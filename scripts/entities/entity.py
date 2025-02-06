@@ -1,9 +1,10 @@
 class Entity:
-    def __init__(self, game):
+    def __init__(self, game, pos):
         self.game = game
-        self.x = 100
-        self.y = 100
-        self.speed = 4
+        self.pos = list(pos)
+        self.x = 368
+        self.y = 336
+        self.speed = 3
         self.direction = None
         
         self.up1 = None
@@ -18,11 +19,10 @@ class Entity:
         self.frame_index = 0 # spriteCounter
         self.frame_num = 0
 
-        
-        
+      
     def update(self, dt):
         pass
     
-    def render(self, surf):
+    def render(self, surf, offset=(0, 0)):
         pass
     

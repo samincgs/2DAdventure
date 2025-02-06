@@ -12,8 +12,15 @@ CAPTION = "2D Adventure"
 TILE_VARIANTS = {
     '0' : 'grass',
     '1': 'wall',
-    '2': 'water'
+    '2': 'water',
+    '3': 'earth',
+    '4': 'tree',
+    '5': 'sand'
 }
+
+# V
+WORLD_DIMENSION = 50
+WORLD_TILE_DIMENSION = WORLD_DIMENSION * TILE_SIZE
 
 # COLORS
 WHITE = (255, 255, 255)

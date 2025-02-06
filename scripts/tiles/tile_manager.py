@@ -9,13 +9,13 @@ class TileManager:
         self.game = game
         self.tile_types = {} # different types of tiles
         
-        self.map_data = self.load_map('map_1')
+        self.map_data = self.load_map('world_1')
         self.tile_types = self.load_tile_images()
         
         
     def load_map(self, map_id):
         data = read_file(MAP_PATH + map_id + '.txt')
-        data = data.split('\n')
+        data = data.replace(' ', '').split('\n')
         return [list(row) for row in data]
      
     def load_tile_images(self):
@@ -26,10 +26,19 @@ class TileManager:
             tile_types[name].img = load_img(TILE_IMG_PATH + variant)
         return tile_types
             
-    def render(self, surf):
-        for y, col in enumerate(self.map_data):
-            for x, row in enumerate(col):
-                if row in TILE_VARIANTS:
-                    img = self.tile_types[TILE_VARIANTS[row]].img
-                    surf.blit(img, (x * TILE_SIZE, y * TILE_SIZE))
-            
+    def render(self, surf, offset=(0, 0), visible=True):
+        
+        if visible:
+            for y in range(offset[1] // TILE_SIZE, (offset[1] + surf.get_height()) // TILE_SIZE + 1):
+                for x in range(offset[0] // TILE_SIZE, (offset[0] + surf.get_width()) // TILE_SIZE + 1):
+                    tile = self.map_data[y][x]
+                    img = self.tile_types[TILE_VARIANTS[str(tile)]].img
+                    surf.blit(img, (x * TILE_SIZE - offset[0], y * TILE_SIZE - offset[1]))  
+        else:
+            for y, col in enumerate(self.map_data):
+                for x, row in enumerate(col):
+                    if row in TILE_VARIANTS:
+                        img = self.tile_types[TILE_VARIANTS[row]].img
+                        surf.blit(img, (x * TILE_SIZE - offset[0], y * TILE_SIZE - offset[1]))
+                    
+                    
