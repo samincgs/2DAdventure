@@ -35,6 +35,7 @@ class Game:
             
             self.screen.blit(pygame.transform.scale(self.display, self.screen.get_size()), (0, 0))
             pygame.display.update()
+            
             self.dt = self.clock.tick(FPS) / 1000
                     
 if __name__ == "__main__":

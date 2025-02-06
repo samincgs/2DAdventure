@@ -5,3 +5,9 @@ def load_img(path, colorkey=None, alpha=True):
     if colorkey:
         img.set_colorkey(colorkey)
     return img
+
+def read_file(path):
+    f = open(path, 'r')
+    data = f.read()
+    f.close()
+    return data

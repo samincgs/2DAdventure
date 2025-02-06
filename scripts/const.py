@@ -8,11 +8,18 @@ SCREEN_HEIGHT = DISPLAY_HEIGHT * RENDER_SCALE
 FPS = 60
 CAPTION = "2D Adventure"
 
+# TYPES
+TILE_VARIANTS = {
+    '0' : 'grass',
+    '1': 'wall',
+    '2': 'water'
+}
+
 # COLORS
 WHITE = (255, 255, 255)
 BLACK = (0, 0, 0)
 
-
 # PATHS
 PLAYER_IMG_PATH = 'data/images/player/'
 TILE_IMG_PATH = 'data/images/tiles/'
+MAP_PATH = 'data/maps/'
