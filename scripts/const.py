@@ -15,3 +15,4 @@ BLACK = (0, 0, 0)
 
 # PATHS
 PLAYER_IMG_PATH = 'data/images/player/'
+TILE_IMG_PATH = 'data/images/tiles/'
