@@ -1,4 +1,5 @@
 import os
+import pygame
 
 from .tile import Tile
 from ..const import *
@@ -12,7 +13,29 @@ class TileManager:
         self.map_data = self.load_map('world_1')
         self.tile_types = self.load_tile_images()
         
+        self.all_tiles = {}
         
+    
+    def collision_test(self, rect, tiles):
+        collisions = []
+        
+        for tile in tiles:
+            tile_rect = pygame.Rect(tile[0] * TILE_SIZE, tile[1] * TILE_SIZE, TILE_SIZE, TILE_SIZE)
+            if rect.colliderect(tile_rect):
+                collisions.append(tile_rect)
+        return collisions
+                
+    
+    def get_nearby_tiles(self, pos):
+        tiles = []
+        tile_pos = [pos[0] // TILE_SIZE, pos[1] // TILE_SIZE]
+        
+        for offset in [(-1, -1), (0, -1), (1, -1), (-1, 0), (0, 0), (1, 0), (-1, 1), (0, 1), (1, 1)]:
+            look_pos = (tile_pos[0] + offset[0], tile_pos[1] + offset[1])
+            if look_pos in self.all_tiles:
+                tiles.append(look_pos)
+        return tiles
+    
     def load_map(self, map_id):
         data = read_file(MAP_PATH + map_id + '.txt')
         data = data.replace(' ', '').split('\n')
@@ -23,17 +46,23 @@ class TileManager:
         for variant in os.listdir(TILE_IMG_PATH):
             name = variant.split('.')[0]
             tile_types[name] = Tile()
+            if name in COLLISION_TILES:
+                tile_types[name].collision = True
             tile_types[name].img = load_img(TILE_IMG_PATH + variant)
         return tile_types
             
     def render(self, surf, offset=(0, 0), visible=True):
-        
+                
         if visible:
             for y in range(offset[1] // TILE_SIZE, (offset[1] + surf.get_height()) // TILE_SIZE + 1):
                 for x in range(offset[0] // TILE_SIZE, (offset[0] + surf.get_width()) // TILE_SIZE + 1):
-                    tile = self.map_data[y][x]
-                    img = self.tile_types[TILE_VARIANTS[str(tile)]].img
-                    surf.blit(img, (x * TILE_SIZE - offset[0], y * TILE_SIZE - offset[1]))  
+                    num = self.map_data[y - 1][x - 1]
+                    tile = self.tile_types[TILE_VARIANTS[str(num)]]
+                    if (x - 1 // TILE_SIZE, y -1 //TILE_SIZE) not in self.all_tiles:
+                        if tile.collision:
+                            self.all_tiles[(x - 1 // TILE_SIZE, y -1 //TILE_SIZE)] = tile
+                    
+                    surf.blit(tile.img, (x * TILE_SIZE - offset[0], y * TILE_SIZE - offset[1]))  
         else:
             for y, col in enumerate(self.map_data):
                 for x, row in enumerate(col):

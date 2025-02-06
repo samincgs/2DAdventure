@@ -4,6 +4,7 @@ from scripts.const import *
 from scripts.input import Input
 from scripts.entities.player import Player
 from scripts.tiles.tile_manager import TileManager
+from scripts.collisions import CollisionManager
 
 
 class Game:
@@ -19,7 +20,8 @@ class Game:
         self.input = Input()
         
         self.tile_manager = TileManager(self)
-        self.player = Player(self, (368, 368))
+        self.collision_manager = CollisionManager(self, self.tile_manager)
+        self.player = Player(self, (372, 372), (10, 11))
         
         self.scroll = [0, 0]
         
@@ -49,7 +51,8 @@ class Game:
             
             self.dt = self.clock.tick(FPS) / 1000
             
-            print(self.clock.get_fps())
+            print('FPS: ' + str(int(self.clock.get_fps())))
+            
                     
 if __name__ == "__main__":
     Game().run()

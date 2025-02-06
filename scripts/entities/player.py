@@ -5,8 +5,8 @@ from ..utils import load_img
 from .entity import Entity
 
 class Player(Entity):
-    def __init__(self, game, pos):
-        super().__init__(game, pos)
+    def __init__(self, game, pos, size):
+        super().__init__(game, pos, size)
         
         self.direction = 'down'
         self.up1 = load_img(PLAYER_IMG_PATH + 'boy_up_1.png')
@@ -17,7 +17,9 @@ class Player(Entity):
         self.left2 = load_img(PLAYER_IMG_PATH + 'boy_left_2.png')
         self.right1 = load_img(PLAYER_IMG_PATH + 'boy_right_1.png')
         self.right2 = load_img(PLAYER_IMG_PATH + 'boy_right_2.png')
-    
+        
+        self.collision_on = True
+        
     @property
     def img(self):
         if self.direction == 'up':
@@ -29,34 +31,44 @@ class Player(Entity):
         elif self.direction == 'left':
             img = self.left1 if self.frame_num == 1 else self.left2
         return img
-    
-    @property
-    def rect(self):
-        return pygame.Rect(self.x, self.y, TILE_SIZE, TILE_SIZE)
+
     
     def update(self, dt):
             
             if self.game.input.pressed:
                 self.frame_index += dt
-                if self.frame_index > 0.18:
+                if self.frame_index > 0.15:
                     self.frame_index = 0
                     self.frame_num = 1 if self.frame_num == 2 else 2
             else:
                 self.frame_index = 0
             
             if self.game.input.up_pressed:
-                self.y -= self.speed
                 self.direction = 'up'
+                self.pos[1] -= self.speed
             elif self.game.input.down_pressed:
-                self.y += self.speed
                 self.direction = 'down'
+                self.pos[1] += self.speed
             elif self.game.input.left_pressed:
-                self.x -= self.speed
                 self.direction = 'left'
+                self.pos[0] -= self.speed
             elif self.game.input.right_pressed:
-                self.x += self.speed
                 self.direction = 'right'
+                self.pos[0] += self.speed
+            self.game.collision_manager.check_tile(self)
          
+    
+    def render_offset(self, offset=(0, 0)):
+        offset = list(offset)
+        player_offset = (3, 5)
+        if self.collision_on:
+            offset[0] += player_offset[0]
+            offset[1] += player_offset[1]
+        return offset
+        
                 
     def render(self, surf, offset=(0, 0)):
-        surf.blit(self.img, (self.x - offset[0], self.y - offset[1]))
+        # pygame.draw.rect(surf, WHITE, pygame.Rect(self.rect.x - offset[0], self.rect.y - offset[1], self.rect.size[0], self.rect.size[1])) debug
+        offset = self.render_offset(offset=offset)
+        surf.blit(self.img, (self.pos[0] - offset[0], self.pos[1] - offset[1]))
+        

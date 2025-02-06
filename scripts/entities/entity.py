@@ -1,9 +1,10 @@
+import pygame
+
 class Entity:
-    def __init__(self, game, pos):
+    def __init__(self, game, pos, size):
         self.game = game
         self.pos = list(pos)
-        self.x = 368
-        self.y = 336
+        self.size = list(size)
         self.speed = 3
         self.direction = None
         
@@ -18,8 +19,13 @@ class Entity:
         
         self.frame_index = 0 # spriteCounter
         self.frame_num = 0
+        
+        self.collision_on = False
 
-      
+    @property
+    def rect(self):
+        return pygame.Rect(*self.pos, *self.size)
+    
     def update(self, dt):
         pass
     
