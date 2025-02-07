@@ -5,6 +5,7 @@ from scripts.input import Input
 from scripts.entities.player import Player
 from scripts.tiles.tile_manager import TileManager
 from scripts.collisions import CollisionManager
+from scripts.object_spawner import ObjectSpawner
 
 
 class Game:
@@ -14,18 +15,23 @@ class Game:
         self.display = pygame.Surface((DISPLAY_WIDTH, DISPLAY_HEIGHT))
         pygame.display.set_caption(CAPTION)
         self.clock = pygame.time.Clock()
-        
+         
         self.dt = 0.1 
         
         self.input = Input()
         
         self.tile_manager = TileManager(self)
         self.collision_manager = CollisionManager(self, self.tile_manager)
+        self.object_spawner = ObjectSpawner(self)
         self.player = Player(self, (372, 372), (10, 11))
+        
+        self.objects = []
         
         self.scroll = [0, 0]
         
-        
+    def load(self):
+        self.object_spawner.spawn()
+       
     def run(self):
         while True:
             self.display.fill((0, 0, 0))
@@ -43,6 +49,9 @@ class Game:
             
             self.tile_manager.render(self.display, offset=render_scroll)
             
+            for obj in self.objects:
+                obj.render(self.display, offset=render_scroll)
+            
             self.player.update(self.dt)
             self.player.render(self.display, offset=render_scroll,)
             
@@ -52,7 +61,11 @@ class Game:
             self.dt = self.clock.tick(FPS) / 1000
             
             print('FPS: ' + str(int(self.clock.get_fps())))
+            if self.input.debug:
+                print(self.player.pos)
             
                     
 if __name__ == "__main__":
-    Game().run()
+    game = Game()
+    game.load()
+    game.run()

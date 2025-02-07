@@ -30,4 +30,5 @@ BLACK = (0, 0, 0)
 # PATHS
 PLAYER_IMG_PATH = 'data/images/player/'
 TILE_IMG_PATH = 'data/images/tiles/'
+OBJECT_IMG_PATH = 'data/images/objects/'
 MAP_PATH = 'data/maps/'

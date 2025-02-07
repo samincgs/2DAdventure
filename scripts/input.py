@@ -7,6 +7,8 @@ class Input:
         self.down_pressed = False
         self.left_pressed = False
         self.right_pressed = False
+        
+        self.debug = False
     
     @property
     def pressed(self):
@@ -29,6 +31,8 @@ class Input:
                     self.down_pressed = True
                 if event.key == pygame.K_d:
                     self.right_pressed = True
+                if event.key == pygame.K_TAB:
+                    self.debug = not self.debug
             if event.type == pygame.KEYUP:
                 if event.key == pygame.K_w:
                     self.up_pressed = False

@@ -15,7 +15,6 @@ class TileManager:
         
         self.all_tiles = {}
         
-    
     def collision_test(self, rect, tiles):
         collisions = []
         
