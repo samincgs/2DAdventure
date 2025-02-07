@@ -21,6 +21,8 @@ class Player(Entity):
         
         self.rect_offset = RECT_OFFSETS[type] if type in RECT_OFFSETS else (0, 0)
         self.collision_on = True
+        
+        self.has_keys = 0
     
  
     @property
@@ -35,6 +37,15 @@ class Player(Entity):
             img = self.left1 if self.frame_num == 1 else self.left2
         return img
 
+    def interact(self, obj):
+        if obj:
+            if obj.name == 'key':
+                self.has_keys += 1
+                self.game.objects.remove(obj)
+            if obj.name == 'door':
+                if self.has_keys:
+                    self.game.objects.remove(obj)
+                    self.has_keys -=1
     
     def update(self, dt):
             
@@ -58,7 +69,14 @@ class Player(Entity):
             elif self.game.input.right_pressed:
                 self.direction = 'right'
                 self.pos[0] += self.speed
+                
             self.game.collision_manager.check_tile(self)
+            obj  = self.game.collision_manager.check_object(self)
+            
+            self.interact(obj)
+            
+            
+            
          
     
     def render_offset(self, offset=(0, 0)):
@@ -70,7 +88,8 @@ class Player(Entity):
         
                 
     def render(self, surf, offset=(0, 0)):
-        # pygame.draw.rect(surf, WHITE, pygame.Rect(self.rect.x - offset[0], self.rect.y - offset[1], self.rect.size[0], self.rect.size[1])) #debug
+        if self.game.input.debug:
+            pygame.draw.rect(surf, WHITE, pygame.Rect(self.rect.x - offset[0], self.rect.y - offset[1], self.rect.size[0], self.rect.size[1])) #debug
         offset = self.render_offset(offset=offset)
         surf.blit(self.img, (self.pos[0] - offset[0], self.pos[1] - offset[1]))
         

@@ -21,7 +21,7 @@ class Game:
         
         self.tile_manager = TileManager(self)
         self.collision_manager = CollisionManager(self, self.tile_manager)
-        self.player = Player(self, (372, 372), (10, 11), 'player')
+        self.player = Player(self, (387, 354), (9, 11), 'player')
         
         self.objects = []
         self.object_spawner = ObjectSpawner(self)
@@ -47,6 +47,9 @@ class Game:
             self.tile_manager.render(self.display, offset=render_scroll)
             
             for obj in self.objects:
+                if obj.collision_on:
+                    if self.player.rect.colliderect(obj.rect):
+                        pass
                 obj.render(self.display, offset=render_scroll)
             
             self.player.update(self.dt)
@@ -57,7 +60,7 @@ class Game:
             
             self.dt = self.clock.tick(FPS) / 1000
             
-            print('FPS: ' + str(int(self.clock.get_fps())))
+            # print('FPS: ' + str(int(self.clock.get_fps())))
             if self.input.debug:
                 print(self.player.pos)
             

@@ -15,16 +15,6 @@ class TileManager:
         
         self.all_tiles = {}
         
-    def collision_test(self, rect, tiles):
-        collisions = []
-        
-        for tile in tiles:
-            tile_rect = pygame.Rect(tile[0] * TILE_SIZE, tile[1] * TILE_SIZE, TILE_SIZE, TILE_SIZE)
-            if rect.colliderect(tile_rect):
-                collisions.append(tile_rect)
-        return collisions
-                
-    
     def get_nearby_tiles(self, pos):
         tiles = []
         tile_pos = [pos[0] // TILE_SIZE, pos[1] // TILE_SIZE]
