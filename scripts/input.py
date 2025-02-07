@@ -1,8 +1,12 @@
 import pygame
 import sys
 
+from .const import *
+
 class Input:
-    def __init__(self):
+    def __init__(self, game):
+        self.game = game
+        
         self.up_pressed = False
         self.down_pressed = False
         self.left_pressed = False
