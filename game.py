@@ -7,7 +7,6 @@ from scripts.tiles.tile_manager import TileManager
 from scripts.collisions import CollisionManager
 from scripts.object_spawner import ObjectSpawner
 
-
 class Game:
     def __init__(self):
         pygame.init()
@@ -22,15 +21,13 @@ class Game:
         
         self.tile_manager = TileManager(self)
         self.collision_manager = CollisionManager(self, self.tile_manager)
-        self.object_spawner = ObjectSpawner(self)
-        self.player = Player(self, (372, 372), (10, 11))
+        self.player = Player(self, (372, 372), (10, 11), 'player')
         
         self.objects = []
+        self.object_spawner = ObjectSpawner(self)
         
         self.scroll = [0, 0]
-        
-    def load(self):
-        self.object_spawner.spawn()
+
        
     def run(self):
         while True:
@@ -67,5 +64,4 @@ class Game:
                     
 if __name__ == "__main__":
     game = Game()
-    game.load()
     game.run()

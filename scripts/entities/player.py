@@ -5,8 +5,8 @@ from ..utils import load_img
 from .entity import Entity
 
 class Player(Entity):
-    def __init__(self, game, pos, size):
-        super().__init__(game, pos, size)
+    def __init__(self, game, pos, size, type):
+        super().__init__(game, pos, size, type)
         
         self.direction = 'down'
         self.up1 = load_img(PLAYER_IMG_PATH + 'boy_up_1.png')
@@ -17,9 +17,12 @@ class Player(Entity):
         self.left2 = load_img(PLAYER_IMG_PATH + 'boy_left_2.png')
         self.right1 = load_img(PLAYER_IMG_PATH + 'boy_right_1.png')
         self.right2 = load_img(PLAYER_IMG_PATH + 'boy_right_2.png')
+        self.player_img = load_img(PLAYER_IMG_PATH + 'player1.png')
         
+        self.rect_offset = RECT_OFFSETS[type] if type in RECT_OFFSETS else (0, 0)
         self.collision_on = True
-        
+    
+ 
     @property
     def img(self):
         if self.direction == 'up':
@@ -60,15 +63,14 @@ class Player(Entity):
     
     def render_offset(self, offset=(0, 0)):
         offset = list(offset)
-        player_offset = (3, 5)
         if self.collision_on:
-            offset[0] += player_offset[0]
-            offset[1] += player_offset[1]
+            offset[0] += self.rect_offset[0]
+            offset[1] += self.rect_offset[1]
         return offset
         
                 
     def render(self, surf, offset=(0, 0)):
-        # pygame.draw.rect(surf, WHITE, pygame.Rect(self.rect.x - offset[0], self.rect.y - offset[1], self.rect.size[0], self.rect.size[1])) debug
+        # pygame.draw.rect(surf, WHITE, pygame.Rect(self.rect.x - offset[0], self.rect.y - offset[1], self.rect.size[0], self.rect.size[1])) #debug
         offset = self.render_offset(offset=offset)
         surf.blit(self.img, (self.pos[0] - offset[0], self.pos[1] - offset[1]))
         

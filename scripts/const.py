@@ -14,14 +14,19 @@ TILE_VARIANTS = {
     '1': 'wall',
     '2': 'water',
     '3': 'earth',
-    '4': 'tree',
+    '4': 'tree1',
     '5': 'sand'
+}
+
+RECT_OFFSETS = {
+    'player': (3, 5),
+    'key': (5, 3)
 }
 
 # V
 WORLD_DIMENSION = 50
 WORLD_TILE_DIMENSION = WORLD_DIMENSION * TILE_SIZE
-COLLISION_TILES = {'wall', 'water', 'tree'}
+COLLISION_TILES = {'wall', 'water', 'tree', 'tree1'}
 
 # COLORS
 WHITE = (255, 255, 255)

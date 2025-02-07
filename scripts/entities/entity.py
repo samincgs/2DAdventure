@@ -1,7 +1,9 @@
 import pygame
 
+from ..const import *
+
 class Entity:
-    def __init__(self, game, pos, size):
+    def __init__(self, game, pos, size, type):
         self.game = game
         self.pos = list(pos)
         self.size = list(size)
@@ -21,6 +23,8 @@ class Entity:
         self.frame_num = 0
         
         self.collision_on = False
+        
+        self.rect_offset = RECT_OFFSETS[type] if type in RECT_OFFSETS else (0, 0)
 
     @property
     def rect(self):

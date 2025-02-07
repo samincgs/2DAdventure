@@ -47,7 +47,7 @@ class TileManager:
             tile_types[name] = Tile()
             if name in COLLISION_TILES:
                 tile_types[name].collision = True
-            tile_types[name].img = load_img(TILE_IMG_PATH + variant)
+            tile_types[name].img = load_img(TILE_IMG_PATH + variant, alpha=True)
         return tile_types
             
     def render(self, surf, offset=(0, 0), visible=True):
