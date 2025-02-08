@@ -1,8 +1,8 @@
-import pygame
-
 from scripts.const import *
 from scripts.window import Window
 from scripts.input import Input
+from scripts.assets import Assets
+from scripts.audio import AudioManager
 from scripts.entities.player import Player
 from scripts.tiles.tile_manager import TileManager
 from scripts.collisions import CollisionManager
@@ -12,6 +12,8 @@ class Game:
     def __init__(self):
         self.window = Window()
         self.input = Input(self)
+        # self.assets = Assets()
+        self.audio = AudioManager()
         self.tile_manager = TileManager(self)
         self.collision_manager = CollisionManager(self, self.tile_manager)
         self.player = Player(self, (387, 354), (9, 11), 'player')

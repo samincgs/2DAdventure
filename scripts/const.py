@@ -21,7 +21,7 @@ TILE_VARIANTS = {
 RECT_OFFSETS = {
     'player': (4, 5),
     'key': (3, 3),
-    'boots': (2, 2)
+    'sneakers': (1, 5)
 }
 
 # V

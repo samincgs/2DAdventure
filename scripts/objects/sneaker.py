@@ -1,6 +1,6 @@
 from .object import Object
 
-class Boots(Object):
+class Sneaker(Object):
     def __init__(self, pos, size):
-        super().__init__(pos, 'boots', size)
+        super().__init__(pos, 'sneaker', size)
         

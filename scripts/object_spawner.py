@@ -2,7 +2,7 @@
 from .objects.key import Key
 from .objects.chest import Chest
 from .objects.door import Door
-from .objects.boots import Boots
+from .objects.sneaker import Sneaker
 
 
 class ObjectSpawner:
@@ -18,4 +18,4 @@ class ObjectSpawner:
         self.game.objects.append(Door((144, 463)))
         self.game.objects.append(Door((176, 191)))
         self.game.objects.append(Chest((177, 128)))
-        self.game.objects.append(Boots((613, 675), (12, 12)))
+        self.game.objects.append(Sneaker((613, 675), (14, 8)))

@@ -42,11 +42,12 @@ class Player(Entity):
             if obj.name == 'key':
                 self.has_keys += 1
                 self.game.objects.remove(obj)
+                self.game.audio.sounds['coin'].play()
             elif obj.name == 'door':
                 if self.has_keys:
                     self.game.objects.remove(obj)
                     self.has_keys -=1
-            elif obj.name == 'boots':
+            elif obj.name == 'sneaker':
                 self.game.objects.remove(obj)
                 self.speed += 1
             elif obj.name == 'chest3':
