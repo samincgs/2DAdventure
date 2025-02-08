@@ -7,7 +7,7 @@ class Entity:
         self.game = game
         self.pos = list(pos)
         self.size = list(size)
-        self.speed = 2
+        self.speed = 150
         self.direction = None
         
         self.up1 = None

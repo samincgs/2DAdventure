@@ -10,7 +10,7 @@ from scripts.object_spawner import ObjectSpawner
 
 class Game:
     def __init__(self):
-        self.window = Window()
+        self.window = Window(self)
         self.input = Input(self)
         # self.assets = Assets()
         self.audio = AudioManager()
@@ -22,6 +22,7 @@ class Game:
         self.object_spawner = ObjectSpawner(self)
         
         self.scroll = [0, 0]
+        
        
     def run(self):
         while True:
@@ -37,7 +38,6 @@ class Game:
             self.scroll[0] = max(0, min(self.scroll[0], WORLD_TILE_DIMENSION - DISPLAY_WIDTH))
             self.scroll[1] = max(0, min(self.scroll[1], WORLD_TILE_DIMENSION  - DISPLAY_HEIGHT))
             
-                        
             self.input.update()
             self.tile_manager.render(surf, offset=render_scroll)
             
@@ -50,6 +50,7 @@ class Game:
             # print('FPS: ' + str(int(self.clock.get_fps())))
             if self.input.debug:
                 print(self.player.pos)
+                
             
                     
 if __name__ == "__main__":

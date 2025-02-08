@@ -22,7 +22,8 @@ class Player(Entity):
         self.rect_offset = RECT_OFFSETS[type] if type in RECT_OFFSETS else (0, 0)
         self.collision_on = True
         
-        self.has_keys = 3
+        self.has_keys = 0
+        self.last_movement = 0
     
  
     @property
@@ -49,12 +50,14 @@ class Player(Entity):
                     self.has_keys -=1
             elif obj.name == 'sneaker':
                 self.game.objects.remove(obj)
-                self.speed += 1
+                self.speed += 50
             elif obj.name == 'chest3':
                 state = 'opened'
                 obj.img = load_img(OBJECT_IMG_PATH + obj.name  + '_' + state + '.png')
     
     def update(self, dt):
+            
+            self.last_movement = self.pos.copy()
             
             if self.game.input.pressed:
                 self.frame_index += dt
@@ -66,17 +69,17 @@ class Player(Entity):
             
             if self.game.input.up_pressed:
                 self.direction = 'up'
-                self.pos[1] -= self.speed
+                self.pos[1] -= int(self.speed * dt)
             elif self.game.input.down_pressed:
                 self.direction = 'down'
-                self.pos[1] += self.speed
+                self.pos[1] += int(self.speed * dt)
             elif self.game.input.left_pressed:
                 self.direction = 'left'
-                self.pos[0] -= self.speed
+                self.pos[0] -= int(self.speed * dt)
             elif self.game.input.right_pressed:
                 self.direction = 'right'
-                self.pos[0] += self.speed
-                
+                self.pos[0] += int(self.speed * dt)
+                                
             self.game.collision_manager.check_tile(self)
             obj  = self.game.collision_manager.check_object(self)
             
@@ -88,12 +91,11 @@ class Player(Entity):
             offset[0] += self.rect_offset[0]
             offset[1] += self.rect_offset[1]
         return offset
-        
-                
+         
     def render(self, surf, offset=(0, 0)):
         img = self.img
         if self.game.input.debug:
             pygame.draw.rect(surf, WHITE, pygame.Rect(self.rect.x - offset[0], self.rect.y - offset[1], self.rect.size[0], self.rect.size[1])) #debug
         offset = self.render_offset(offset=offset)
-        surf.blit(img, (self.pos[0] - offset[0], self.pos[1] - offset[1]))
+        surf.blit(img, (int(self.pos[0] - offset[0]) , int(self.pos[1] - offset[1])))
         
