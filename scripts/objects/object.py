@@ -1,15 +1,15 @@
 import pygame
 
 from ..const import *
-from ..utils import load_img
 
 
 class Object:
-    def __init__(self, pos, name, size=(16, 16)):
+    def __init__(self, game, pos, name, size=(16, 16)):
+        self.game = game
         self.pos = list(pos)
         self.name = name
         self.size = list(size)
-        self.img = load_img(OBJECT_IMG_PATH + name + '.png')
+        self.img = self.game.assets.object_imgs[self.name]
         self.collision_on = False
         self.pickeable = False
         

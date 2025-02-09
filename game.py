@@ -21,16 +21,16 @@ class Game:
         self.player = Player(self, (387, 354), (9, 11), 'player')
         self.ui = UI(self)
         
-        self.running = True
-        self.objects = []
         self.object_spawner = ObjectSpawner(self)
         
         self.scroll = [0, 0]
         
+        self.game_over = False
+        
         
        
     def run(self):
-        while self.running:
+        while True:
             surf = self.window.display   
             
             self.window.render(self.ui)
@@ -46,21 +46,20 @@ class Game:
             self.input.update()
             self.tile_manager.render(surf, offset=render_scroll)
             
-            for obj in self.objects:
+            for obj in self.object_spawner.objects:
                 obj.render(surf, offset=render_scroll)
             
-            self.player.update(self.window.dt)
+            if not self.game_over:
+                self.player.update(self.window.dt)
+                self.ui.render(surf)
+                
             self.player.render(surf, offset=render_scroll)
-            
-            self.ui.render(surf)
             
             # print('FPS: ' + str(int(self.clock.get_fps())))
             if self.input.debug:
                 print(self.player.pos)
                 
-                
-            
-                    
+                              
 if __name__ == "__main__":
     game = Game()
     game.run()

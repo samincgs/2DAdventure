@@ -51,7 +51,7 @@ class CollisionManager:
         obj = None
         
         temp_rect = entity.rect.copy()
-        collisions = self.collision_obj(temp_rect, self.game.objects)
+        collisions = self.collision_obj(temp_rect, self.game.object_spawner.objects)
         
         for collision_obj in collisions:
             if collision_obj.collision_on:
@@ -63,7 +63,7 @@ class CollisionManager:
             entity.pos[0] = temp_rect.x
             
         temp_rect = entity.rect.copy()
-        collisions = self.collision_obj(temp_rect, self.game.objects)
+        collisions = self.collision_obj(temp_rect, self.game.object_spawner.objects)
         
         for collision_obj in collisions:
             if collision_obj.collision_on:

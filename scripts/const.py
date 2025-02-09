@@ -10,12 +10,13 @@ CAPTION = "2D Adventure"
 
 # TYPES
 TILE_VARIANTS = {
-    '0' : 'grass',
+    '0' : 'plain_grass',
     '1': 'wall',
     '2': 'water',
     '3': 'earth',
     '4': 'tree1',
-    '5': 'sand'
+    '5': 'sand',
+    '6': 'grass'
 }
 
 RECT_OFFSETS = {
