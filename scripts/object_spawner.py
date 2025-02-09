@@ -14,6 +14,7 @@ class ObjectSpawner:
     def spawn(self):
         self.game.objects.append(Key((384, 642), (8, 9)))
         self.game.objects.append(Key((384, 128), (8, 9)))
+        self.game.objects.append(Key((628, 154), (8, 9)))
         self.game.objects.append(Door((208, 370)))
         self.game.objects.append(Door((144, 463)))
         self.game.objects.append(Door((176, 191)))

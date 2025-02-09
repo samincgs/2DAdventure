@@ -1,9 +1,8 @@
 import os
-import pygame
 
 from .tile import Tile
 from ..const import *
-from ..utils import load_img, read_file
+from ..utils import read_file
 
 class TileManager:
     def __init__(self, game):
@@ -38,7 +37,7 @@ class TileManager:
             tile_types[name] = Tile()
             if name in COLLISION_TILES:
                 tile_types[name].collision = True
-            tile_types[name].img = load_img(TILE_IMG_PATH + variant, alpha=True)
+            tile_types[name].img = self.game.assets.tile_imgs[name]
         return tile_types
             
     def render(self, surf, offset=(0, 0), visible=True):

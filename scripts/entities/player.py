@@ -44,16 +44,22 @@ class Player(Entity):
                 self.has_keys += 1
                 self.game.objects.remove(obj)
                 self.game.audio.sounds['coin'].play()
+                self.game.ui.create_message('You got a key!')
             elif obj.name == 'door':
                 if self.has_keys:
                     self.game.objects.remove(obj)
                     self.has_keys -=1
+                    self.game.ui.create_message('You opened the door!')
+                else:
+                    self.game.ui.create_message('Seems like you need a key.')
             elif obj.name == 'sneaker':
                 self.game.objects.remove(obj)
                 self.speed += 50
+                self.game.ui.create_message('You can now run faster!')
             elif obj.name == 'chest3':
                 state = 'opened'
                 obj.img = load_img(OBJECT_IMG_PATH + obj.name  + '_' + state + '.png')
+                self.game.ui.create_message('YOU WIN!')
     
     def update(self, dt):
             
@@ -82,7 +88,6 @@ class Player(Entity):
                                 
             self.game.collision_manager.check_tile(self)
             obj  = self.game.collision_manager.check_object(self)
-            
             self.interact(obj)
             
     def render_offset(self, offset=(0, 0)):
