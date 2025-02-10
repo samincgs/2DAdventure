@@ -9,15 +9,7 @@ class Player(Entity):
         super().__init__(game, pos, size, type)
         
         self.direction = 'down'
-        self.up1 = load_img(PLAYER_IMG_PATH + 'boy_up_1.png')
-        self.up2 = load_img(PLAYER_IMG_PATH + 'boy_up_2.png')
-        self.down1 = load_img(PLAYER_IMG_PATH + 'boy_down_1.png')
-        self.down2 = load_img(PLAYER_IMG_PATH + 'boy_down_2.png')
-        self.left1 = load_img(PLAYER_IMG_PATH + 'boy_left_1.png')
-        self.left2 = load_img(PLAYER_IMG_PATH + 'boy_left_2.png')
-        self.right1 = load_img(PLAYER_IMG_PATH + 'boy_right_1.png')
-        self.right2 = load_img(PLAYER_IMG_PATH + 'boy_right_2.png')
-        self.player_img = load_img(PLAYER_IMG_PATH + 'player1.png')
+        self.player_imgs = self.game.assets.player_imgs
         
         self.rect_offset = RECT_OFFSETS[type] if type in RECT_OFFSETS else (0, 0)
         self.collision_on = True
@@ -29,13 +21,13 @@ class Player(Entity):
     @property
     def img(self):
         if self.direction == 'up':
-            img = self.up1 if self.frame_num == 1 else self.up2
+            img = self.player_imgs['up_1'] if self.frame_num == 1 else self.player_imgs['up_2']
         elif self.direction == 'down':
-            img = self.down1 if self.frame_num == 1 else self.down2
+            img = self.player_imgs['down_1'] if self.frame_num == 1 else self.player_imgs['down_2']
         elif self.direction == 'right':
-            img = self.right1 if self.frame_num == 1 else self.right2
+            img = self.player_imgs['right_1'] if self.frame_num == 1 else self.player_imgs['right_2']
         elif self.direction == 'left':
-            img = self.left1 if self.frame_num == 1 else self.left2
+            img = self.player_imgs['left_1'] if self.frame_num == 1 else self.player_imgs['left_2']
         return img
 
     def interact(self, obj):
@@ -71,6 +63,7 @@ class Player(Entity):
                     self.frame_index = 0
                     self.frame_num = 1 if self.frame_num == 2 else 2
             else:
+                self.frame_num = 1
                 self.frame_index = 0
             
             if self.game.input.up_pressed:

@@ -18,7 +18,7 @@ class Game:
         self.audio = AudioManager()
         self.tile_manager = TileManager(self)
         self.collision_manager = CollisionManager(self, self.tile_manager)
-        self.player = Player(self, (387, 354), (9, 11), 'player')
+        self.player = Player(self, (371, 338), (9, 11), 'player')
         self.ui = UI(self)
         
         self.object_spawner = ObjectSpawner(self)
@@ -37,11 +37,12 @@ class Game:
             
             self.scroll[0] += (self.player.rect.centerx - surf.get_width() // 2 - self.scroll[0]) 
             self.scroll[1] += (self.player.rect.centery - surf.get_height() // 2 - self.scroll[1])
-            render_scroll = (int(self.scroll[0]), int(self.scroll[1]))
             
             # world boundaries
             self.scroll[0] = max(0, min(self.scroll[0], WORLD_TILE_DIMENSION - DISPLAY_WIDTH))
-            self.scroll[1] = max(0, min(self.scroll[1], WORLD_TILE_DIMENSION  - DISPLAY_HEIGHT))
+            self.scroll[1] = max(0, min(self.scroll[1], WORLD_TILE_DIMENSION - DISPLAY_HEIGHT))
+            
+            render_scroll = (int(self.scroll[0]), int(self.scroll[1]))
             
             self.input.update()
             self.tile_manager.render(surf, offset=render_scroll)
