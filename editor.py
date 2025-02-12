@@ -1,6 +1,8 @@
 import pygame
 import os
 import sys
+import tkinter as tk
+from tkinter import filedialog
 
 from editor.font import Font
 from editor.utils import load_dir
@@ -8,7 +10,7 @@ from editor.utils import load_dir
 WIDTH = 600
 HEIGHT = 400
 RENDER_SCALE = 2
-SIDEBAR_WIDTH = 80 # 1 for the tiles to align properly
+SIDEBAR_WIDTH = 64 # 1 for the tiles to align properly
 
 class Editor:
     def __init__(self):
@@ -30,10 +32,10 @@ class Editor:
         self.tile_size = 16
         
         self.tile_list = self.assets[self.tile_names[self.tile_index]]
-        print(self.tile_list)
         
-        self.map_size = 10
-        self.map_swap = False
+        self.map_change = 0
+        self.map_sizes = [10, 25, 50, 100]
+        self.map_size = self.map_sizes[self.map_change]
         
         self.map = [[None for j in range(self.map_size)] for i in range(self.map_size)]
         
@@ -47,6 +49,7 @@ class Editor:
         self.clicked = False
         
         self.grid_rects = {}
+        
         
                 
         self.sidebar_surf = pygame.Surface((SIDEBAR_WIDTH, HEIGHT))
@@ -96,11 +99,11 @@ class Editor:
             for idx, (num, tile_img) in enumerate(self.tile_list.items()):
                 x_offset = 0
                 y_offset = 0
-                tile_img_pos =  (start_pos + x_offset, 80 + start_pos * 3 + (idx * 1.3 * tile_img.get_height()))
+                tile_img_pos =  (start_pos + x_offset, SIDEBAR_WIDTH + start_pos * 3 + (idx * 1.2 * tile_img.get_height()))
                 if tile_img_pos[1] + tile_img.get_height() > self.sidebar_surf.get_height():
                     x_offset = tile_img.get_width() + 5
                     idx = idx % index_limit
-                    tile_img_pos =  (start_pos + x_offset, 80 + start_pos * 3 + (idx * 1.3 * tile_img.get_height()))
+                    tile_img_pos =  (start_pos + x_offset, SIDEBAR_WIDTH + start_pos * 3 + (idx * 1.2 * tile_img.get_height()))
                 tile_rect = pygame.Rect(*tile_img_pos, *tile_img.get_size())
                 if tile_rect.collidepoint(self.mpos):
                     y_offset = 2
@@ -123,7 +126,12 @@ class Editor:
 
             
             # display tiles
-            
+            for name in self.tile_names:
+                for y, row in enumerate(self.map):
+                    for x, col in enumerate(row):
+                        if col:
+                            if col in self.assets[name]:
+                                self.display.blit(self.assets[name][col], (SIDEBAR_WIDTH + x * self.tile_size, y * self.tile_size))   
             
             # show tile hover when placing blocks
             if self.current_tile:
@@ -137,13 +145,9 @@ class Editor:
                 if self.mpos[0] > SIDEBAR_WIDTH and rect.collidepoint(self.mpos):
                     self.current_grid_pos = coord
                     if self.clicked:
-                        self.map[coord[1]][coord[0]] = self.current_tile
+                        self.map[coord[0]][coord[1]] = self.current_tile
                         
-            
-            print(self.map)                   
-            
-                    
-            
+                     
             # text ui
             selected_text ='selected: ' + str(self.current_tile) if self.current_tile else 'selected: None' 
             self.font.render(self.display, selected_text, (WIDTH - self.font.width(selected_text, extra_space=2), 1))
@@ -170,6 +174,9 @@ class Editor:
                         self.movement[2] = True
                     if event.key == pygame.K_DOWN:
                         self.movement[3] = True
+                    if event.key == pygame.K_m:
+                        self.map_change = (self.map_change + 1) % len(self.map_sizes)
+                        self.map_size = self.map_sizes[self.map_change]
                 if event.type == pygame.KEYUP:
                     if event.key == pygame.K_RIGHT:
                         self.movement[0] = False
