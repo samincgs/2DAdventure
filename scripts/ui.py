@@ -23,7 +23,7 @@ class UI:
     def render(self, surf):
         key = self.game.assets.object_imgs['key']
         surf.blit(key, (2, 2))
-    
+            
     def render_font(self, surf, dt):
         if not self.game.game_over:
             key_text = self.roboto_font.render('x ' + str(self.game.player.has_keys), True, (255, 255, 255))

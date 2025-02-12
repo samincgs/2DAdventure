@@ -11,7 +11,8 @@ def load_dir(path, func):
         dir = {}
         for file in os.listdir(path):
             full_path = path + '/' + file
-            dir[file.split('.')[0]] = func(full_path)
+            if os.path.isfile(full_path):
+                dir[file.split('.')[0]] = func(full_path)
         return dir
     
 def blit_center(surf, img, pos, offset=(0, 0)):

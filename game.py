@@ -1,14 +1,13 @@
-from scripts.const import *
 from scripts.window import Window
 from scripts.input import Input
 from scripts.assets import Assets
 from scripts.ui import UI
-from scripts.audio import AudioManager
 from scripts.entities.player import Player
+from scripts.audio import AudioManager
 from scripts.tiles.tile_manager import TileManager
 from scripts.collisions import CollisionManager
 from scripts.object_spawner import ObjectSpawner
-
+from scripts.const import *
 
 class Game:
     def __init__(self):
@@ -18,7 +17,7 @@ class Game:
         self.audio = AudioManager()
         self.tile_manager = TileManager(self)
         self.collision_manager = CollisionManager(self, self.tile_manager)
-        self.player = Player(self, (371, 338), (9, 11), 'player')
+        self.player = Player(self, (371, 338), (9, 10), 'player')
         self.ui = UI(self)
         
         self.object_spawner = ObjectSpawner(self)
@@ -27,8 +26,6 @@ class Game:
         
         self.game_over = False
         
-        
-       
     def run(self):
         while True:
             surf = self.window.display   
@@ -45,6 +42,7 @@ class Game:
             render_scroll = (int(self.scroll[0]), int(self.scroll[1]))
             
             self.input.update()
+            
             self.tile_manager.render(surf, offset=render_scroll)
             
             for obj in self.object_spawner.objects:
@@ -62,5 +60,4 @@ class Game:
                 
                               
 if __name__ == "__main__":
-    game = Game()
-    game.run()
+    Game().run()

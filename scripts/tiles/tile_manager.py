@@ -12,9 +12,8 @@ class TileManager:
         self.tile_types = {} # different types of tiles
         self.tile_positions = [] # all tile positions on camera screen
         
-        self.map_data = self.load_map('world_1')
+        self.map_data = self.load_map('world_2')
         self.tile_types = self.load_tile_images()
-        
         
     def get_nearby_tiles(self, pos):
         tiles = []
@@ -27,17 +26,30 @@ class TileManager:
     
     def load_map(self, map_id):
         data = read_file(MAP_PATH + map_id + '.txt')
-        data = data.replace(' ', '').split('\n')
-        return [list(row) for row in data]
+        data = data.split('\n')
+        return [row.split() for row in data]
      
     def load_tile_images(self):
         tile_types = {}
         for variant in os.listdir(TILE_IMG_PATH):
-            name = variant.split('.')[0]
-            tile_types[name] = Tile()
-            if name in COLLISION_TILES:
-                tile_types[name].collision = True
-            tile_types[name].img = self.game.assets.tile_imgs[name]
+            full_path = TILE_IMG_PATH + '/' + variant
+            if os.path.isfile(full_path):
+                name = variant.split('.')[0]
+                tile_types[name] = Tile()
+                if name in COLLISION_TILES:
+                    tile_types[name].collision = True
+                tile_types[name].img = self.game.assets.tile_imgs[name]
+            else:
+                for subvariant in os.listdir(full_path):
+                    name = subvariant.split('.')[0]
+                    tile_types[name] = Tile()
+                    tile_type = name.split('_')[0]
+                    if tile_type in COLLISION_TILES:
+                        tile_types[name].collision = True   
+                    if tile_type == 'water':
+                        tile_types[name].img = self.game.assets.water_imgs[name]
+                    elif tile_type == 'sand':
+                        pass                 
         return tile_types
             
     def render(self, surf, offset=(0, 0), visible=True):
@@ -51,7 +63,7 @@ class TileManager:
                         self.tile_positions.append(tile_pos)
                     surf.blit(tile.img, (x * self.tile_size - offset[0], y * self.tile_size - offset[1]))  
         else:
-            for y, col in enumerate(self.map_data): # render whole map (only efficient when the number tiles is less than screen size)
+            for y, col in enumerate(self.map_data): # render whole map (only efficient when the number tiles is less than screen size )
                 for x, row in enumerate(col):
                     if row in TILE_VARIANTS:
                         img = self.tile_types[TILE_VARIANTS[row]].img

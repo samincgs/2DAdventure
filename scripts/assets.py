@@ -8,5 +8,7 @@ class Assets:
         self.player_imgs = load_dir(path + 'player', load_img)
         self.object_imgs = load_dir(path + 'objects', load_img)
         self.tile_imgs = load_dir(path + 'tiles', load_img)
+        self.water_imgs = load_dir(path + 'tiles/water', load_img)
+        
                 
         
