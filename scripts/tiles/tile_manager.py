@@ -32,24 +32,19 @@ class TileManager:
     def load_tile_images(self):
         tile_types = {}
         for variant in os.listdir(TILE_IMG_PATH):
-            full_path = TILE_IMG_PATH + '/' + variant
-            if os.path.isfile(full_path):
-                name = variant.split('.')[0]
-                tile_types[name] = Tile()
-                if name in COLLISION_TILES:
-                    tile_types[name].collision = True
-                tile_types[name].img = self.game.assets.tile_imgs[name]
-            else:
-                for subvariant in os.listdir(full_path):
-                    name = subvariant.split('.')[0]
-                    tile_types[name] = Tile()
-                    tile_type = name.split('_')[0]
-                    if tile_type in COLLISION_TILES:
-                        tile_types[name].collision = True   
-                    if tile_type == 'water':
-                        tile_types[name].img = self.game.assets.water_imgs[name]
-                    elif tile_type == 'sand':
-                        pass                 
+            name = variant.split('.')[0]
+            tile_types[name] = Tile()
+            if name in COLLISION_TILES:
+                tile_types[name].collision = True
+            tile_types[name].img = self.game.assets.tile_imgs[name]
+
+        for variant in os.listdir(WATER_IMG_PATH):
+            name = variant.split('.')[0]
+            tile_types[name] = Tile()
+            tile_type = name.split('_')[0]
+            if tile_type in COLLISION_TILES:
+                tile_types[name].collision = True   
+            tile_types[name].img = self.game.assets.water_imgs[name]              
         return tile_types
             
     def render(self, surf, offset=(0, 0), visible=True):
