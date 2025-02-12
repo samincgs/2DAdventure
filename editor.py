@@ -5,12 +5,14 @@ import tkinter as tk
 from tkinter import filedialog
 
 from editor.font import Font
-from editor.utils import load_dir
+from editor.utils import load_dir, load_map
 
 WIDTH = 600
 HEIGHT = 400
 RENDER_SCALE = 2
 SIDEBAR_WIDTH = 64 # 1 for the tiles to align properly
+
+INITIAL_DIR = 'editor/data/maps'
 
 class Editor:
     def __init__(self):
@@ -44,6 +46,8 @@ class Editor:
         
         self.current_tile = list(self.tile_list)[0] # placeholder first tile
         self.current_grid_pos = None
+        
+        self.current_map = None
         
         self.mpos = None
         self.clicked = False
@@ -160,7 +164,9 @@ class Editor:
             
             map_text = 'map size: ' + str(self.map_size) + 'x' + str(self.map_size)
             self.font.render(self.display, map_text, (WIDTH - self.font.width(map_text, extra_space=16), HEIGHT - 22))
-                   
+            
+           
+             
             for event in pygame.event.get():
                 if event.type == pygame.QUIT:
                     pygame.quit()
@@ -174,9 +180,25 @@ class Editor:
                         self.movement[2] = True
                     if event.key == pygame.K_DOWN:
                         self.movement[3] = True
-                    if event.key == pygame.K_m:
+                    if event.key == pygame.K_m: # change grid dimensions
                         self.map_change = (self.map_change + 1) % len(self.map_sizes)
                         self.map_size = self.map_sizes[self.map_change]
+                        self.map = [[None for j in range(self.map_size)] for i in range(self.map_size)] # TODO: figure out how to keep the active drawing while changing maps
+                    if event.key == pygame.K_i: # load a map
+                        root = tk.Tk()
+                        root.withdraw()
+                        filename = filedialog.askopenfilename(initialdir=INITIAL_DIR, title='Select A Map', filetypes=[('txt files', '*.txt')])
+                        self.current_map = load_map(filename)
+                        filename.close()
+                    if event.key == pygame.K_o: # save a map
+                        root = tk.Tk()
+                        root.withdraw()
+                        filename = filedialog.asksaveasfile(defaultextension='.txt', initialdir=INITIAL_DIR, filetypes=[('txt files', '*.txt')], title='Save A Map')
+                        if filename:
+                            for col in self.map:
+                                tile_num = " ".join(str(num) for num in col)
+                                filename.write(tile_num + '\n')
+                        filename.close()
                 if event.type == pygame.KEYUP:
                     if event.key == pygame.K_RIGHT:
                         self.movement[0] = False
