@@ -4,16 +4,15 @@ import sys
 import tkinter as tk
 from tkinter import filedialog
 
-from editor.font import Font
-from editor.tile_manager import TileManager, TILE_SIZE
-from editor.utils import load_map_txt
+from editor.scripts.font import Font
+from editor.scripts.tile_manager import TileManager, TILE_SIZE
 
 WIDTH = 600
 HEIGHT = 400
 RENDER_SCALE = 2
 SIDEBAR_WIDTH = 64 # 1 for the tiles to align properly
 
-INITIAL_DIR = 'editor/data/maps'
+INITIAL_DIR = 'data/maps'
 
 class Editor:
     def __init__(self):
@@ -32,13 +31,7 @@ class Editor:
         self.tile_group = 0 # for names of tiles
         self.tile_variant = 0 # for num of variant
         self.tile_size = TILE_SIZE
-                
-        self.map_sizes = [10, 25, 50, 75, 100]
-        self.map_change = 0
-        self.map_size = self.map_sizes[self.map_change]
-        
-        # self.clear_map()
-        
+                        
         self.scroll = [0, 0]
         self.movement = [False, False, False, False] # right, left, up, down
         
@@ -138,31 +131,24 @@ class Editor:
                     self.tile_manager.remove_tile(tile_loc)
                         
             # # text ui
-            text = 'file: ' + str(self.current_file) if self.current_file else 'file: None'
-            self.render_text(text=text, loc=(WIDTH - self.font.width(text, extra_space=3), 5))
+            text_h = 5 
+            text = 'filename: ' + str(self.current_file) if self.current_file else 'file: None'
+            self.render_text(text=text, loc=(WIDTH - self.font.width(text, extra_space=3), text_h))
+            text_h += 12
 
-            
-            text = 'map size: ' + str(self.map_size) + 'x' + str(self.map_size)
-            self.render_text(text=text, loc=(WIDTH - self.font.width(text, extra_space=3), 17))
-            
-            # selected_text ='selected: ' + str(self.current_tile) if self.current_tile else 'selected: None' 
-            # self.font.render(self.display, selected_text, (WIDTH - self.font.width(selected_text, extra_space=3), text_height))
-            # text_height += 12
-            
+    
             text = f'pos: [{str(tile_pos[0])},{str(tile_pos[1])}]'
-            self.render_text(text=text, loc=(WIDTH - self.font.width(text, extra_space=3), 29))
+            self.render_text(text=text, loc=(WIDTH - self.font.width(text, extra_space=3), text_h))
+            text_h += 12
             
             text = f'scroll: [{str(render_scroll[0])},{str(render_scroll[1])}]'
-            self.render_text(text=text, loc=(WIDTH - self.font.width(text, extra_space=3), 41))
+            self.render_text(text=text, loc=(WIDTH - self.font.width(text, extra_space=3), text_h))
+            text_h += 12
             
-            text = 'col: ' + str(self.current_grid_pos[1]) if self.current_grid_pos else 'col: None'
-            self.render_text(text=text, loc=(WIDTH - self.font.width(text, extra_space=3), 53))
-            
-            text = 'row: ' + str(self.current_grid_pos[0]) if self.current_grid_pos else 'row: None'
-            self.render_text(text=text, loc=(WIDTH - self.font.width(text, extra_space=3), 65))
             
             text = 'collisions:' + str(self.collision_on)
-            self.render_text(text=text, loc=(WIDTH - self.font.width(text, extra_space=3), 77))
+            self.render_text(text=text, loc=(WIDTH - self.font.width(text, extra_space=3), text_h))
+            text_h += 12
             
                  
             for event in pygame.event.get():
@@ -194,7 +180,8 @@ class Editor:
                             tile_data = self.tile_manager.load_map(filename)
                             self.map_size = tile_data['map_size']
                             self.tile_manager.tile_map = tile_data['tilemap']
-                            self.current_file = filename.split('/')[-1].split('.')[0]
+                            self.current_file = filename.split('/')[-1]
+                            print(self.current_file)
                     if event.key == pygame.K_o: # save a map
                         root = tk.Tk()
                         root.withdraw()

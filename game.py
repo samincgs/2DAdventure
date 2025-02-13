@@ -9,6 +9,8 @@ from scripts.collisions import CollisionManager
 from scripts.object_spawner import ObjectSpawner
 from scripts.const import *
 
+import sys
+
 class Game:
     def __init__(self):
         self.window = Window(self)
@@ -26,6 +28,8 @@ class Game:
         
         self.game_over = False
         
+        print(sys.path)
+        
     def run(self):
         while True:
             surf = self.window.display   
@@ -34,11 +38,6 @@ class Game:
             
             self.scroll[0] += (self.player.rect.centerx - surf.get_width() // 2 - self.scroll[0]) 
             self.scroll[1] += (self.player.rect.centery - surf.get_height() // 2 - self.scroll[1])
-            
-            # world boundaries
-            self.scroll[0] = max(0, min(self.scroll[0], WORLD_TILE_DIMENSION - DISPLAY_WIDTH))
-            self.scroll[1] = max(0, min(self.scroll[1], WORLD_TILE_DIMENSION - DISPLAY_HEIGHT))
-            
             render_scroll = (int(self.scroll[0]), int(self.scroll[1]))
             
             self.input.update()
