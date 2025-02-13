@@ -9,8 +9,6 @@ from scripts.collisions import CollisionManager
 from scripts.object_spawner import ObjectSpawner
 from scripts.const import *
 
-import sys
-
 class Game:
     def __init__(self):
         self.window = Window(self)
@@ -22,13 +20,12 @@ class Game:
         self.player = Player(self, (371, 338), (9, 10), 'player')
         self.ui = UI(self)
         
-        # self.object_spawner = ObjectSpawner(self)
+        self.object_spawner = ObjectSpawner(self)
         
         self.scroll = [0, 0]
         
         self.game_over = False
         
-        print(sys.path)
         
     def run(self):
         while True:
@@ -44,13 +41,13 @@ class Game:
             
             self.tile_manager.render(surf, offset=render_scroll)
             
-            # for obj in self.object_spawner.objects:
-            #     obj.render(surf, offset=render_scroll)
-            
-            
+            for obj in self.object_spawner.objects:
+                obj.render(surf, offset=render_scroll)
+        
+        
             if not self.game_over:
                 self.player.update(self.window.dt)
-                # self.ui.render(surf)
+                self.ui.render(surf)
                 
             self.player.render(surf, offset=render_scroll)
             

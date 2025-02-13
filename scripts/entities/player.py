@@ -80,8 +80,8 @@ class Player(Entity):
                 self.pos[0] += int(self.speed * dt)
                                 
             self.game.collision_manager.check_tile(self)
-            # obj  = self.game.collision_manager.check_object(self)
-            # self.interact(obj)
+            obj  = self.game.collision_manager.check_object(self)
+            self.interact(obj)
             
     def render_offset(self, offset=(0, 0)):
         offset = list(offset)

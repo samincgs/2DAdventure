@@ -1,5 +1,5 @@
 import pygame
-from .utils import load_map_json, save_map_json, load_dir_list, outline
+from .utils import load_json, save_json, load_dir_list, outline
 
 TILE_SIZE = 16
 
@@ -33,11 +33,11 @@ class TileManager:
             del self.tile_map[str_pos]
     
     def load_map(self, path):
-        tile_data = load_map_json(path)
+        tile_data = load_json(path)
         self.tile_map = tile_data['tilemap']
     
     def write_map(self, path, map_data):
-        save_map_json(path, map_data)
+        save_json(path, map_data)
     
     def remove_map(self):
         self.tile_map = {}

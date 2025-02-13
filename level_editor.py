@@ -4,8 +4,9 @@ import sys
 import tkinter as tk
 from tkinter import filedialog
 
-from editor.scripts.font import Font
-from editor.scripts.tile_manager import TileManager, TILE_SIZE
+from editor.font import Font
+from editor.tile_manager import TileManager, TILE_SIZE
+from editor.utils import outline
 
 WIDTH = 600
 HEIGHT = 400
@@ -21,9 +22,13 @@ class Editor:
         self.screen = pygame.display.set_mode((WIDTH * RENDER_SCALE, HEIGHT * RENDER_SCALE))
         pygame.display.set_caption('Level Editor')
         self.display = pygame.Surface((WIDTH, HEIGHT))
+        self.clock = pygame.time.Clock()
         
         self.tile_manager = TileManager(self)
-        self.font = Font('editor/data/fonts/small_font.png')
+        
+        self.white_font = Font('editor/data/fonts/small_font.png')
+        self.red_font = Font('editor/data/fonts/small_font.png', (255, 0, 0))
+        self.green_font = Font('editor/data/fonts/small_font.png', (0, 255, 0))
       
         self.assets = self.tile_manager.tile_assets
         
@@ -43,6 +48,7 @@ class Editor:
         self.mpos = None
         self.clicked = False
         self.right_clicked = False
+        self.shift = False
         
         self.current_file = None
         self.grid_rects = {}
@@ -57,7 +63,7 @@ class Editor:
     
     def render_text(self, text, loc):
         file_text = text
-        self.font.render(self.display, file_text, loc)
+        self.white_font.render(self.display, file_text, loc)
           
     def run(self):
         while True:
@@ -66,8 +72,7 @@ class Editor:
             self.sidebar_surf.fill((37, 54, 83))
             
             self.scroll[0] += (self.movement[0] - self.movement[1]) * 2
-            self.scroll[1] += (self.movement[3] - self.movement[2]) * 2
-            
+            self.scroll[1] += (self.movement[3] - self.movement[2]) * 2            
             render_scroll = (int(self.scroll[0]), int(self.scroll[1]))
             
             self.mpos = pygame.mouse.get_pos()
@@ -89,14 +94,14 @@ class Editor:
             start_pos = 1
             for idx, tile_name in enumerate(self.tile_names):
                 x_offset = 0
-                font_height = self.font.base_size[1]
+                font_height = self.white_font.base_size[1]
                 tile_rect = pygame.Rect(start_pos, 2 + idx * font_height, self.sidebar_surf.get_width(), font_height)
                 if tile_rect.collidepoint(self.mpos):
                     x_offset = 3
                     if self.clicked and self.tile_group != idx:
                         self.tile_group = idx
                         self.tile_variant = 0
-                self.font.render(self.display, str(tile_name), (start_pos + x_offset, 2 + idx * font_height))
+                self.white_font.render(self.display, str(tile_name), (start_pos + x_offset, 2 + idx * font_height))
             
             # # bottom left sidebar
             self.tile_list = self.assets[self.tile_names[self.tile_group]]
@@ -115,11 +120,12 @@ class Editor:
                         self.tile_variant = idx
                 self.display.blit(tile_img, (tile_img_pos[0], tile_img_pos[1] - y_offset))
             
-            
             # # show tile hover when placing blocks
             if self.mpos[0] > self.sidebar_surf.get_width():
                 img = self.assets[self.tile_names[self.tile_group]][self.tile_variant].copy()
-                img.set_alpha(210)
+                img.set_alpha(150)
+                if self.collision_on:
+                    outline(self.display, img, display_pos, (255, 0, 0))
                 self.display.blit(img, display_pos)
             
             # add and remove tiles from the map
@@ -133,24 +139,28 @@ class Editor:
             # # text ui
             text_h = 5 
             text = 'filename: ' + str(self.current_file) if self.current_file else 'file: None'
-            self.render_text(text=text, loc=(WIDTH - self.font.width(text, extra_space=3), text_h))
+            self.render_text(text=text, loc=(WIDTH - self.white_font.width(text, extra_space=3), text_h))
             text_h += 12
 
     
             text = f'pos: [{str(tile_pos[0])},{str(tile_pos[1])}]'
-            self.render_text(text=text, loc=(WIDTH - self.font.width(text, extra_space=3), text_h))
+            self.render_text(text=text, loc=(WIDTH - self.white_font.width(text, extra_space=3), text_h))
             text_h += 12
             
             text = f'scroll: [{str(render_scroll[0])},{str(render_scroll[1])}]'
-            self.render_text(text=text, loc=(WIDTH - self.font.width(text, extra_space=3), text_h))
+            self.render_text(text=text, loc=(WIDTH - self.white_font.width(text, extra_space=3), text_h))
             text_h += 12
             
             
-            text = 'collisions:' + str(self.collision_on)
-            self.render_text(text=text, loc=(WIDTH - self.font.width(text, extra_space=3), text_h))
+            text = 'collisions: ' + str(self.collision_on) 
+            self.render_text(text=text, loc=(WIDTH - self.white_font.width(text, extra_space=3), text_h))
+            if self.collision_on:
+                self.red_font.render(self.display, str(self.collision_on), loc=(WIDTH - self.white_font.width(str(self.collision_on), extra_space=3), text_h))
+            else:
+                self.green_font.render(self.display, str(self.collision_on), loc=(WIDTH  - self.white_font.width(str(self.collision_on), extra_space=3), text_h))
+
             text_h += 12
             
-                 
             for event in pygame.event.get():
                 if event.type == pygame.QUIT:
                     pygame.quit()
@@ -169,31 +179,29 @@ class Editor:
                         self.movement[3] = True
                     if event.key == pygame.K_c:
                         self.collision_on = not self.collision_on
-                    if event.key == pygame.K_m: # change grid dimensions
-                        self.map_change = (self.map_change + 1) % len(self.map_sizes)
-                        self.map_reset()
+                    if event.key == pygame.K_LSHIFT:
+                        self.shift = True
                     if event.key == pygame.K_i: # load a map
                         root = tk.Tk()
                         root.withdraw()
                         filename = filedialog.askopenfilename(initialdir=INITIAL_DIR, title='Select A Map', filetypes=[('json files', '*.json')])
                         if filename:
                             tile_data = self.tile_manager.load_map(filename)
-                            self.map_size = tile_data['map_size']
                             self.tile_manager.tile_map = tile_data['tilemap']
                             self.current_file = filename.split('/')[-1]
-                            print(self.current_file)
                     if event.key == pygame.K_o: # save a map
                         root = tk.Tk()
                         root.withdraw()
                         filename = filedialog.asksaveasfilename(defaultextension='.json', initialdir=INITIAL_DIR, filetypes=[('json files', '*.json')], title='Save A Map')
                         if filename:
-                            tile_data = {'map_size': self.map_size, 'tilemap': self.tile_manager.tile_map}
+                            tile_data = {'tilemap': self.tile_manager.tile_map}
                             self.tile_manager.write_map(filename, tile_data)
                     if event.key == pygame.K_f:
                         # TODO: floodfill
                         pass
                     if event.key == pygame.K_x:
-                        self.tile_manager.remove_map()
+                        if self.shift:
+                            self.tile_manager.remove_map()
                 if event.type == pygame.KEYUP:
                     if event.key == pygame.K_d:
                         self.movement[0] = False
@@ -203,6 +211,8 @@ class Editor:
                         self.movement[2] = False
                     if event.key == pygame.K_s:
                         self.movement[3] = False
+                    if event.key == pygame.K_LSHIFT:
+                        self.shift = True
                 if event.type == pygame.MOUSEBUTTONDOWN:
                     if event.button == 1:
                         self.clicked = True
@@ -215,8 +225,9 @@ class Editor:
                         self.right_clicked = False
                    
             self.screen.blit(pygame.transform.scale(self.display, self.screen.get_size()), (0, 0))
-            
             pygame.display.update()
+            self.clock.tick()
+            
                         
 if __name__ == "__main__":
     Editor().run()

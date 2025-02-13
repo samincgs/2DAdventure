@@ -35,13 +35,21 @@ def load_dir_list(path):
             image_dir[folder].append(load_img(os.path.join(path, folder, img)))                                       
     return image_dir
 
-def load_map_json(path):
+def load_sounds(path):
+    tiles = {}
+    for file in sorted(os.listdir(path)):
+        name = file.split('.')[0]
+        sound = pygame.mixer.Sound(path + '/' + file)
+        tiles[name] = sound
+    return tiles
+
+def load_json(path):
     f = open(path)
     map_data = json.load(fp=f)
     f.close()
     return map_data
 
-def save_map_json(path, data):
+def save_json(path, data):
     f = open(path, 'w')
     json.dump(data, fp=f)
     f.close()
