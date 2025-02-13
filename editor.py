@@ -30,7 +30,7 @@ class Editor:
         
         self.tile_names = list(self.assets)
         self.tile_group = 0 # for names of tiles
-        self.tile_index = 0 # for num of variant
+        self.tile_variant = 0 # for num of variant
         self.tile_size = TILE_SIZE
                 
         self.map_sizes = [10, 25, 50, 100]
@@ -42,7 +42,7 @@ class Editor:
         self.scroll = [0, 0]
         self.movement = [False, False, False, False] # right, left, up, down
         
-        self.current_tile = self.assets[self.tile_names[self.tile_group]][self.tile_index] # placeholder first tile
+        self.current_tile = self.assets[self.tile_names[self.tile_group]][self.tile_variant] # placeholder first tile
         self.current_grid_pos = None
         
         self.collision_on = False
@@ -73,10 +73,12 @@ class Editor:
             
             self.scroll[0] += (self.movement[0] - self.movement[1]) * 2
             self.scroll[1] += (self.movement[3] - self.movement[2]) * 2
+            render_scroll = (int(self.scroll[0]), int(self.scroll[1]))
             
             self.mpos = pygame.mouse.get_pos()
             self.mpos = (int(self.mpos[0] // RENDER_SCALE), int(self.mpos[1] // RENDER_SCALE))
             grid_pos = (int(self.mpos[0]) // self.tile_size, int(self.mpos[1]) // self.tile_size)
+            tile_pos = (int(self.mpos[0] - SIDEBAR_WIDTH) // self.tile_size, int(self.mpos[1]) // self.tile_size)
             scaled_pos = (int(grid_pos[0]) * self.tile_size, int(grid_pos[1]) * self.tile_size)
             
             self.display.blit(self.sidebar_surf, (0, 0))
@@ -96,7 +98,7 @@ class Editor:
                     x_offset = 3
                     if self.clicked and self.tile_group != idx:
                         self.tile_group = idx
-                        self.tile_index = 0
+                        self.tile_variant = 0
                 self.font.render(self.display, str(tile_name), (start_pos + x_offset, 2 + idx * font_height))
             
             # # bottom left sidebar
@@ -114,10 +116,11 @@ class Editor:
                 if tile_rect.collidepoint(self.mpos):
                     y_offset = 2
                     if self.clicked:
-                        self.tile_index = idx
+                        self.tile_variant = idx
                 self.display.blit(tile_img, (tile_img_pos[0], tile_img_pos[1] - y_offset))
             
             
+            self.tile_manager.render(self.display, offset=render_scroll)
             # # display tiles
             # for name in self.tile_names:
             #     for y, row in enumerate(self.map):
@@ -142,7 +145,7 @@ class Editor:
             
             # # show tile hover when placing blocks
             if self.mpos[0] > self.sidebar_surf.get_width():
-                img = self.assets[self.tile_names[self.tile_group]][self.tile_index].copy()
+                img = self.assets[self.tile_names[self.tile_group]][self.tile_variant].copy()
                 img.set_alpha(210)
                 self.display.blit(img, scaled_pos)
             
@@ -150,7 +153,11 @@ class Editor:
             for coord, rect in self.grid_rects.items():
                 if self.mpos[0] > SIDEBAR_WIDTH and rect.collidepoint(self.mpos):
                     self.current_grid_pos = coord
-                    # TODO
+                    if self.clicked:
+                        tile_data = {'type': self.tile_names[self.tile_group], 'variant': self.tile_variant, 'pos': scaled_pos}
+                        self.tile_manager.add_tile(tile_pos=tile_pos, tile_data=tile_data)
+                    elif self.right_clicked:
+                        self.tile_manager.remove_tile(tile_pos)
                         
             # # text ui
             text_height = 5
@@ -174,8 +181,7 @@ class Editor:
             row_text = 'row: ' + str(self.current_grid_pos[0]) if self.current_grid_pos else 'row: None'
             self.font.render(self.display, row_text, (WIDTH - self.font.width(row_text, extra_space=3), text_height))
             text_height += 10
-            
-            
+                        
             for event in pygame.event.get():
                 if event.type == pygame.QUIT:
                     pygame.quit()
@@ -197,27 +203,23 @@ class Editor:
                     if event.key == pygame.K_m: # change grid dimensions
                         self.map_change = (self.map_change + 1) % len(self.map_sizes)
                         self.map_reset()
-                    # if event.key == pygame.K_i: # load a map
-                    #     root = tk.Tk()
-                    #     root.withdraw()
-                    #     filename = filedialog.askopenfilename(initialdir=INITIAL_DIR, title='Select A Map', filetypes=[('txt files', '*.txt')])
-                    #     self.map = load_map(filename)
-                    #     self.map_size = len(self.map) - 1
-                    # if event.key == pygame.K_o: # save a map
-                    #     root = tk.Tk()
-                    #     root.withdraw()
-                    #     filename = filedialog.asksaveasfile(defaultextension='.txt', initialdir=INITIAL_DIR, filetypes=[('txt files', '*.txt')], title='Save A Map')
-                    #     if filename:
-                    #         for col in self.map:
-                    #             tile_num = " ".join(str(num) for num in col)
-                    #             filename.write(tile_num + '\n')
-                    #     filename.close()
+                    if event.key == pygame.K_i: # load a map
+                        root = tk.Tk()
+                        root.withdraw()
+                        filename = filedialog.askopenfilename(initialdir=INITIAL_DIR, title='Select A Map', filetypes=[('json files', '*.json')])
+                        self.tile_manager.load_map(filename)
+                    if event.key == pygame.K_o: # save a map
+                        root = tk.Tk()
+                        root.withdraw()
+                        filename = filedialog.asksaveasfilename(defaultextension='.json', initialdir=INITIAL_DIR, filetypes=[('json files', '*.json')], title='Save A Map')
+                        if filename:
+                            self.tile_manager.write_map(filename, self.tile_manager.tile_map)
                     # if event.key == pygame.K_f:
                     #     for y, row in enumerate(self.map):
                     #         for x, col in enumerate(row):
                     #             self.map[y][x] = self.current_tile
-                    # if event.key == pygame.K_x:
-                    #     self.map = self.clear_map()
+                    if event.key == pygame.K_x:
+                        self.tile_manager.remove_map()
                 if event.type == pygame.KEYUP:
                     if event.key == pygame.K_d:
                         self.movement[0] = False
@@ -237,8 +239,7 @@ class Editor:
                         self.clicked = False
                     if event.button == 3:
                         self.right_clicked = False
-                
-                    
+                   
             self.screen.blit(pygame.transform.scale(self.display, self.screen.get_size()), (0, 0))
             pygame.display.update()
                         
