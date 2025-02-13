@@ -9,9 +9,10 @@ class TileManager:
         self.tile_size = TILE_SIZE
         
         self.tile_map = {} # '5;3: {'type': '', 'var}
-        self.load_map('editor/data/maps/test5.json')
+        self.load_map('data/maps/test.json')
         
         self.tile_assets = load_dir_list('data/images/tiles')
+        self.collision_rects = []
                                 
     def get_nearby_tiles(self, pos):
         tiles = []
@@ -50,17 +51,19 @@ class TileManager:
                 img = self.tile_assets[tile['type']][tile['variant']].copy()
                 loc = (tile['pos'][0] - offset[0], tile['pos'][1] - offset[1])
                 if tile['collision']:
-                    pass
+                    rect = pygame.Rect(tile['pos'][0], tile['pos'][1], self.tile_size, self.tile_size)
+                    if rect not in self.collision_rects:
+                        self.collision_rects.append(rect)
                 surf.blit(img, loc)
+                
+        # for col in self.collision_rects:
+        #     pygame.draw.rect(surf, (255, 0, 0), pygame.Rect(col[0] - offset[0], col[1] - offset[1], col[2], col[3]), 1)
     
-    def render_editor(self, surf, offset=(0, 0), new_tile_size=(0, 0)): # assume new_tile_size is smaller than usual tile size
+    def render_editor(self, surf, offset=(0, 0)): # assume new_tile_size is smaller than usual tile size
         for tile_loc in self.tile_map:
             tile = self.tile_map[tile_loc]
             img = self.tile_assets[tile['type']][tile['variant']].copy()
-            loc = (tile['editor_pos'][0] - offset[0], tile['editor_pos'][1] - offset[1])
-            if new_tile_size:
-                img = pygame.transform.scale(img, new_tile_size)
-                loc = (tile['editor_pos'][0] - offset[0] + (self.tile_size - new_tile_size[0]), tile['editor_pos'][1] - offset[1] + (self.tile_size - new_tile_size[1]))
+            loc = (tile['pos'][0] - offset[0], tile['pos'][1] - offset[1])
             if tile['collision']:
                 outline(surf, img, loc, (255, 0, 0))
             surf.blit(img, loc)

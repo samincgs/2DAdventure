@@ -16,7 +16,7 @@ class Game:
         self.assets = Assets()
         self.audio = AudioManager()
         self.tile_manager = TileManager(self)
-        # self.collision_manager = CollisionManager(self, self.tile_manager)
+        self.collision_manager = CollisionManager(self, self.tile_manager)
         self.player = Player(self, (371, 338), (9, 10), 'player')
         self.ui = UI(self)
         
@@ -47,6 +47,7 @@ class Game:
             
             # for obj in self.object_spawner.objects:
             #     obj.render(surf, offset=render_scroll)
+            
             
             if not self.game_over:
                 self.player.update(self.window.dt)

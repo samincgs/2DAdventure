@@ -79,7 +79,7 @@ class Player(Entity):
                 self.direction = 'right'
                 self.pos[0] += int(self.speed * dt)
                                 
-            # self.game.collision_manager.check_tile(self)
+            self.game.collision_manager.check_tile(self)
             # obj  = self.game.collision_manager.check_object(self)
             # self.interact(obj)
             

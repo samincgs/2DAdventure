@@ -6,13 +6,11 @@ class CollisionManager:
         self.game = game
         self.tile_manager = tile_manager
         
-
     def collision_test(self, rect, tiles):
         collisions = []
         for tile in tiles:
-            tile_rect = pygame.Rect(tile[0] * TILE_SIZE, tile[1] * TILE_SIZE, TILE_SIZE, TILE_SIZE)
-            if rect.colliderect(tile_rect):
-                collisions.append(tile_rect)
+            if rect.colliderect(tile):
+                collisions.append(tile)
         return collisions
     
     def collision_obj(self, rect, objs):
@@ -24,7 +22,7 @@ class CollisionManager:
     
     def check_tile(self, entity):
         
-        tiles = self.tile_manager.get_nearby_tiles(entity.pos)
+        tiles = self.tile_manager.collision_rects
         temp_rect = entity.rect
         collisions = self.collision_test(temp_rect, tiles)
         
@@ -35,7 +33,7 @@ class CollisionManager:
                 temp_rect.left = collision_rect.right  
         entity.pos[0] = temp_rect.x
             
-        tiles = self.tile_manager.get_nearby_tiles(entity.pos)
+        tiles = self.tile_manager.collision_rects
         temp_rect = entity.rect
         collisions = self.collision_test(temp_rect, tiles)
         

@@ -33,7 +33,7 @@ class Editor:
         self.tile_variant = 0 # for num of variant
         self.tile_size = TILE_SIZE
                 
-        self.map_sizes = [10, 25, 50, 100]
+        self.map_sizes = [10, 25, 50, 75, 100]
         self.map_change = 0
         self.map_size = self.map_sizes[self.map_change]
         
@@ -61,7 +61,11 @@ class Editor:
         self.map_size = self.map_sizes[self.map_change]
         self.current_grid_pos = None
         self.grid_rects = {}
-         
+    
+    def render_text(self, text, loc):
+        file_text = text
+        self.font.render(self.display, file_text, loc)
+          
     def run(self):
         while True:
             
@@ -70,21 +74,23 @@ class Editor:
             
             self.scroll[0] += (self.movement[0] - self.movement[1]) * 2
             self.scroll[1] += (self.movement[3] - self.movement[2]) * 2
+            
             render_scroll = (int(self.scroll[0]), int(self.scroll[1]))
             
             self.mpos = pygame.mouse.get_pos()
             self.mpos = (int(self.mpos[0] // RENDER_SCALE), int(self.mpos[1] // RENDER_SCALE))
-            tile_pos = (int(self.mpos[0] - SIDEBAR_WIDTH) // self.tile_size, int(self.mpos[1]) // self.tile_size)
-            grid_pos = (int(self.mpos[0]) // self.tile_size, int(self.mpos[1]) // self.tile_size)
-            scaled_pos = (int(grid_pos[0]) * self.tile_size, int(grid_pos[1]) * self.tile_size)
-            scaled_tile_pos = (int(tile_pos[0]) * self.tile_size, int(tile_pos[1]) * self.tile_size)
+            tile_pos = (int(self.mpos[0] + self.scroll[0]) // self.tile_size, int(self.mpos[1] + self.scroll[1]) // self.tile_size)
+            tile_loc = (int(tile_pos[0] * self.tile_size), int(tile_pos[1] * self.tile_size))
+            display_pos = (tile_pos[0] * self.tile_size - self.scroll[0], tile_pos[1] * self.tile_size - self.scroll[1])
+            
+            self.tile_manager.render_editor(self.display, offset=render_scroll) 
             
             self.display.blit(self.sidebar_surf, (0, 0))
             
             # sidebar line
             line_color = (79, 82, 119)
             pygame.draw.line(self.display, line_color, (SIDEBAR_WIDTH - 1, 0), (SIDEBAR_WIDTH - 1, HEIGHT))
-            pygame.draw.line(self.display, line_color, (0, SIDEBAR_WIDTH), (self.sidebar_surf.get_width(), SIDEBAR_WIDTH))
+            pygame.draw.line(self.display, line_color, (0, SIDEBAR_WIDTH), (self.sidebar_surf.get_width() - 1, SIDEBAR_WIDTH))
 
             # top left sidebar
             start_pos = 1
@@ -101,7 +107,6 @@ class Editor:
             
             # # bottom left sidebar
             self.tile_list = self.assets[self.tile_names[self.tile_group]]
-            # index_limit = 14
             # TODO: fix the code (spaghetti)
             for idx, tile_img in enumerate(self.tile_list):
                 x_offset = 0
@@ -118,80 +123,47 @@ class Editor:
                 self.display.blit(tile_img, (tile_img_pos[0], tile_img_pos[1] - y_offset))
             
             
-            
-            # # display tiles
-            # for name in self.tile_names:
-            #     for y, row in enumerate(self.map):
-            #         for x, col in enumerate(row):
-            #             if col is None:
-            #                 continue
-            #             if col in self.assets[name]:
-            #                 self.display.blit(self.assets[name][col], (SIDEBAR_WIDTH + x * self.tile_size, y * self.tile_size))   
-            
-            
-            # draw grid
-            for row in range(self.map_size):
-                for col in range(self.map_size):
-                    rect = pygame.Rect(SIDEBAR_WIDTH + col * self.tile_size, row * self.tile_size, self.tile_size, self.tile_size)
-                    if (row, col) not in self.grid_rects:
-                        self.grid_rects[(row, col)] = rect
-                    pygame.draw.line(self.display, (150, 150, 150), (SIDEBAR_WIDTH + col * self.tile_size, row * self.tile_size), (SIDEBAR_WIDTH + col * self.tile_size + 16, row * self.tile_size))
-                    pygame.draw.line(self.display, (150, 150, 150), (SIDEBAR_WIDTH + col * self.tile_size, row * self.tile_size), (SIDEBAR_WIDTH + col * self.tile_size, row * self.tile_size + 16))
-            
-            # display map
-            self.tile_manager.render_editor(self.display, offset=render_scroll, new_tile_size=(15, 15))
-            
-            # last lines
-            pygame.draw.line(self.display, (150, 150, 150), (SIDEBAR_WIDTH + self.map_size * self.tile_size, 0), (SIDEBAR_WIDTH + self.map_size * self.tile_size, self.map_size * self.tile_size))
-            pygame.draw.line(self.display, (150, 150, 150), (SIDEBAR_WIDTH, self.map_size * self.tile_size), (SIDEBAR_WIDTH + self.map_size * self.tile_size, self.map_size * self.tile_size))
-            
             # # show tile hover when placing blocks
             if self.mpos[0] > self.sidebar_surf.get_width():
                 img = self.assets[self.tile_names[self.tile_group]][self.tile_variant].copy()
                 img.set_alpha(210)
-                self.display.blit(img, scaled_pos)
+                self.display.blit(img, display_pos)
             
             # add and remove tiles from the map
-            for coord, rect in self.grid_rects.items():
-                if self.mpos[0] > SIDEBAR_WIDTH and rect.collidepoint(self.mpos):
-                    self.current_grid_pos = coord
-                    if self.clicked:
-                        tile_data = {'type': self.tile_names[self.tile_group], 'variant': self.tile_variant, 'collision': self.collision_on, 'pos': scaled_tile_pos, 'editor_pos': scaled_pos}
-                        self.tile_manager.add_tile(tile_pos=tile_pos, tile_data=tile_data)
-                    elif self.right_clicked:
-                        self.tile_manager.remove_tile(tile_pos)
+            if self.mpos[0] > SIDEBAR_WIDTH :
+                if self.clicked:
+                    tile_data = {'type': self.tile_names[self.tile_group], 'variant': self.tile_variant, 'collision': self.collision_on, 'pos': tile_loc, 'tile_pos': tile_pos}
+                    self.tile_manager.add_tile(tile_pos=tile_loc, tile_data=tile_data)
+                elif self.right_clicked:
+                    self.tile_manager.remove_tile(tile_loc)
                         
             # # text ui
-            text_height = 5
-            file_text = 'file: ' + str(self.current_file) if self.current_file else 'file: None'
-            self.font.render(self.display, file_text, (WIDTH - self.font.width(file_text, extra_space=3), text_height))
-            text_height += 12
+            text = 'file: ' + str(self.current_file) if self.current_file else 'file: None'
+            self.render_text(text=text, loc=(WIDTH - self.font.width(text, extra_space=3), 5))
+
             
-            map_text = 'map size: ' + str(self.map_size) + 'x' + str(self.map_size)
-            self.font.render(self.display, map_text, (WIDTH - self.font.width(map_text, extra_space=3), text_height))
-            text_height += 12
+            text = 'map size: ' + str(self.map_size) + 'x' + str(self.map_size)
+            self.render_text(text=text, loc=(WIDTH - self.font.width(text, extra_space=3), 17))
             
             # selected_text ='selected: ' + str(self.current_tile) if self.current_tile else 'selected: None' 
             # self.font.render(self.display, selected_text, (WIDTH - self.font.width(selected_text, extra_space=3), text_height))
             # text_height += 12
             
-            pos_text = f'pos: [{str(scaled_pos[0])},{str(scaled_pos[1])}]'
-            self.font.render(self.display, pos_text, (WIDTH - self.font.width(pos_text, extra_space=3), text_height))
-            text_height += 12
+            text = f'pos: [{str(tile_pos[0])},{str(tile_pos[1])}]'
+            self.render_text(text=text, loc=(WIDTH - self.font.width(text, extra_space=3), 29))
             
-            col_text = 'col: ' + str(self.current_grid_pos[1]) if self.current_grid_pos else 'col: None'
-            self.font.render(self.display, col_text, (WIDTH - self.font.width(col_text, extra_space=3), text_height))
-            text_height += 12
+            text = f'scroll: [{str(render_scroll[0])},{str(render_scroll[1])}]'
+            self.render_text(text=text, loc=(WIDTH - self.font.width(text, extra_space=3), 41))
             
-            row_text = 'row: ' + str(self.current_grid_pos[0]) if self.current_grid_pos else 'row: None'
-            self.font.render(self.display, row_text, (WIDTH - self.font.width(row_text, extra_space=3), text_height))
-            text_height += 12
+            text = 'col: ' + str(self.current_grid_pos[1]) if self.current_grid_pos else 'col: None'
+            self.render_text(text=text, loc=(WIDTH - self.font.width(text, extra_space=3), 53))
             
-            collision_text = 'collisions:' + str(self.collision_on)
-            self.font.render(self.display, collision_text, (WIDTH - self.font.width(collision_text, extra_space=3), text_height))
-            text_height += 12
+            text = 'row: ' + str(self.current_grid_pos[0]) if self.current_grid_pos else 'row: None'
+            self.render_text(text=text, loc=(WIDTH - self.font.width(text, extra_space=3), 65))
             
-            print(self.scroll)
+            text = 'collisions:' + str(self.collision_on)
+            self.render_text(text=text, loc=(WIDTH - self.font.width(text, extra_space=3), 77))
+            
                  
             for event in pygame.event.get():
                 if event.type == pygame.QUIT:
@@ -256,6 +228,7 @@ class Editor:
                         self.right_clicked = False
                    
             self.screen.blit(pygame.transform.scale(self.display, self.screen.get_size()), (0, 0))
+            
             pygame.display.update()
                         
 if __name__ == "__main__":
