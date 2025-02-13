@@ -51,6 +51,7 @@ class Editor:
         
         self.mpos = None
         self.clicked = False
+        self.right_clicked = False
         
         self.grid_rects = {}
         
@@ -128,14 +129,14 @@ class Editor:
             pygame.draw.line(self.display, (150, 150, 150), (SIDEBAR_WIDTH + self.map_size * self.tile_size, 0), (SIDEBAR_WIDTH + self.map_size * self.tile_size, self.map_size * self.tile_size))
             pygame.draw.line(self.display, (150, 150, 150), (SIDEBAR_WIDTH, self.map_size * self.tile_size), (SIDEBAR_WIDTH + self.map_size * self.tile_size, self.map_size * self.tile_size))
 
-            
             # display tiles
             for name in self.tile_names:
                 for y, row in enumerate(self.map):
                     for x, col in enumerate(row):
-                        if col:
-                            if col in self.assets[name]:
-                                self.display.blit(self.assets[name][col], (SIDEBAR_WIDTH + x * self.tile_size, y * self.tile_size))   
+                        if col is None:
+                            continue
+                        if col in self.assets[name]:
+                            self.display.blit(self.assets[name][col], (SIDEBAR_WIDTH + x * self.tile_size, y * self.tile_size))   
             
             # show tile hover when placing blocks
             if self.current_tile:
@@ -144,12 +145,14 @@ class Editor:
                     img.set_alpha(210)
                     self.display.blit(img, scaled_pos)
             
-            # col and row indicator
+            # add and remove tiles from the map
             for coord, rect in self.grid_rects.items():
                 if self.mpos[0] > SIDEBAR_WIDTH and rect.collidepoint(self.mpos):
                     self.current_grid_pos = coord
                     if self.clicked:
                         self.map[coord[0]][coord[1]] = self.current_tile
+                    elif self.right_clicked:
+                        self.map[coord[0]][coord[1]] = None
                         
                      
             # text ui
@@ -199,6 +202,10 @@ class Editor:
                                 tile_num = " ".join(str(num) for num in col)
                                 filename.write(tile_num + '\n')
                         filename.close()
+                    if event.key == pygame.K_f:
+                        for y, row in enumerate(self.map):
+                            for x, col in enumerate(row):
+                                self.map[y][x] = self.current_tile
                 if event.type == pygame.KEYUP:
                     if event.key == pygame.K_RIGHT:
                         self.movement[0] = False
@@ -211,9 +218,13 @@ class Editor:
                 if event.type == pygame.MOUSEBUTTONDOWN:
                     if event.button == 1:
                         self.clicked = True
+                    if event.button == 3:
+                        self.right_clicked = True
                 if event.type == pygame.MOUSEBUTTONUP:
                     if event.button == 1:
                         self.clicked = False
+                    if event.button == 3:
+                        self.right_clicked = False
                 
                     
             self.screen.blit(pygame.transform.scale(self.display, self.screen.get_size()), (0, 0))
