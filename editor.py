@@ -56,12 +56,9 @@ class Editor:
         
         self.sidebar_surf = pygame.Surface((SIDEBAR_WIDTH, HEIGHT))
   
-    def clear_map(self):
-        self.map = [[None for j in range(self.map_size)] for i in range(self.map_size)]
-    
+
     def map_reset(self):
         self.map_size = self.map_sizes[self.map_change]
-        self.clear_map() # TODO: figure out how to keep the active drawing while changing maps
         self.current_grid_pos = None
         self.grid_rects = {}
          
@@ -77,9 +74,10 @@ class Editor:
             
             self.mpos = pygame.mouse.get_pos()
             self.mpos = (int(self.mpos[0] // RENDER_SCALE), int(self.mpos[1] // RENDER_SCALE))
-            grid_pos = (int(self.mpos[0]) // self.tile_size, int(self.mpos[1]) // self.tile_size)
             tile_pos = (int(self.mpos[0] - SIDEBAR_WIDTH) // self.tile_size, int(self.mpos[1]) // self.tile_size)
+            grid_pos = (int(self.mpos[0]) // self.tile_size, int(self.mpos[1]) // self.tile_size)
             scaled_pos = (int(grid_pos[0]) * self.tile_size, int(grid_pos[1]) * self.tile_size)
+            scaled_tile_pos = (int(tile_pos[0]) * self.tile_size, int(tile_pos[1]) * self.tile_size)
             
             self.display.blit(self.sidebar_surf, (0, 0))
             
@@ -120,7 +118,7 @@ class Editor:
                 self.display.blit(tile_img, (tile_img_pos[0], tile_img_pos[1] - y_offset))
             
             
-            self.tile_manager.render(self.display, offset=render_scroll)
+            
             # # display tiles
             # for name in self.tile_names:
             #     for y, row in enumerate(self.map):
@@ -130,6 +128,7 @@ class Editor:
             #             if col in self.assets[name]:
             #                 self.display.blit(self.assets[name][col], (SIDEBAR_WIDTH + x * self.tile_size, y * self.tile_size))   
             
+            
             # draw grid
             for row in range(self.map_size):
                 for col in range(self.map_size):
@@ -138,6 +137,9 @@ class Editor:
                         self.grid_rects[(row, col)] = rect
                     pygame.draw.line(self.display, (150, 150, 150), (SIDEBAR_WIDTH + col * self.tile_size, row * self.tile_size), (SIDEBAR_WIDTH + col * self.tile_size + 16, row * self.tile_size))
                     pygame.draw.line(self.display, (150, 150, 150), (SIDEBAR_WIDTH + col * self.tile_size, row * self.tile_size), (SIDEBAR_WIDTH + col * self.tile_size, row * self.tile_size + 16))
+            
+            # display map
+            self.tile_manager.render_editor(self.display, offset=render_scroll, new_tile_size=(15, 15))
             
             # last lines
             pygame.draw.line(self.display, (150, 150, 150), (SIDEBAR_WIDTH + self.map_size * self.tile_size, 0), (SIDEBAR_WIDTH + self.map_size * self.tile_size, self.map_size * self.tile_size))
@@ -154,34 +156,43 @@ class Editor:
                 if self.mpos[0] > SIDEBAR_WIDTH and rect.collidepoint(self.mpos):
                     self.current_grid_pos = coord
                     if self.clicked:
-                        tile_data = {'type': self.tile_names[self.tile_group], 'variant': self.tile_variant, 'pos': scaled_pos}
+                        tile_data = {'type': self.tile_names[self.tile_group], 'variant': self.tile_variant, 'collision': self.collision_on, 'pos': scaled_tile_pos, 'editor_pos': scaled_pos}
                         self.tile_manager.add_tile(tile_pos=tile_pos, tile_data=tile_data)
                     elif self.right_clicked:
                         self.tile_manager.remove_tile(tile_pos)
                         
             # # text ui
             text_height = 5
-            
             file_text = 'file: ' + str(self.current_file) if self.current_file else 'file: None'
             self.font.render(self.display, file_text, (WIDTH - self.font.width(file_text, extra_space=3), text_height))
-            text_height += 10
+            text_height += 12
             
             map_text = 'map size: ' + str(self.map_size) + 'x' + str(self.map_size)
             self.font.render(self.display, map_text, (WIDTH - self.font.width(map_text, extra_space=3), text_height))
-            text_height += 10
+            text_height += 12
             
             # selected_text ='selected: ' + str(self.current_tile) if self.current_tile else 'selected: None' 
             # self.font.render(self.display, selected_text, (WIDTH - self.font.width(selected_text, extra_space=3), text_height))
-            # text_height += 10
+            # text_height += 12
+            
+            pos_text = f'pos: [{str(scaled_pos[0])},{str(scaled_pos[1])}]'
+            self.font.render(self.display, pos_text, (WIDTH - self.font.width(pos_text, extra_space=3), text_height))
+            text_height += 12
             
             col_text = 'col: ' + str(self.current_grid_pos[1]) if self.current_grid_pos else 'col: None'
             self.font.render(self.display, col_text, (WIDTH - self.font.width(col_text, extra_space=3), text_height))
-            text_height += 10
+            text_height += 12
             
             row_text = 'row: ' + str(self.current_grid_pos[0]) if self.current_grid_pos else 'row: None'
             self.font.render(self.display, row_text, (WIDTH - self.font.width(row_text, extra_space=3), text_height))
-            text_height += 10
-                        
+            text_height += 12
+            
+            collision_text = 'collisions:' + str(self.collision_on)
+            self.font.render(self.display, collision_text, (WIDTH - self.font.width(collision_text, extra_space=3), text_height))
+            text_height += 12
+            
+            print(self.scroll)
+                 
             for event in pygame.event.get():
                 if event.type == pygame.QUIT:
                     pygame.quit()
@@ -207,17 +218,21 @@ class Editor:
                         root = tk.Tk()
                         root.withdraw()
                         filename = filedialog.askopenfilename(initialdir=INITIAL_DIR, title='Select A Map', filetypes=[('json files', '*.json')])
-                        self.tile_manager.load_map(filename)
+                        if filename:
+                            tile_data = self.tile_manager.load_map(filename)
+                            self.map_size = tile_data['map_size']
+                            self.tile_manager.tile_map = tile_data['tilemap']
+                            self.current_file = filename.split('/')[-1].split('.')[0]
                     if event.key == pygame.K_o: # save a map
                         root = tk.Tk()
                         root.withdraw()
                         filename = filedialog.asksaveasfilename(defaultextension='.json', initialdir=INITIAL_DIR, filetypes=[('json files', '*.json')], title='Save A Map')
                         if filename:
-                            self.tile_manager.write_map(filename, self.tile_manager.tile_map)
-                    # if event.key == pygame.K_f:
-                    #     for y, row in enumerate(self.map):
-                    #         for x, col in enumerate(row):
-                    #             self.map[y][x] = self.current_tile
+                            tile_data = {'map_size': self.map_size, 'tilemap': self.tile_manager.tile_map}
+                            self.tile_manager.write_map(filename, tile_data)
+                    if event.key == pygame.K_f:
+                        # TODO: floodfill
+                        pass
                     if event.key == pygame.K_x:
                         self.tile_manager.remove_map()
                 if event.type == pygame.KEYUP:

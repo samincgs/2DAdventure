@@ -4,7 +4,7 @@ from scripts.assets import Assets
 from scripts.ui import UI
 from scripts.entities.player import Player
 from scripts.audio import AudioManager
-from scripts.tiles.tile_manager import TileManager
+from scripts.tile_manager import TileManager
 from scripts.collisions import CollisionManager
 from scripts.object_spawner import ObjectSpawner
 from scripts.const import *
@@ -16,11 +16,11 @@ class Game:
         self.assets = Assets()
         self.audio = AudioManager()
         self.tile_manager = TileManager(self)
-        self.collision_manager = CollisionManager(self, self.tile_manager)
+        # self.collision_manager = CollisionManager(self, self.tile_manager)
         self.player = Player(self, (371, 338), (9, 10), 'player')
         self.ui = UI(self)
         
-        self.object_spawner = ObjectSpawner(self)
+        # self.object_spawner = ObjectSpawner(self)
         
         self.scroll = [0, 0]
         
@@ -45,12 +45,12 @@ class Game:
             
             self.tile_manager.render(surf, offset=render_scroll)
             
-            for obj in self.object_spawner.objects:
-                obj.render(surf, offset=render_scroll)
+            # for obj in self.object_spawner.objects:
+            #     obj.render(surf, offset=render_scroll)
             
             if not self.game_over:
                 self.player.update(self.window.dt)
-                self.ui.render(surf)
+                # self.ui.render(surf)
                 
             self.player.render(surf, offset=render_scroll)
             
