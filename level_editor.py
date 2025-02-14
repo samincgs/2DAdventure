@@ -71,8 +71,8 @@ class Editor:
             self.display.fill((0, 0, 0))
             self.sidebar_surf.fill((37, 54, 83))
             
-            self.scroll[0] += (self.movement[0] - self.movement[1]) * 2
-            self.scroll[1] += (self.movement[3] - self.movement[2]) * 2            
+            self.scroll[0] += (self.movement[0] - self.movement[1]) * 4
+            self.scroll[1] += (self.movement[3] - self.movement[2]) * 4            
             render_scroll = (int(self.scroll[0]), int(self.scroll[1]))
             
             self.mpos = pygame.mouse.get_pos()
@@ -161,6 +161,10 @@ class Editor:
 
             text_h += 12
             
+            text = f'total tiles: {len(self.tile_manager.tile_map)}'
+            self.render_text(text=text, loc=(WIDTH - self.white_font.width(text, extra_space=3), text_h))
+            text_h += 12
+            
             for event in pygame.event.get():
                 if event.type == pygame.QUIT:
                     pygame.quit()
@@ -193,7 +197,6 @@ class Editor:
                         root = tk.Tk()
                         root.withdraw()
                         filename = filedialog.asksaveasfilename(defaultextension='.json', initialdir=INITIAL_DIR, initialfile=self.current_file if self.current_file else None, filetypes=[('json files', '*.json')], title='Save A Map')
-
                         if filename:
                             tile_data = {'tilemap': self.tile_manager.tile_map}
                             self.tile_manager.write_map(filename, tile_data)
@@ -203,6 +206,8 @@ class Editor:
                     if event.key == pygame.K_x:
                         if self.shift:
                             self.tile_manager.remove_map()
+                    if event.key == pygame.K_TAB:
+                        print(self.clock.get_fps())
                 if event.type == pygame.KEYUP:
                     if event.key == pygame.K_d:
                         self.movement[0] = False
@@ -227,7 +232,7 @@ class Editor:
                    
             self.screen.blit(pygame.transform.scale(self.display, self.screen.get_size()), (0, 0))
             pygame.display.update()
-            self.clock.tick()
+            self.clock.tick(60)
             
                         
 if __name__ == "__main__":

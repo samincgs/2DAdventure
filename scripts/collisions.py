@@ -22,7 +22,7 @@ class CollisionManager:
     
     def check_tile(self, entity):
         
-        tiles = self.tile_manager.collision_rects
+        tiles = self.tile_manager.get_nearby_rects(entity.pos)
         temp_rect = entity.rect
         collisions = self.collision_test(temp_rect, tiles)
         
@@ -33,7 +33,7 @@ class CollisionManager:
                 temp_rect.left = collision_rect.right  
         entity.pos[0] = temp_rect.x
             
-        tiles = self.tile_manager.collision_rects
+        tiles = self.tile_manager.get_nearby_rects(entity.pos)
         temp_rect = entity.rect
         collisions = self.collision_test(temp_rect, tiles)
         

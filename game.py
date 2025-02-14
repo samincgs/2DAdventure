@@ -18,7 +18,7 @@ class Game:
         self.tile_manager = TileManager(self)
         self.tile_manager.load_map('data/maps/world1.json')
         self.collision_manager = CollisionManager(self, self.tile_manager)
-        self.player = Player(self, (371, 338), (9, 10), 'player')
+        self.player = Player(self, (323, 160), (9, 10), 'player')
         self.ui = UI(self)
         
         self.object_spawner = ObjectSpawner(self)

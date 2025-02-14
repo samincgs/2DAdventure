@@ -10,18 +10,19 @@ class TileManager:
         
         self.tile_map = {} # '5;3: {'type': '', 'var}
         
-        
         self.tile_assets = load_dir_list('data/images/tiles')
         self.collision_rects = []
                                 
-    def get_nearby_tiles(self, pos):
-        tiles = []
-        tile_pos = [pos[0] // self.tile_size, pos[1] // self.tile_size]
-        for offset in [(-1, -1), (0, -1), (1, -1), (-1, 0), (0, 0), (1, 0), (-1, 1), (0, 1), (1, 1)]:
-            look_pos = (tile_pos[0] + offset[0], tile_pos[1] + offset[1])
-            if look_pos in self.tile_positions:
-                tiles.append(look_pos)
-        return tiles
+    def get_nearby_rects(self, pos):
+        rects = []
+        tile_pos = (int(pos[0] // self.tile_size), int(pos[1] // self.tile_size))
+        check_locs = [(-1, -1), (0, -1), (1, -1), (-1, 0), (0, 0), (1, 0), (-1, 1), (0, 1), (1, 1)]
+        for loc in check_locs:
+            tile_loc = [tile_pos[0] + loc[0], tile_pos[1] + loc[1]]
+            for str_loc in self.tile_map:
+                if tile_loc == self.tile_map[str_loc]['tile_pos'] and self.tile_map[str_loc]['collision']:
+                    rects.append(pygame.Rect(tile_loc[0] * self.tile_size, tile_loc[1] * self.tile_size, self.tile_size, self.tile_size))
+        return rects
     
     def add_tile(self, tile_pos, tile_data):
         str_pos = str(tile_pos[0]) + ';' + str(tile_pos[1])
@@ -50,10 +51,6 @@ class TileManager:
                 tile = self.tile_map[tile_loc]
                 img = self.tile_assets[tile['type']][tile['variant']].copy()
                 loc = (tile['pos'][0] - offset[0], tile['pos'][1] - offset[1])
-                if tile['collision']:
-                    rect = pygame.Rect(tile['pos'][0], tile['pos'][1], self.tile_size, self.tile_size)
-                    if rect not in self.collision_rects:
-                        self.collision_rects.append(rect)
                 surf.blit(img, loc)
                 
         # for col in self.collision_rects:
