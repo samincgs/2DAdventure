@@ -44,7 +44,6 @@ class Game:
             for obj in self.object_spawner.objects:
                 obj.render(surf, offset=render_scroll)
         
-        
             if not self.game_over:
                 self.player.update(self.window.dt)
                 self.ui.render(surf)
