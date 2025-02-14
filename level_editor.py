@@ -192,7 +192,8 @@ class Editor:
                     if event.key == pygame.K_o: # save a map
                         root = tk.Tk()
                         root.withdraw()
-                        filename = filedialog.asksaveasfilename(defaultextension='.json', initialdir=INITIAL_DIR, filetypes=[('json files', '*.json')], title='Save A Map')
+                        filename = filedialog.asksaveasfilename(defaultextension='.json', initialdir=INITIAL_DIR, initialfile=self.current_file if self.current_file else None, filetypes=[('json files', '*.json')], title='Save A Map')
+
                         if filename:
                             tile_data = {'tilemap': self.tile_manager.tile_map}
                             self.tile_manager.write_map(filename, tile_data)

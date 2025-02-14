@@ -9,7 +9,7 @@ class TileManager:
         self.tile_size = TILE_SIZE
         
         self.tile_map = {} # '5;3: {'type': '', 'var}
-        self.load_map('data/maps/test.json')
+        
         
         self.tile_assets = load_dir_list('data/images/tiles')
         self.collision_rects = []
