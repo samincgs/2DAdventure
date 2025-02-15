@@ -7,12 +7,10 @@ class TileManager:
     def __init__(self, game):
         self.game = game
         self.tile_size = TILE_SIZE
+        self.tile_assets = load_dir_list('data/images/tiles')
         
         self.tile_map = {} # '5;3: {'type': '', 'var}
-        
-        self.tile_assets = load_dir_list('data/images/tiles')
-        self.collision_rects = []
-                                
+                             
     def get_nearby_rects(self, pos):
         rects = []
         tile_pos = (int(pos[0] // self.tile_size), int(pos[1] // self.tile_size))
@@ -43,18 +41,26 @@ class TileManager:
     def remove_map(self):
         self.tile_map = {}
     
-    def render(self, surf, offset=(0, 0), visible=False):
-        if visible:
-            pass
-        else:
-            for tile_loc in self.tile_map:
-                tile = self.tile_map[tile_loc]
-                img = self.tile_assets[tile['type']][tile['variant']].copy()
-                loc = (tile['pos'][0] - offset[0], tile['pos'][1] - offset[1])
-                surf.blit(img, loc)
+    def render_visible(self, surf, offset=(0, 0)):
+        
+        for x in range(offset[0] // self.tile_size, ((offset[0] + surf.get_width()) // self.tile_size) + 1):
+            for y in range(offset[1] // self.tile_size, ((offset[1] + surf.get_height()) // self.tile_size) + 1):
+                loc = str(x * self.tile_size) + ';' + str(y * self.tile_size)
+                if loc in self.tile_map:
+                    tile = self.tile_map[loc]
+                    img = self.tile_assets[tile['type']][tile['variant']]
+                    loc = (tile['pos'][0] - offset[0], tile['pos'][1] - offset[1])
+                    surf.blit(img, loc)
                 
-        # for col in self.collision_rects:
-        #     pygame.draw.rect(surf, (255, 0, 0), pygame.Rect(col[0] - offset[0], col[1] - offset[1], col[2], col[3]), 1)
+                        
+        
+    def render_all(self, surf, offset=(0, 0)):
+         for tile_loc in self.tile_map:
+            tile = self.tile_map[tile_loc]
+            img = self.tile_assets[tile['type']][tile['variant']].copy()
+            loc = (tile['pos'][0] - offset[0], tile['pos'][1] - offset[1])
+            surf.blit(img, loc)
+                
     
     def render_editor(self, surf, offset=(0, 0)): # assume new_tile_size is smaller than usual tile size
         for tile_loc in self.tile_map:

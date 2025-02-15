@@ -13,10 +13,10 @@ class Window:
          
         self.dt = 0.1 
           
-    def render(self, ui):
+    def create(self, ui):
         self.dt = self.clock.tick(FPS) / 1000
         self.screen.blit(pygame.transform.scale(self.display, self.screen.get_size()), (0, 0))
-        ui.render_font(self.screen, self.dt)
+        # ui.render_font(self.screen, self.dt)
         pygame.display.update()
         self.display.fill((0, 0, 0))
         

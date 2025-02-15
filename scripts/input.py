@@ -37,6 +37,8 @@ class Input:
                     self.right_pressed = True
                 if event.key == pygame.K_TAB:
                     self.debug = not self.debug
+                if event.key == pygame.K_p:
+                    self.game.current_state = self.game.game_states['pause'] if self.game.current_state == self.game.game_states['play'] else self.game.game_states['play']
             if event.type == pygame.KEYUP:
                 if event.key == pygame.K_w:
                     self.up_pressed = False
