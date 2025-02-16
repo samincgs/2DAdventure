@@ -14,14 +14,13 @@ class NPC(Entity):
         
         self.collision_on = True
         self.last_movement = 0
-        
     
     
     def set_action(self, dt):
         
         self.action_counter += dt
         
-        if self.action_counter >= 3:
+        if self.action_counter >= 2:
             random_direction = random.randint(0, 100)
             if random_direction <= 25:
                 self.direction = 'up'
@@ -44,7 +43,9 @@ class NPC(Entity):
         self.set_action(dt)
         self.move(dt)
         
+        self.game.collision_manager.check_entity(self, self.game.player)
         self.game.collision_manager.check_tile(self)
+        
     
     def render(self, surf, offset=(0, 0)):
         super().render(surf, offset=offset)

@@ -10,7 +10,7 @@ CAPTION = "2D Adventure"
 
 RECT_OFFSETS = {
     'player': (3, 4),
-    'old_wizard': (4, 5),
+    'old_wizard': (2, 4),
     'key': (3, 3),
     'sneakers': (1, 5)
 }

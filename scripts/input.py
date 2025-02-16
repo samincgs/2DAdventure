@@ -49,3 +49,4 @@ class Input:
                 if event.key == pygame.K_d:
                     self.right_pressed = False
                     
+            

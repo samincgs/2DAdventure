@@ -7,7 +7,7 @@ class Entity:
         self.game = game
         self.pos = list(pos)
         self.size = list(size)
-        self.speed = 150
+        self.speed = 60
         
         self.images = None
         self.direction = None
@@ -34,11 +34,11 @@ class Entity:
         if self.direction == 'up':
             self.pos[1] -= int(self.speed * dt) 
         elif self.direction == 'down':
-            self.pos[1] += int(self.speed * dt) 
+            self.pos[1] += self.speed * dt
         elif self.direction == 'left':
             self.pos[0] -= int(self.speed * dt) 
         elif self.direction == 'right':
-            self.pos[0] += int(self.speed * dt) 
+            self.pos[0] += self.speed * dt
             
     def update(self, dt):
         self.set_action(dt)

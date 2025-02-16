@@ -20,13 +20,13 @@ class Game:
         self.player = Player(self, (323, 160), (9, 10), 'player')
         self.old_wizard = NPC(self, (275, 150), (10, 9), 'old_wizard')
         self.ui = UI(self)
-        
+         
         self.object_spawner = ObjectSpawner(self)
         
         self.scroll = [0, 0]
         
         self.current_state = 0
-        self.game_states = {'play': 0, 'pause': 1}
+        self.game_states = {'play': 0, 'pause': 1, 'dialogue': 2}
         
        
     def run(self):
@@ -50,6 +50,9 @@ class Game:
             if self.current_state == self.game_states['play']:
                 self.old_wizard.update(self.window.dt)
                 self.player.update(self.window.dt)
+            
+            if self.input.debug:
+                print(self.player.pos)
             
             self.old_wizard.render(surf, offset=render_scroll)
             self.player.render(surf, offset=render_scroll)
