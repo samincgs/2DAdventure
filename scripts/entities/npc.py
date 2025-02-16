@@ -15,9 +15,6 @@ class NPC(Entity):
         self.collision_on = True
         self.last_movement = 0
     
-    def on_screen(self, camera, display):
-       return (camera[0] <= self.pos[0] <= camera[0] + display.get_width() and camera[1] <= self.pos[1] <= camera[1] + display.get_height())
-    
     def set_action(self, dt):
         
         self.action_counter += dt
@@ -31,10 +28,11 @@ class NPC(Entity):
         super().update(dt)
         
         if self.last_movement != self.pos:
-            self.animation_update(dt)
-            
-        self.game.collision_manager.check_tile(self)
-        self.game.collision_manager.check_entity(self, self.game.player)
+            self.animation_update(dt)  
+            self.game.collision_manager.check_tile(self)
+        
+        if self.on_screen(self, self.game.scroll, self.game.window.display):
+            self.game.collision_manager.check_entity(self, self.game.player)
         
         self.last_movement = self.pos.copy()        
     

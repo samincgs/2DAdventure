@@ -23,9 +23,9 @@ class CollisionManager:
     def check_tile(self, entity):
         
         tiles = self.tile_manager.get_nearby_rects(entity.pos)
-        collisions = self.collision_test(entity.rect, tiles)
+        temp_rect = entity.rect
+        collisions = self.collision_test(temp_rect, tiles)
         
-        temp_rect = entity.rect.copy()
         
         for collision_rect in collisions:
             if entity.direction == 'right':

@@ -35,23 +35,28 @@ class Player(Entity):
         elif self.game.input.right_pressed:
             self.direction = 'right'
             movement[0] += self.speed * dt
-        
         return movement
 
      
     def update(self, dt):
-
+            
             movement = self.move(dt)
                         
             self.pos[0] += movement[0]
             self.pos[1] += movement[1]
             
-            self.game.collision_manager.check_tile(self)
-            npc_collide = self.game.collision_manager.check_entity(self, self.game.old_wizard)
+            self.pos[0] = round(self.pos[0])
+            self.pos[1] = round(self.pos[1])
+
             
-            if npc_collide:
-                if self.game.input.interacted:
-                    self.game.current_state = self.game.game_states['dialogue']
+            self.game.collision_manager.check_tile(self)
+            
+            if self.on_screen(self.game.old_wizard, self.game.scroll, self.game.window.display):
+                npc_collide = self.game.collision_manager.check_entity(self, self.game.old_wizard)
+            
+                if npc_collide:
+                    if self.game.input.interacted:
+                        self.game.current_state = self.game.game_states['dialogue']
             
 
             if self.game.input.pressed:    
@@ -65,7 +70,8 @@ class Player(Entity):
         if self.game.input.debug:
             pygame.draw.rect(surf, WHITE, pygame.Rect(self.rect.x - offset[0], self.rect.y - offset[1], self.rect.size[0], self.rect.size[1])) #debug
         offset = self.render_offset(offset=offset)
-        surf.blit(self.img, (int(round(self.pos[0]) - offset[0]), int(round(self.pos[1]) - offset[1])))
+        
+        surf.blit(self.img, (int(self.pos[0] - offset[0]), int(self.pos[1] - offset[1])))
 
 
 

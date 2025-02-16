@@ -30,12 +30,11 @@ class Entity:
     
     @property
     def rect(self):
-        return pygame.Rect(self.pos[0] // 1, self.pos[1] // 1, *self.size)
+        return pygame.Rect(int(self.pos[0]), int(self.pos[1]), *self.size)
     
-    @property
-    def render_pos(self):
-        return [round(self.pos[0]), round(self.pos[1])]
-    
+    def on_screen(self, entity, camera, display):
+       return (camera[0] <= entity.pos[0] <= camera[0] + display.get_width() and camera[1] <= entity.pos[1] <= camera[1] + display.get_height())
+   
     def move(self, dt):
         movement = [0, 0]
         if self.direction == 'up':
