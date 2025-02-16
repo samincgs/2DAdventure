@@ -24,7 +24,8 @@ class CollisionManager:
         
         tiles = self.tile_manager.get_nearby_rects(entity.pos)
         collisions = self.collision_test(entity.rect, tiles)
-        temp_rect = entity.rect
+        
+        temp_rect = entity.rect.copy()
         
         for collision_rect in collisions:
             if entity.direction == 'right':
@@ -34,14 +35,14 @@ class CollisionManager:
             entity.pos[0] = temp_rect.x
             
         tiles = self.tile_manager.get_nearby_rects(entity.pos)
-        collisions = self.collision_test(entity.rect, tiles)
         temp_rect = entity.rect
+        collisions = self.collision_test(temp_rect, tiles)
         
         for collision_rect in collisions:
             if entity.direction == 'up':
                 temp_rect.top = collision_rect.bottom  
             elif entity.direction == 'down':
-                temp_rect.bottom = collision_rect.top  
+                temp_rect.bottom = collision_rect.top      
             entity.pos[1] = temp_rect.y
         
     def check_object(self, entity):
@@ -75,6 +76,8 @@ class CollisionManager:
     
     def check_entity(self, entity, other):
         
+        collided = False
+        
         other_rect = [pygame.Rect(*other.rect)]
         collisions = self.collision_test(entity.rect, other_rect)
         temp_rect = entity.rect
@@ -86,6 +89,7 @@ class CollisionManager:
             elif entity.direction == 'left':
                 temp_rect.left = collision_rect.right  
             entity.pos[0] = temp_rect.x
+            collided = True
             
         other_rect = [pygame.Rect(*other.rect)]
         collisions = self.collision_test(entity.rect, other_rect)
@@ -97,6 +101,9 @@ class CollisionManager:
             elif entity.direction == 'down':
                 temp_rect.bottom = collision_rect.top  
             entity.pos[1] = temp_rect.y
+            collided = True
+            
+        return collided
         
         
         

@@ -11,6 +11,7 @@ class Input:
         self.down_pressed = False
         self.left_pressed = False
         self.right_pressed = False
+        self.interacted = False
         
         self.debug = False
     
@@ -35,6 +36,8 @@ class Input:
                     self.down_pressed = True
                 if event.key == pygame.K_d:
                     self.right_pressed = True
+                if event.key == pygame.K_f:
+                    self.interacted = True
                 if event.key == pygame.K_TAB:
                     self.debug = not self.debug
                 if event.key == pygame.K_p:
@@ -48,5 +51,7 @@ class Input:
                     self.down_pressed = False
                 if event.key == pygame.K_d:
                     self.right_pressed = False
+                if event.key == pygame.K_f:
+                    self.interacted = False
                     
             

@@ -25,8 +25,8 @@ class Game:
         
         self.scroll = [0, 0]
         
-        self.current_state = 0
         self.game_states = {'play': 0, 'pause': 1, 'dialogue': 2}
+        self.current_state = 0
         
        
     def run(self):
@@ -46,15 +46,14 @@ class Game:
             
             # for obj in self.object_spawner.objects:
             #     obj.render(surf, offset=render_scroll)
-
             
             if self.current_state == self.game_states['play']:
                 self.old_wizard.update(self.window.dt)
                 self.player.update(self.window.dt)
             
             if self.input.debug:
-                print(f"POS: {self.player.pos}")         # Float position
-                print(f"RECT: {self.player.rect.topleft}")  # Integer position
+                print(f"POS: {self.old_wizard.pos}")         # Float position
+                print(f"RECT: {self.old_wizard.rect.topleft}")  # Integer position
                 print(f"SCROLL: {self.scroll}")            # Camera position
                 print(f"FPS: {self.window.clock.get_fps()}") # FPS to check if dt is stable
                 print("-" * 40)
