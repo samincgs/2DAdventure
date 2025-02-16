@@ -36,7 +36,8 @@ class Game:
             self.window.create(self.ui)
             
             self.scroll[0] += (self.player.rect.centerx - surf.get_width() // 2 - self.scroll[0]) 
-            self.scroll[1] += (self.player.rect.centery - surf.get_height() // 2 - self.scroll[1])
+            self.scroll[1] += (self.player.rect.centery - surf.get_height() // 2 - self.scroll[1]) 
+
             render_scroll = (int(self.scroll[0]), int(self.scroll[1]))
             
             self.input.update()
@@ -52,7 +53,12 @@ class Game:
                 self.player.update(self.window.dt)
             
             if self.input.debug:
-                print(self.player.pos)
+                print(f"POS: {self.player.pos}")         # Float position
+                print(f"RECT: {self.player.rect.topleft}")  # Integer position
+                print(f"SCROLL: {self.scroll}")            # Camera position
+                print(f"FPS: {self.window.clock.get_fps()}") # FPS to check if dt is stable
+                print("-" * 40)
+
             
             self.old_wizard.render(surf, offset=render_scroll)
             self.player.render(surf, offset=render_scroll)

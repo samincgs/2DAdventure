@@ -11,7 +11,7 @@ class Player(Entity):
         
         self.direction = 'down'
         self.images = self.game.assets.player_imgs
-        self.speed = 120
+        self.speed = 110
         
         self.collision_on = True
         
@@ -36,6 +36,7 @@ class Player(Entity):
      
     def update(self, dt):
 
+            
             movement = [0, 0]
             speed = self.speed * dt
             
@@ -55,19 +56,23 @@ class Player(Entity):
             self.pos[0] += movement[0]
             self.pos[1] += movement[1]
             
+            self.pos[0] = round(self.pos[0])
+            self.pos[1] = round(self.pos[1])
+                        
+            self.game.collision_manager.check_tile(self)
+            self.game.collision_manager.check_entity(self, self.game.old_wizard)
+
             if self.game.input.pressed:    
                 self.animation_update(dt)
             else:
                 self.frame_num = 0
                 self.frame_index = 1
-            
-            self.game.collision_manager.check_tile(self)
-            self.game.collision_manager.check_entity(self, self.game.old_wizard)
-            
-                     
+                  
     def render(self, surf, offset=(0, 0)):
         if self.game.input.debug:
             pygame.draw.rect(surf, WHITE, pygame.Rect(self.rect.x - offset[0], self.rect.y - offset[1], self.rect.size[0], self.rect.size[1])) #debug
         offset = self.render_offset(offset=offset)
-        surf.blit(self.img, (self.pos[0] - offset[0], self.pos[1] - offset[1])) 
+        surf.blit(self.img, (self.pos[0] - offset[0], self.pos[1] - offset[1]))
+
+
         

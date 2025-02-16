@@ -28,7 +28,7 @@ class Entity:
     
     @property
     def rect(self):
-        return pygame.Rect(*self.pos, *self.size)
+        return pygame.FRect(self.pos[0] // 1, self.pos[1] // 1, *self.size)
     
     def move(self, dt):
         if self.direction == 'up':
