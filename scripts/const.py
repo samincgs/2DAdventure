@@ -15,8 +15,12 @@ RECT_OFFSETS = {
 }
 
 DIALOGUES = {
-    'player': [3, 4],
-    'old_wizard': ['What the buns', 'Hello lad.']
+    'player': [],
+    'old_wizard': ['Hello lad.', 
+                   "Welcome to this island, I don't think I have\nseen you around.", 
+                   "So you've come to this island to find the\ntreasure?", 
+                   "I used to be a great wizard but now I'm a bit\ntoo old to go on an adventure."
+                   ]
 }
 
 # V

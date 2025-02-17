@@ -20,6 +20,8 @@ class Player(Entity):
         
         self.frame_motion = [0, 0]
         
+        self.interact_range = 18
+        
     def move(self, dt):
         
         movement = [0, 0]
@@ -55,9 +57,9 @@ class Player(Entity):
                 self.game.collision_manager.check_entity(self, self.game.old_wizard)
                 
                 dis = self.get_distance(self.game.old_wizard)
-                if dis < 18:
+                if dis < self.interact_range:
                     if self.game.input.interacted:
-                        self.game.current_state = self.game.game_states['dialogue']
+                        self.game.set_state('dialogue')
                         self.game.interacted_npc = self.game.old_wizard
                         self.game.interacted_npc.turn_to_player(self)
                         self.game.interacted_npc.speak()

@@ -9,6 +9,8 @@ class Assets:
         self.npc_imgs = load_dir(path + 'npc')
         self.object_imgs = load_dir(path + 'objects')
         
+        print(self.player_imgs)
+        
         self.sounds = load_sounds('data/sfx/')
         
                 

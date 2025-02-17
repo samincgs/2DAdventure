@@ -24,9 +24,8 @@ class Game:
         self.object_spawner = ObjectSpawner(self)
         
         self.scroll = [0, 0]
-        
-        self.game_states = {'play': 0, 'pause': 1, 'dialogue': 2}
-        self.current_state = 0
+        self.game_states = {'play': 0, 'pause': 1, 'dialogue': 2, 'menu': 3}
+        self.current_state = self.game_states['menu']
         self.last_state = self.current_state
         
         self.interacted_npc = None
@@ -43,6 +42,10 @@ class Game:
     def dialogue_state(self):
         return self.current_state == self.game_states['dialogue']
     
+    @property
+    def menu_state(self):
+        return self.current_state == self.game_states['menu']
+    
     def set_state(self, state):
         self.current_state = self.game_states[state]
     
@@ -52,38 +55,30 @@ class Game:
             
             if not self.pause_state:
                 self.last_state = self.current_state
-                
             
             self.window.create(self.ui)
-            
-            self.scroll[0] += (self.player.rect.centerx - surf.get_width() // 2 - self.scroll[0]) 
-            self.scroll[1] += (self.player.rect.centery - surf.get_height() // 2 - self.scroll[1]) 
-
-            render_scroll = (int(self.scroll[0]), int(self.scroll[1]))
-            
             self.input.update()
             
-            self.tile_manager.render_visible(surf, offset=render_scroll)
             
-            # for obj in self.object_spawner.objects:
-            #     obj.render(surf, offset=render_scroll)
-            
-            if self.current_state == self.game_states['play']:
-                self.old_wizard.update(self.window.dt)
-                self.player.update(self.window.dt)
-            elif self.current_state == self.game_states['dialogue']:
-                self.interacted_npc.continue_dialogue()
-            
-            
-            if self.input.debug:
-                print(f"POS: {self.player.pos}")         # Float position
-                print(f"RECT: {self.player.rect.topleft}")  # Integer position
-                print(f"SCROLL: {self.scroll}")            # Camera position
-                print(f"FPS: {self.window.clock.get_fps()}") # FPS to check if dt is stable
-                print("-" * 40)
+            if self.current_state in {self.game_states['play'], self.game_states['pause'], self.game_states['dialogue']}:
+                self.scroll[0] += (self.player.rect.centerx - surf.get_width() // 2 - self.scroll[0]) 
+                self.scroll[1] += (self.player.rect.centery - surf.get_height() // 2 - self.scroll[1]) 
 
-            self.old_wizard.render(surf, offset=render_scroll)
-            self.player.render(surf, offset=render_scroll)
+                render_scroll = (int(self.scroll[0]), int(self.scroll[1]))
+                self.tile_manager.render_visible(surf, offset=render_scroll)
+                
+                # for obj in self.object_spawner.objects:
+                #     obj.render(surf, offset=render_scroll)
+                
+                if self.current_state == self.game_states['play']:
+                    self.old_wizard.update(self.window.dt)
+                    self.player.update(self.window.dt)
+                elif self.current_state == self.game_states['dialogue']:
+                    self.interacted_npc.continue_dialogue()
+                
+                self.old_wizard.render(surf, offset=render_scroll)
+                self.player.render(surf, offset=render_scroll)
+                
             self.ui.render(surf)            
                 
                               
