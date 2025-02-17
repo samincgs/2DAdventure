@@ -37,11 +37,11 @@ class Player(Entity):
             movement[0] += self.speed * dt
         return movement
 
-     
+    
     def update(self, dt):
             
             movement = self.move(dt)
-                        
+            
             self.pos[0] += movement[0]
             self.pos[1] += movement[1]
             
@@ -52,12 +52,18 @@ class Player(Entity):
             self.game.collision_manager.check_tile(self)
             
             if self.on_screen(self.game.old_wizard, self.game.scroll, self.game.window.display):
-                npc_collide = self.game.collision_manager.check_entity(self, self.game.old_wizard)
-            
-                if npc_collide:
+                self.game.collision_manager.check_entity(self, self.game.old_wizard)
+                
+                dis = self.get_distance(self.game.old_wizard)
+                if dis < 18:
                     if self.game.input.interacted:
                         self.game.current_state = self.game.game_states['dialogue']
-            
+                        self.game.interacted_npc = self.game.old_wizard
+                        self.game.interacted_npc.turn_to_player(self)
+                        self.game.interacted_npc.speak()
+               
+                        
+                
 
             if self.game.input.pressed:    
                 self.animation_update(dt)

@@ -1,4 +1,5 @@
 import pygame
+import math
 
 from ..const import *
 
@@ -22,6 +23,9 @@ class Entity:
         self.rect_offset = RECT_OFFSETS[type] if type in RECT_OFFSETS else (0, 0)
         
         self.action_counter = 0
+        
+        self.dialogues = DIALOGUES[type] if type in DIALOGUES else []
+        self.dialogue_index = 0
         
     @property
     def img(self):
@@ -47,7 +51,8 @@ class Entity:
             movement[0] += self.speed * dt
         return movement
             
-        
+    def get_distance(self, target):
+        return math.sqrt((self.pos[0] - target.pos[0]) ** 2 + (self.pos[1] - target.pos[1]) ** 2)   
             
     def update(self, dt):
         self.set_action(dt)
@@ -57,6 +62,9 @@ class Entity:
         self.pos[1] += movement[1]
         
     def set_action(self, dt):
+        pass
+    
+    def speak(self):
         pass
     
     def animation_update(self, dt):

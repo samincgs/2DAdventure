@@ -16,7 +16,8 @@ class UI:
         self.message_timer = 0
         
         self.play_time = 0
-    
+
+        self.current_dialogue = ''
     
     def draw_dialogue(self, surf):
         pass
@@ -33,15 +34,19 @@ class UI:
             dialogue_height = 55
             
             dialogue_surf = pygame.Surface((DISPLAY_WIDTH - dialogue_size_x * 2, dialogue_height), pygame.SRCALPHA)
-            dialogue_surf.fill((0,0,0))
+            dialogue_surf.fill((0, 0, 0))
             
             dialogue_rect = pygame.Rect(4, 4, dialogue_surf.get_width() - 8, dialogue_surf.get_height() - 8)
             outline_rect = pygame.Rect(2, 2, dialogue_surf.get_width() - 4, dialogue_surf.get_height() - 4)
             
             pygame.draw.rect(dialogue_surf, (255, 255, 255, 255), outline_rect)
             pygame.draw.rect(dialogue_surf, (0, 0, 0, 210), dialogue_rect, 0, 5)
-            surf.blit(dialogue_surf, (dialogue_size_x, dialogue_size_y))
             
+            
+            if self.current_dialogue:
+                self.font.render(dialogue_surf, self.current_dialogue, (10, 10))
+            
+            surf.blit(dialogue_surf, (dialogue_size_x, dialogue_size_y))
             
         
         
