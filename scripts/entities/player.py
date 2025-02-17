@@ -6,12 +6,15 @@ from ..const import *
 from .entity import Entity
 
 class Player(Entity):
-    def __init__(self, game, pos, size, type):
+    def __init__(self, game, pos, size, type):        
         super().__init__(game, pos, size, type)
         
         self.direction = 'down'
-        self.images = self.game.assets.player_imgs
+        self.images = self.game.assets.player
         self.speed = 110
+        
+        self.max_health = 6 # 2 health equals one whole heart, 1 equals half heart
+        self.health = self.max_health
         
         self.collision_on = True
         
@@ -22,8 +25,14 @@ class Player(Entity):
         
         self.interact_range = 18
         
-    def move(self, dt):
+        self.animation_timer = 0.14
         
+    
+    @property
+    def img(self):
+        return self.images[self.direction][self.frame_index]
+    
+    def move(self, dt):
         movement = [0, 0]
         if self.game.input.up_pressed:
             self.direction = 'up'
@@ -39,6 +48,14 @@ class Player(Entity):
             movement[0] += self.speed * dt
         return movement
 
+    
+    def animation_update(self, dt):
+        self.frame_num += dt
+        if self.frame_num > self.animation_timer:
+            self.frame_index += 1
+            self.frame_num = 0
+            if self.frame_index >= len(self.images[self.direction]):
+                self.frame_index = 0
     
     def update(self, dt):
             
@@ -65,21 +82,20 @@ class Player(Entity):
                         self.game.interacted_npc.speak()
                
                         
-                
-
             if self.game.input.pressed:    
                 self.animation_update(dt)
             else:
                 self.frame_num = 0
-                self.frame_index = 1
+                self.frame_index = 0
                 
             
     def render(self, surf, offset=(0, 0)):
+        img = self.img
         if self.game.input.debug:
             pygame.draw.rect(surf, WHITE, pygame.Rect(self.rect.x - offset[0], self.rect.y - offset[1], self.rect.size[0], self.rect.size[1])) #debug
         offset = self.render_offset(offset=offset)
         
-        surf.blit(self.img, (int(self.pos[0] - offset[0]), int(self.pos[1] - offset[1])))
+        surf.blit(img, (int(self.pos[0] - offset[0]), int(self.pos[1] - offset[1])))
 
 
 

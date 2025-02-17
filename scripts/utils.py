@@ -27,12 +27,12 @@ def load_dir(path, colorkey=None, alpha=False):
     return tiles
 
 # load multiple directories into a dict with lists of images
-def load_dir_list(path):
+def load_dir_list(path, colorkey=None, alpha=False):
     image_dir = {}
     for folder in sorted(os.listdir(path)):
         image_dir[folder] = []
         for img in os.listdir(path + '/' + folder):
-            image_dir[folder].append(load_img(os.path.join(path, folder, img)))                                       
+            image_dir[folder].append(load_img(os.path.join(path, folder, img), colorkey, alpha))                                       
     return image_dir
 
 def load_sounds(path):

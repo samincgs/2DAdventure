@@ -13,6 +13,9 @@ class Entity:
         self.images = None
         self.direction = None
         
+        self.max_health = 3
+        self.health = self.max_health
+        
         self.frame_index = 1 # spriteCounter
         self.frame_num = 0
         

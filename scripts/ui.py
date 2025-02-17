@@ -13,8 +13,7 @@ class UI:
         
         self.current_dialogue = ''
         self.menu_cursor = 0
-        
-
+                
     def draw_dialogue(self, surf):
         dialogue_size_x = 30
         dialogue_size_y = 8
@@ -31,22 +30,27 @@ class UI:
         
         surf.blit(dialogue_surf, (dialogue_size_x, dialogue_size_y))
     
+    def draw_player_hearts(self, surf):
+        pass
+     
+    def draw_menu_character(self, surf):
+        char_img = self.game.assets.player['down'][0]
+        char_img = pygame.transform.scale(char_img, (char_img.get_width() * 2, char_img.get_height() * 2))
+        surf.blit(char_img, (DISPLAY_WIDTH // 2 - char_img.get_width() / 2, DISPLAY_HEIGHT // 2 - char_img.get_height() / 2 - 20))
+    
     def render(self, surf):
         if self.game.current_state == self.game.game_states['menu']:  #MENU STATE
-            char_img = self.game.assets.player_imgs['down_1']
-            char_img = pygame.transform.scale(char_img, (char_img.get_width() * 2, char_img.get_height() * 2))
-            surf.blit(char_img, (DISPLAY_WIDTH // 2 - char_img.get_width() / 2, DISPLAY_HEIGHT // 2 - char_img.get_height() / 2 - 20))
-             
+            self.draw_menu_character(surf)
         elif self.game.current_state == self.game.game_states['play']: #PLAY STATE
-            pass
+            # render hearts
+            self.draw_player_hearts(surf)
         elif self.game.current_state == self.game.game_states['pause']:
             pause_text = 'PAUSED'
             self.font.render(surf, pause_text, (DISPLAY_WIDTH // 2 - self.font.width(pause_text) // 2, DISPLAY_HEIGHT // 2 - 30 - self.font.base_size[1]))
         elif self.game.current_state == self.game.game_states['dialogue']:
+            self.draw_player_hearts(surf)
             self.draw_dialogue(surf)
-            
-        
-        
+                
     def render_font(self, surf):
         if self.game.current_state == self.game.game_states['menu']:
             title_text = self.byte_bounce_font.render('Adventure Game', False, (255, 255, 255))
