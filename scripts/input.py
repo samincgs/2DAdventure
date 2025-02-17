@@ -12,10 +12,11 @@ class Input:
         self.left_pressed = False
         self.right_pressed = False
         self.interacted = False
+        self.enter_pressed = False
+        
         self.debug = False
         
-        self.menu_up = False
-        self.menu_down = False
+
         
     
     @property
@@ -34,6 +35,7 @@ class Input:
             if event.type == pygame.KEYDOWN:
                 if event.key == pygame.K_ESCAPE:
                     self.quit_game()
+                    
                 if self.game.current_state in {self.game.game_states['play'], self.game.game_states['pause'], self.game.game_states['dialogue']}:
                     if event.key == pygame.K_w:
                         self.up_pressed = True
@@ -53,10 +55,15 @@ class Input:
                         elif self.game.pause_state:
                             self.game.current_state = self.game.last_state 
                 else:
-                    if event.key == pygame.K_UP:
+                    if event.key == pygame.K_w:
                         self.game.ui.menu_cursor = (self.game.ui.menu_cursor - 1) % 3 
-                    if event.key == pygame.K_DOWN:
-                        self.game.ui.menu_cursor = (self.game.ui.menu_cursor + 1) % 3             
+                    if event.key == pygame.K_s:
+                        self.game.ui.menu_cursor = (self.game.ui.menu_cursor + 1) % 3
+                    if event.key == pygame.K_RETURN:
+                        if self.game.ui.menu_cursor == 0:
+                            self.game.set_state('play')
+                        elif self.game.ui.menu_cursor == 2:
+                            self.quit_game()
                   
             if event.type == pygame.KEYUP:
                 if event.key == pygame.K_w:
@@ -69,6 +76,8 @@ class Input:
                     self.right_pressed = False
                 if event.key == pygame.K_f:
                     self.interacted = False
+                if event.key == pygame.K_RETURN:
+                    self.enter_pressed = False
                 
                     
         if self.debug:
