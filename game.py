@@ -1,4 +1,5 @@
 from scripts.entities.npc import NPC
+from scripts.events import Events
 from scripts.window import Window
 from scripts.input import Input
 from scripts.assets import Assets
@@ -17,9 +18,10 @@ class Game:
         self.tile_manager = TileManager(self)
         self.tile_manager.load_map('data/maps/world1.json')
         self.collision_manager = CollisionManager(self, self.tile_manager)
-        self.player = Player(self, (323, 160), (7,6), 'player2')
-        self.old_wizard = NPC(self, (275, 150), (16, 16), 'old_wizard')
+        self.player = Player(self, (323, 160), (8,8), 'player')
+        self.old_wizard = NPC(self, (275, 150), (14, 10), 'old_wizard')
         self.ui = UI(self)
+        self.events = Events(self)
          
         self.object_spawner = ObjectSpawner(self)
         

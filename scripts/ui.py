@@ -31,7 +31,24 @@ class UI:
         surf.blit(dialogue_surf, (dialogue_size_x, dialogue_size_y))
     
     def draw_player_hearts(self, surf):
-        pass
+        full_heart_img = self.game.assets.object_imgs['full_heart']
+        half_heart_img = self.game.assets.object_imgs['half_heart']
+        empty_heart_img = self.game.assets.object_imgs['empty_heart']
+        
+        total_hearts = self.game.player.max_health / 2
+        player_hearts = self.game.player.health
+        
+        
+        for i in range(int(total_hearts)):
+            if player_hearts >= 2:
+                surf.blit(full_heart_img, (4 + i * 18, 4))
+                player_hearts -= 2
+            elif player_hearts == 1:
+                surf.blit(half_heart_img, (4 + i * 18, 4))
+                player_hearts -= 1
+            else:
+                surf.blit(empty_heart_img, (4 + i * 18, 4))
+        
      
     def draw_menu_character(self, surf):
         char_img = self.game.assets.player['down'][0]

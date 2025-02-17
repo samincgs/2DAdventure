@@ -9,7 +9,8 @@ FPS = 60
 CAPTION = "2D Adventure"
 
 RECT_OFFSETS = {
-    'player': [3, 4],
+    'player': (4, 9),
+    'old_wizard': (1, 6),
     'key': (3, 3),
     'sneakers': (1, 5)
 }
