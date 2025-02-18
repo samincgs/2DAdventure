@@ -1,4 +1,3 @@
-
 from .objects.key import Key
 from .objects.chest import Chest
 from .objects.door import Door

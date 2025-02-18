@@ -1,4 +1,5 @@
 import pygame
+
 from .utils import load_json, save_json, load_dir_list, outline
 
 TILE_SIZE = 16
@@ -42,7 +43,6 @@ class TileManager:
         self.tile_map = {}
     
     def render_visible(self, surf, offset=(0, 0)):
-        
         for x in range(offset[0] // self.tile_size, ((offset[0] + surf.get_width()) // self.tile_size) + 1):
             for y in range(offset[1] // self.tile_size, ((offset[1] + surf.get_height()) // self.tile_size) + 1):
                 loc = str(x * self.tile_size) + ';' + str(y * self.tile_size)
@@ -52,8 +52,6 @@ class TileManager:
                     loc = (tile['pos'][0] - offset[0], tile['pos'][1] - offset[1])
                     surf.blit(img, loc)
                 
-                        
-        
     def render_all(self, surf, offset=(0, 0)):
          for tile_loc in self.tile_map:
             tile = self.tile_map[tile_loc]
@@ -61,7 +59,6 @@ class TileManager:
             loc = (tile['pos'][0] - offset[0], tile['pos'][1] - offset[1])
             surf.blit(img, loc)
                 
-    
     def render_editor(self, surf, offset=(0, 0)): # assume new_tile_size is smaller than usual tile size
         for tile_loc in self.tile_map:
             tile = self.tile_map[tile_loc]

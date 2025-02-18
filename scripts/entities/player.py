@@ -81,7 +81,9 @@ class Player(Entity):
                         self.game.interacted_npc.turn_to_player(self)
                         self.game.interacted_npc.speak()
                
-                        
+            
+            self.game.events.event()
+            
             if self.game.input.pressed:    
                 self.animation_update(dt)
             else:

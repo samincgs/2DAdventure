@@ -15,10 +15,7 @@ class Input:
         self.enter_pressed = False
         
         self.debug = False
-        
 
-        
-    
     @property
     def pressed(self):
         return self.up_pressed or self.down_pressed or self.left_pressed or self.right_pressed

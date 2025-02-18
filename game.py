@@ -21,7 +21,7 @@ class Game:
         self.player = Player(self, (323, 160), (8,8), 'player')
         self.old_wizard = NPC(self, (275, 150), (14, 10), 'old_wizard')
         self.ui = UI(self)
-        self.events = Events(self)
+        self.events = Events(self, self.collision_manager)
          
         self.object_spawner = ObjectSpawner(self)
         
@@ -31,6 +31,7 @@ class Game:
         self.last_state = self.current_state
         
         self.interacted_npc = None
+        self.current_event = None
 
     @property
     def play_state(self):
@@ -50,6 +51,11 @@ class Game:
     
     def set_state(self, state):
         self.current_state = self.game_states[state]
+    
+    def return_to_game(self):
+        if self.input.interacted:
+            self.set_state('play')
+            self.current_event = None
     
     def run(self):
         while True:
@@ -76,7 +82,10 @@ class Game:
                     self.old_wizard.update(self.window.dt)
                     self.player.update(self.window.dt)
                 elif self.current_state == self.game_states['dialogue']:
-                    self.interacted_npc.continue_dialogue()
+                    if self.interacted_npc:
+                        self.interacted_npc.continue_dialogue()
+                    if self.current_event:
+                        self.return_to_game()
                 
                 self.old_wizard.render(surf, offset=render_scroll)
                 self.player.render(surf, offset=render_scroll)

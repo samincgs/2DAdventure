@@ -1,4 +1,5 @@
 import pygame
+
 from .const import *
 
 class CollisionManager:
@@ -25,7 +26,6 @@ class CollisionManager:
         tiles = self.tile_manager.get_nearby_rects(entity.pos)
         temp_rect = entity.rect
         collisions = self.collision_test(temp_rect, tiles)
-        
         
         for collision_rect in collisions:
             if entity.direction == 'right':
@@ -76,7 +76,6 @@ class CollisionManager:
     
     def check_entity(self, entity, other):
         
-        
         other_rect = [pygame.Rect(*other.rect)]
         collisions = self.collision_test(entity.rect, other_rect)
         temp_rect = entity.rect
@@ -99,6 +98,27 @@ class CollisionManager:
                 temp_rect.bottom = collision_rect.top  
             entity.pos[1] = temp_rect.y
             
+    def check_event(self, loc, size, req_direction='any'):
+        rect = pygame.Rect(loc[0] + TILE_SIZE / 2, loc[1] + TILE_SIZE / 2, size, size)
+        player = self.game.player
+        
+        if player.rect.colliderect(rect) and (player.direction == req_direction or req_direction == 'any'):
+            if player.direction == 'up':
+                player.pos[1] = rect.bottom + size
+            elif player.direction == 'down':
+                player.pos[1] = rect.top - size
+            elif player.direction == 'right':
+                player.pos[0] = rect.left - size
+            elif player.direction == 'left':
+                player.pos[0] = rect.right + size
+            return True
+
+            
+            
+            
+        
+
+
     
         
         
