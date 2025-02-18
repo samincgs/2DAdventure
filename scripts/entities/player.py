@@ -50,45 +50,47 @@ class Player(Entity):
 
     
     def animation_update(self, dt):
-        self.frame_num += dt
-        if self.frame_num > self.animation_timer:
-            self.frame_index += 1
+        if self.game.input.pressed: 
+            self.frame_num += dt
+            if self.frame_num > self.animation_timer:
+                self.frame_index += 1
+                self.frame_num = 0
+                if self.frame_index >= len(self.images[self.direction]):
+                    self.frame_index = 0
+        else:
             self.frame_num = 0
-            if self.frame_index >= len(self.images[self.direction]):
-                self.frame_index = 0
+            self.frame_index = 0
     
     def update(self, dt):
             
-            movement = self.move(dt)
+        movement = self.move(dt)
+        
+        self.pos[0] += movement[0]
+        self.pos[1] += movement[1]
+        
+        self.pos[0] = round(self.pos[0])
+        self.pos[1] = round(self.pos[1])
+        
+        self.animation_update(dt)
+        
+        self.game.collision_manager.check_tile(self)
+        self.game.events.events()
+        
+        if self.on_screen(self.game.old_wizard, self.game.scroll, self.game.window.display):
+            self.game.collision_manager.check_entity(self, self.game.old_wizard)
             
-            self.pos[0] += movement[0]
-            self.pos[1] += movement[1]
+            dis = self.get_distance(self.game.old_wizard)
+            if dis < self.interact_range:
+                if self.game.input.interacted:
+                    self.game.set_state('dialogue')
+                    self.game.interacted_npc = self.game.old_wizard
+                    self.game.interacted_npc.turn_to_player(self)
+                    self.game.interacted_npc.speak()
             
-            self.pos[0] = round(self.pos[0])
-            self.pos[1] = round(self.pos[1])
-
             
-            self.game.collision_manager.check_tile(self)
             
-            if self.on_screen(self.game.old_wizard, self.game.scroll, self.game.window.display):
-                self.game.collision_manager.check_entity(self, self.game.old_wizard)
-                
-                dis = self.get_distance(self.game.old_wizard)
-                if dis < self.interact_range:
-                    if self.game.input.interacted:
-                        self.game.set_state('dialogue')
-                        self.game.interacted_npc = self.game.old_wizard
-                        self.game.interacted_npc.turn_to_player(self)
-                        self.game.interacted_npc.speak()
-               
             
-            self.game.events.event()
             
-            if self.game.input.pressed:    
-                self.animation_update(dt)
-            else:
-                self.frame_num = 0
-                self.frame_index = 0
                 
             
     def render(self, surf, offset=(0, 0)):

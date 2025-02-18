@@ -18,8 +18,11 @@ class Game:
         self.tile_manager = TileManager(self)
         self.tile_manager.load_map('data/maps/world1.json')
         self.collision_manager = CollisionManager(self, self.tile_manager)
-        self.player = Player(self, (323, 160), (8,8), 'player')
-        self.old_wizard = NPC(self, (275, 150), (14, 10), 'old_wizard')
+        self.entities = []
+        self.entities.append(Player(self, (323, 160), (8,8), 'player'))
+        self.entities.append(NPC(self, (275, 150), (14, 10), 'old_wizard'))
+        self.player = self.entities[0]
+        self.old_wizard = self.entities[-1]
         self.ui = UI(self)
         self.events = Events(self, self.collision_manager)
          
@@ -52,10 +55,10 @@ class Game:
     def set_state(self, state):
         self.current_state = self.game_states[state]
     
-    def return_to_game(self):
-        if self.input.interacted:
-            self.set_state('play')
-            self.current_event = None
+    def return_to_play_state(self):
+        self.set_state('play')
+        self.current_event = None
+        self.interacted_npc = None
     
     def run(self):
         while True:
@@ -66,7 +69,6 @@ class Game:
             
             self.window.create(self.ui)
             self.input.update()
-            
             
             if self.current_state in {self.game_states['play'], self.game_states['pause'], self.game_states['dialogue']}:
                 self.scroll[0] += (self.player.rect.centerx - surf.get_width() // 2 - self.scroll[0]) 
@@ -79,16 +81,18 @@ class Game:
                 #     obj.render(surf, offset=render_scroll)
                 
                 if self.current_state == self.game_states['play']:
-                    self.old_wizard.update(self.window.dt)
-                    self.player.update(self.window.dt)
+                    for entity in self.entities:
+                        entity.update(self.window.dt)
                 elif self.current_state == self.game_states['dialogue']:
                     if self.interacted_npc:
                         self.interacted_npc.continue_dialogue()
                     if self.current_event:
-                        self.return_to_game()
+                        if self.input.interacted:
+                            self.return_to_play_state()
                 
-                self.old_wizard.render(surf, offset=render_scroll)
-                self.player.render(surf, offset=render_scroll)
+                for entity in sorted(self.entities, key=lambda x: x.pos[1]): # sprite ordering
+                    entity.render(surf, offset=render_scroll)
+                
                 
             self.ui.render(surf)            
                 

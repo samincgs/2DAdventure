@@ -98,19 +98,23 @@ class CollisionManager:
                 temp_rect.bottom = collision_rect.top  
             entity.pos[1] = temp_rect.y
             
-    def check_event(self, loc, size, req_direction='any'):
-        rect = pygame.Rect(loc[0] + TILE_SIZE / 2, loc[1] + TILE_SIZE / 2, size, size)
+    def check_event(self, loc, size, req_direction='any', push=False):
+        rect = pygame.Rect(loc[0], loc[1], size, size)
         player = self.game.player
         
+        # debug
+        # pygame.draw.rect(self.game.window.display, (255, 0, 0), pygame.Rect(rect.x - self.game.scroll[0], rect.y - self.game.scroll[1], size, size))
+        
         if player.rect.colliderect(rect) and (player.direction == req_direction or req_direction == 'any'):
-            if player.direction == 'up':
-                player.pos[1] = rect.bottom + size
-            elif player.direction == 'down':
-                player.pos[1] = rect.top - size
-            elif player.direction == 'right':
-                player.pos[0] = rect.left - size
-            elif player.direction == 'left':
-                player.pos[0] = rect.right + size
+            if push:
+                if player.direction == 'up':
+                    player.pos[1] = rect.bottom + size
+                elif player.direction == 'down':
+                    player.pos[1] = rect.top - size
+                elif player.direction == 'right':
+                    player.pos[0] = rect.left - size
+                elif player.direction == 'left':
+                    player.pos[0] = rect.right + size
             return True
 
             

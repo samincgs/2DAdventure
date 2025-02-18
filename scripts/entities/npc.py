@@ -31,7 +31,7 @@ class NPC(Entity):
             self.dialogue_index += 1
             if self.dialogue_index >= len(self.dialogues):
                 self.dialogue_index = 0
-                self.game.current_state = self.game.game_states['play']
+                self.game.return_to_play_state()
                 return
             self.speak()
     

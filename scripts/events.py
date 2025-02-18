@@ -5,19 +5,34 @@ class Events:
         self.game = game
         self.collision_manager = collision_manager
         
-        self.event_rect_size = 2
+        self.event_rect_size = 4
+        
+        self.pit_fall_happened = False
 
     def set_event(self, event_name):
         self.game.current_event = event_name
-    
-    def event(self):
-        # FALL INTO PIT (DAMAGE EVENT)
-        pos = (16 * TILE_SIZE, 18 * TILE_SIZE)
-        if self.collision_manager.check_event(loc=pos, size=self.event_rect_size,req_direction='left'): 
-            self.fall_into_pit('dialogue')
             
-    def fall_into_pit(self, state):
+    def events(self):
+        # FALL INTO PIT (DAMAGE EVENT)
+        pos = (16 * TILE_SIZE + TILE_SIZE / 2, 18 * TILE_SIZE + TILE_SIZE / 3)
+        # if not self.pit_fall_happened:
+        if self.collision_manager.check_event(loc=pos, size=self.event_rect_size, req_direction='left', push=True):
+            self.pit_fall('dialogue')
+        
+        pos = (20 * TILE_SIZE + 7, -4 * TILE_SIZE + 2)
+        # HEALING EVENT (HEALTH EVENT)
+        if self.collision_manager.check_event(loc=pos, size=self.event_rect_size, req_direction='up'):
+            self.heal_pool('dialogue')
+            
+    def pit_fall(self, state):
         self.game.set_state(state)
         self.game.ui.current_dialogue = 'You fell into a pit!'
+        self.set_event(self.pit_fall.__name__)
         self.game.player.health -= 1
-        self.set_event(self.fall_into_pit.__name__)
+        
+    def heal_pool(self, state):
+        if self.game.input.interacted:
+            self.game.set_state(state)
+            self.game.ui.current_dialogue = 'You drank the water!\nYour health has been recovered.'
+            self.set_event(self.heal_pool.__name__)
+            self.game.player.health = self.game.player.max_health
