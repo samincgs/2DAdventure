@@ -18,12 +18,15 @@ class Game:
         self.tile_manager = TileManager(self)
         self.tile_manager.load_map('data/maps/world1.json')
         self.collision_manager = CollisionManager(self, self.tile_manager)
+        
         self.entities = []
         self.entities.append(Player(self, (323, 160), (8,8), 'player'))
         self.entities.append(NPC(self, (275, 150), (14, 10), 'old_wizard'))
+        
         self.player = self.entities[0]
         self.old_wizard = self.entities[-1]
         self.ui = UI(self)
+        
         self.events = Events(self, self.collision_manager)
          
         self.object_spawner = ObjectSpawner(self)

@@ -42,7 +42,7 @@ class Input:
                         self.down_pressed = True
                     if event.key == pygame.K_d:
                         self.right_pressed = True
-                    if event.key == pygame.K_f:
+                    if event.key == pygame.K_z:
                         self.interacted = True
                     if event.key == pygame.K_TAB:
                         self.debug = not self.debug
@@ -56,7 +56,7 @@ class Input:
                         self.game.ui.menu_cursor = (self.game.ui.menu_cursor - 1) % 3 
                     if event.key == pygame.K_s:
                         self.game.ui.menu_cursor = (self.game.ui.menu_cursor + 1) % 3
-                    if event.key == pygame.K_RETURN:
+                    if event.key == pygame.K_z:
                         if self.game.ui.menu_cursor == 0:
                             self.game.set_state('play')
                         elif self.game.ui.menu_cursor == 2:

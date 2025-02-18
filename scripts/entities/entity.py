@@ -55,7 +55,7 @@ class Entity:
         return movement
             
     def get_distance(self, target):
-        return math.sqrt((self.pos[0] - target.pos[0]) ** 2 + (self.pos[1] - target.pos[1]) ** 2)   
+        return math.sqrt((self.rect.center[0] - target.rect.center[0]) ** 2 + (self.rect.center[1] - target.rect.center[1]) ** 2)   
             
     def update(self, dt):
         self.set_action(dt)
