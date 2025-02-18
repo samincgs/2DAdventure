@@ -8,6 +8,7 @@ class Entity:
         self.game = game
         self.pos = list(pos)
         self.size = list(size)
+        self.type = type
         self.speed = 60
         
         self.images = None

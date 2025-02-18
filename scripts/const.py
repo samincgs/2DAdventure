@@ -14,6 +14,7 @@ WORLD_TILE_DIMENSION = WORLD_DIMENSION * TILE_SIZE
 RECT_OFFSETS = {
     'player': (4, 9),
     'old_wizard': (1, 6),
+    'knight': (2, 2),
     'key': (3, 3),
     'sneakers': (1, 5)
 }
@@ -24,7 +25,8 @@ DIALOGUES = {
                    "Welcome to this island, I don't think I have\nseen you around.", 
                    "So you've come to this island to find the\ntreasure?", 
                    "I used to be a great wizard but now I'm a bit\ntoo old to go on an adventure."
-                   ]
+                   ],
+    'knight': ["Don't talk to me stranger."]
 }
 
 

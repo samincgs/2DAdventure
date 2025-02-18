@@ -1,4 +1,3 @@
-import pygame
 import random
 
 from ..const import *
@@ -8,12 +7,15 @@ class NPC(Entity):
     def __init__(self, game, pos, size, type):
         super().__init__(game, pos, size, type)
         
-        self.direction = random.choice(['up', 'left', 'right', 'down'])
+        self.direction = 'down'
         self.images = self.game.assets.npc_imgs
         self.speed = 30
         
         self.collision_on = True
         self.last_movement = 0
+        
+        self.interact_range = 12
+        self.can_turn = True
     
     def set_action(self, dt):
         
@@ -53,7 +55,7 @@ class NPC(Entity):
             self.animation_update(dt)  
             self.game.collision_manager.check_tile(self)
         
-        if self.on_screen(self, self.game.scroll, self.game.window.display):
+        if self.on_screen(self, self.game.scroll, self.game.window.display): # check if self is on the screen
             self.game.collision_manager.check_entity(self, self.game.player)
             
         

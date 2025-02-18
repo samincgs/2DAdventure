@@ -1,6 +1,8 @@
 import pygame
 import math
 
+from scripts.entities.npc import NPC
+
 from ..const import *
 
 from .entity import Entity
@@ -22,9 +24,6 @@ class Player(Entity):
         self.last_movement = 0
         
         self.frame_motion = [0, 0]
-        
-        self.interact_range = 12
-        
         self.animation_timer = 0.14
         
     
@@ -48,6 +47,16 @@ class Player(Entity):
             movement[0] += self.speed * dt
         return movement
 
+    
+    def interact_with_npc(self, npc, turn=True):
+        dis = self.get_distance(npc)
+        if dis <= npc.interact_range:
+            if self.game.input.interacted:
+                self.game.set_state('dialogue')
+                self.game.interacted_npc = npc
+                if npc.can_turn:
+                    self.game.interacted_npc.turn_to_player(self)
+                self.game.interacted_npc.speak()
     
     def animation_update(self, dt):
         if self.game.input.pressed: 
@@ -76,16 +85,13 @@ class Player(Entity):
         self.game.collision_manager.check_tile(self)
         self.game.events.events()
         
-        if self.on_screen(self.game.old_wizard, self.game.scroll, self.game.window.display):
-            self.game.collision_manager.check_entity(self, self.game.old_wizard)
+        for entity in (npc for npc in self.game.entities if isinstance(npc, NPC)):
+            if self.on_screen(entity, self.game.scroll, self.game.window.display):
+                self.game.collision_manager.check_entity(self, entity)
+                self.interact_with_npc(entity)
             
-            dis = self.get_distance(self.game.old_wizard)
-            if dis <= self.interact_range:
-                if self.game.input.interacted:
-                    self.game.set_state('dialogue')
-                    self.game.interacted_npc = self.game.old_wizard
-                    self.game.interacted_npc.turn_to_player(self)
-                    self.game.interacted_npc.speak()
+        if self.on_screen(self.game.knight, self.game.scroll, self.game.window.display):
+            self.game.collision_manager.check_entity(self, self.game.knight)
 
     def render(self, surf, offset=(0, 0)):
         img = self.img
@@ -94,7 +100,3 @@ class Player(Entity):
         offset = self.render_offset(offset=offset)
         
         surf.blit(img, (int(self.pos[0] - offset[0]), int(self.pos[1] - offset[1])))
-
-
-
-        

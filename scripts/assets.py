@@ -8,6 +8,7 @@ class Assets:
         # self.player_imgs = load_dir(path + 'old_player')
         self.player = load_dir_list(path + 'player', alpha=True)
         self.npc_imgs = load_dir(path + 'npc')
+        self.knight_imgs = load_dir(path + 'knight')
         self.object_imgs = load_dir(path + 'objects')
         
         

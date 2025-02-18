@@ -34,13 +34,13 @@ class Input:
                     self.quit_game()
                     
                 if self.game.current_state in {self.game.game_states['play'], self.game.game_states['pause'], self.game.game_states['dialogue']}:
-                    if event.key == pygame.K_w:
+                    if event.key == pygame.K_UP:
                         self.up_pressed = True
-                    if event.key == pygame.K_a:
+                    if event.key == pygame.K_LEFT:
                         self.left_pressed = True
-                    if event.key == pygame.K_s:
+                    if event.key == pygame.K_DOWN:
                         self.down_pressed = True
-                    if event.key == pygame.K_d:
+                    if event.key == pygame.K_RIGHT:
                         self.right_pressed = True
                     if event.key == pygame.K_z:
                         self.interacted = True
@@ -52,9 +52,9 @@ class Input:
                         elif self.game.pause_state:
                             self.game.current_state = self.game.last_state 
                 else:
-                    if event.key == pygame.K_w:
+                    if event.key == pygame.K_UP:
                         self.game.ui.menu_cursor = (self.game.ui.menu_cursor - 1) % 3 
-                    if event.key == pygame.K_s:
+                    if event.key == pygame.K_DOWN:
                         self.game.ui.menu_cursor = (self.game.ui.menu_cursor + 1) % 3
                     if event.key == pygame.K_z:
                         if self.game.ui.menu_cursor == 0:
@@ -63,15 +63,15 @@ class Input:
                             self.quit_game()
                   
             if event.type == pygame.KEYUP:
-                if event.key == pygame.K_w:
+                if event.key == pygame.K_UP:
                     self.up_pressed = False
-                if event.key == pygame.K_a:
+                if event.key == pygame.K_LEFT:
                     self.left_pressed = False
-                if event.key == pygame.K_s:
+                if event.key == pygame.K_DOWN:
                     self.down_pressed = False
-                if event.key == pygame.K_d:
+                if event.key == pygame.K_RIGHT:
                     self.right_pressed = False
-                if event.key == pygame.K_f:
+                if event.key == pygame.K_z:
                     self.interacted = False
                 if event.key == pygame.K_RETURN:
                     self.enter_pressed = False

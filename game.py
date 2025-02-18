@@ -1,10 +1,11 @@
-from scripts.entities.npc import NPC
+from scripts.entities.old_wizard import OldWizard
 from scripts.events import Events
 from scripts.window import Window
 from scripts.input import Input
 from scripts.assets import Assets
 from scripts.ui import UI
 from scripts.entities.player import Player
+from scripts.entities.knight import Knight
 from scripts.tile_manager import TileManager
 from scripts.collisions import CollisionManager
 from scripts.object_spawner import ObjectSpawner
@@ -18,18 +19,16 @@ class Game:
         self.tile_manager = TileManager(self)
         self.tile_manager.load_map('data/maps/world1.json')
         self.collision_manager = CollisionManager(self, self.tile_manager)
+        self.ui = UI(self)
+        self.events = Events(self, self.collision_manager)
+        self.object_spawner = ObjectSpawner(self)
         
         self.entities = []
-        self.entities.append(Player(self, (323, 160), (8,8), 'player'))
-        self.entities.append(NPC(self, (275, 150), (14, 10), 'old_wizard'))
+        self.load_entities()
+       
         
-        self.player = self.entities[0]
-        self.old_wizard = self.entities[-1]
-        self.ui = UI(self)
         
-        self.events = Events(self, self.collision_manager)
          
-        self.object_spawner = ObjectSpawner(self)
         
         self.scroll = [0, 0]
         self.game_states = {'play': 0, 'pause': 1, 'dialogue': 2, 'menu': 3}
@@ -39,6 +38,18 @@ class Game:
         self.interacted_npc = None
         self.current_event = None
 
+    def load_entities(self):
+        self.entities.append(Player(self, (323, 160), (8,8), 'player'))
+        self.player = self.entities[0]
+        
+        self.entities.append(OldWizard(self, (275, 150), (14, 10), 'old_wizard'))
+        self.old_wizard = self.entities[1]
+        
+        self.entities.append(Knight(self, (404, 367), (12, 14), 'knight'))
+        self.knight = self.entities[2]
+        
+    
+    
     @property
     def play_state(self):
         return self.current_state == self.game_states['play']

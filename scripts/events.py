@@ -15,9 +15,9 @@ class Events:
     def events(self):
         # FALL INTO PIT (DAMAGE EVENT)
         pos = (16 * TILE_SIZE + TILE_SIZE / 2, 18 * TILE_SIZE + TILE_SIZE / 3)
-        # if not self.pit_fall_happened:
-        if self.collision_manager.check_event(loc=pos, size=self.event_rect_size, req_direction='left', push=True):
-            self.pit_fall('dialogue')
+        if not self.pit_fall_happened:
+            if self.collision_manager.check_event(loc=pos, size=self.event_rect_size, req_direction='left', push=True):
+                self.pit_fall('dialogue')
         
         pos = (20 * TILE_SIZE + 7, -4 * TILE_SIZE + 2)
         # HEALING EVENT (HEALTH EVENT)
