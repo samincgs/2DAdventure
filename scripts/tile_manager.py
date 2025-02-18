@@ -11,6 +11,8 @@ class TileManager:
         self.tile_assets = load_dir_list('data/images/tiles')
         
         self.tile_map = {} # '5;3: {'type': '', 'var}
+        
+        self.load_map('data/maps/world1.json')
                              
     def get_nearby_rects(self, pos):
         rects = []
@@ -59,7 +61,7 @@ class TileManager:
             loc = (tile['pos'][0] - offset[0], tile['pos'][1] - offset[1])
             surf.blit(img, loc)
                 
-    def render_editor(self, surf, offset=(0, 0)): # assume new_tile_size is smaller than usual tile size
+    def render_editor(self, surf, offset=(0, 0)): 
         for tile_loc in self.tile_map:
             tile = self.tile_map[tile_loc]
             img = self.tile_assets[tile['type']][tile['variant']].copy()

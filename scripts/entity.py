@@ -28,9 +28,6 @@ class Entity:
         
         self.action_counter = 0
         
-        self.dialogues = DIALOGUES[type] if type in DIALOGUES else []
-        self.dialogue_index = 0
-        
     @property
     def img(self):
         img = self.images[self.direction + '_' + str(self.frame_index)]
@@ -61,9 +58,7 @@ class Entity:
     def update(self, dt):
         self.set_action(dt)
         movement = self.move(dt)
-        
-        self.pos[0] += movement[0]
-        self.pos[1] += movement[1]
+        return movement
         
     def set_action(self, dt):
         pass

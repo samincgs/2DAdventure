@@ -14,14 +14,13 @@ from scripts.const import *
 class Game:
     def __init__(self):
         self.window = Window(self)
-        self.input = Input(self)
+        self.state = State(self)
+        self.input = Input(self, self.state)
         self.assets = Assets()
         self.tile_manager = TileManager(self)
-        self.tile_manager.load_map('data/maps/world1.json')
         self.collision_manager = CollisionManager(self, self.tile_manager)
-        self.ui = UI(self)
-        self.state = State(self)
-        self.events = Events(self, self.collision_manager)
+        self.ui = UI(self, self.state)
+        self.events = Events(self, self.state, self.collision_manager)
         
         self.entities = []
         self.load_entities()
@@ -44,26 +43,20 @@ class Game:
             
             self.window.create(self.ui)
             self.input.update()
-            self.state.update()
+            self.state.track_last_state()
             
             if self.state.ingame_state:
                 self.scroll[0] += (self.player.rect.centerx - surf.get_width() // 2 - self.scroll[0]) 
                 self.scroll[1] += (self.player.rect.centery - surf.get_height() // 2 - self.scroll[1]) 
-
                 render_scroll = (int(self.scroll[0]), int(self.scroll[1]))
+
                 self.tile_manager.render_visible(surf, offset=render_scroll)
                 
-                if self.state.play_state:
+                if self.state.play_state: 
                     for entity in self.entities:
                         entity.update(self.window.dt)
                 elif self.state.dialogue_state:
-                    if self.state.interacted_npc:
-                        self.state.interacted_npc.continue_dialogue()
-                    if self.state.current_event:
-                        
-                        if self.input.interacted:
-                            self.state.return_to_play_state()
-                    print(self.state.current_event, self.state.interacted_npc)
+                    self.state.track_event_and_dialogues()
                 
                 for entity in sorted(self.entities, key=lambda x: x.pos[1]): # sprite ordering
                     entity.render(surf, offset=render_scroll)

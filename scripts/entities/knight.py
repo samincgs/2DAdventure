@@ -8,6 +8,6 @@ class Knight(NPC):
         
         self.interact_range = 13
         self.can_turn = False
+        self.can_move = False
         
-    def update(self, dt):
-        pass
+    

@@ -37,7 +37,16 @@ class State:
         self.set_state('play')
         self.current_event = None
         self.interacted_npc = None
-        
-    def update(self):
+    
+    def track_last_state(self):
         if not self.pause_state:
             self.last_state = self.current_state
+        
+    def update(self):
+        pass
+                        
+    def track_event_and_dialogues(self):
+        if self.interacted_npc:
+            self.interacted_npc.continue_dialogue()
+        if self.current_event and self.game.input.interacted:
+            self.return_to_play_state()

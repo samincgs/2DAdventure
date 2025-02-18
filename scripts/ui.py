@@ -4,10 +4,12 @@ from .font import Font
 from .const import *
 
 class UI:
-    def __init__(self, game):
+    def __init__(self, game, state):
         self.game = game
+        self.state = state
+        
         self.font = Font(FONT_PATH + 'small_font.png')
-        self.maru_monica_font = pygame.font.Font('data/fonts/marumonica.ttf', 28)
+        self.maru_monica_font = pygame.font.Font('data/fonts/marumonica.ttf', 30)
         self.byte_bounce_font = pygame.font.Font('data/fonts/ByteBounce.ttf', 84)
         self.byte_bounce_font2 = pygame.font.Font('data/fonts/ByteBounce.ttf', 48)
         
@@ -56,20 +58,20 @@ class UI:
         surf.blit(char_img, (DISPLAY_WIDTH // 2 - char_img.get_width() / 2, DISPLAY_HEIGHT // 2 - char_img.get_height() / 2 - 20))
     
     def render(self, surf):
-        if self.game.state.menu_state:  #MENU STATE
+        if self.state.menu_state:  #MENU STATE
             self.draw_menu_character(surf)
-        elif self.game.state.play_state: #PLAY STATE
+        elif self.state.play_state: #PLAY STATE
             # render hearts
             self.draw_player_hearts(surf)
-        elif self.game.state.pause_state:
+        elif self.state.pause_state:
             pause_text = 'PAUSED'
             self.font.render(surf, pause_text, (DISPLAY_WIDTH // 2 - self.font.width(pause_text) // 2, DISPLAY_HEIGHT // 2 - 30 - self.font.base_size[1]))
-        elif self.game.state.dialogue_state:
+        elif self.state.dialogue_state:
             self.draw_player_hearts(surf)
             self.draw_dialogue(surf)
                 
     def render_font(self, surf):
-        if self.game.state.menu_state:
+        if self.state.menu_state:
             title_text = self.byte_bounce_font.render('Adventure Game', False, (255, 255, 255))
             shadow_title_text = self.byte_bounce_font.render('Adventure Game', False, 'gray')
             
@@ -99,7 +101,7 @@ class UI:
             if self.menu_cursor == 2:
                 surf.blit(self.byte_bounce_font2.render('>', False, (255, 255, 255)), (text_pos[0] - 30, text_pos[1]))
             
-        elif self.game.state.dialogue_state:
+        elif self.state.dialogue_state:
             if self.current_dialogue:
                 dialogue_text = self.maru_monica_font.render(self.current_dialogue, False, (255, 255, 255))
                 surf.blit(dialogue_text, (130, 50))

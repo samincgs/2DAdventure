@@ -1,8 +1,9 @@
 from .const import *
 
 class Events:
-    def __init__(self, game, collision_manager):
+    def __init__(self, game, state, collision_manager):
         self.game = game
+        self.state = state
         self.collision_manager = collision_manager
         
         self.event_rect_size = 4
@@ -10,7 +11,7 @@ class Events:
         self.pit_fall_happened = False
 
     def set_event(self, event_name):
-        self.game.state.current_event = event_name
+        self.state.current_event = event_name
             
     def events(self):
         # FALL INTO PIT (DAMAGE EVENT)
@@ -26,14 +27,18 @@ class Events:
             self.heal_pool('dialogue')
             
     def pit_fall(self, state):
-        self.game.state.set_state(state)
+        self.state.set_state(state)
         self.game.ui.current_dialogue = 'You fell into a pit!'
         self.set_event(self.pit_fall.__name__)
-        self.game.player.health -= 1
+        
+        # functionality
+        self.game.player.health -= 2
         
     def heal_pool(self, state):
         if self.game.input.interacted:
-            self.game.state.set_state(state)
+            self.state.set_state(state)
             self.game.ui.current_dialogue = 'You drank the water!\nYour health has been recovered.'
             self.set_event(self.heal_pool.__name__)
+            
+            # functionality
             self.game.player.health = self.game.player.max_health
