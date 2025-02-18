@@ -56,20 +56,20 @@ class UI:
         surf.blit(char_img, (DISPLAY_WIDTH // 2 - char_img.get_width() / 2, DISPLAY_HEIGHT // 2 - char_img.get_height() / 2 - 20))
     
     def render(self, surf):
-        if self.game.current_state == self.game.game_states['menu']:  #MENU STATE
+        if self.game.state.menu_state:  #MENU STATE
             self.draw_menu_character(surf)
-        elif self.game.current_state == self.game.game_states['play']: #PLAY STATE
+        elif self.game.state.play_state: #PLAY STATE
             # render hearts
             self.draw_player_hearts(surf)
-        elif self.game.current_state == self.game.game_states['pause']:
+        elif self.game.state.pause_state:
             pause_text = 'PAUSED'
             self.font.render(surf, pause_text, (DISPLAY_WIDTH // 2 - self.font.width(pause_text) // 2, DISPLAY_HEIGHT // 2 - 30 - self.font.base_size[1]))
-        elif self.game.current_state == self.game.game_states['dialogue']:
+        elif self.game.state.dialogue_state:
             self.draw_player_hearts(surf)
             self.draw_dialogue(surf)
                 
     def render_font(self, surf):
-        if self.game.current_state == self.game.game_states['menu']:
+        if self.game.state.menu_state:
             title_text = self.byte_bounce_font.render('Adventure Game', False, (255, 255, 255))
             shadow_title_text = self.byte_bounce_font.render('Adventure Game', False, 'gray')
             
@@ -99,7 +99,7 @@ class UI:
             if self.menu_cursor == 2:
                 surf.blit(self.byte_bounce_font2.render('>', False, (255, 255, 255)), (text_pos[0] - 30, text_pos[1]))
             
-        elif self.game.current_state == self.game.game_states['dialogue']:
+        elif self.game.state.dialogue_state:
             if self.current_dialogue:
                 dialogue_text = self.maru_monica_font.render(self.current_dialogue, False, (255, 255, 255))
                 surf.blit(dialogue_text, (130, 50))

@@ -31,9 +31,8 @@ class Input:
                 self.quit_game()
             if event.type == pygame.KEYDOWN:
                 if event.key == pygame.K_ESCAPE:
-                    self.quit_game()
-                    
-                if self.game.current_state in {self.game.game_states['play'], self.game.game_states['pause'], self.game.game_states['dialogue']}:
+                    self.quit_game()  
+                if self.game.state.ingame_state:
                     if event.key == pygame.K_UP:
                         self.up_pressed = True
                     if event.key == pygame.K_LEFT:
@@ -47,10 +46,10 @@ class Input:
                     if event.key == pygame.K_TAB:
                         self.debug = not self.debug
                     if event.key == pygame.K_p:
-                        if self.game.play_state or self.game.dialogue_state:
-                            self.game.set_state('pause')
-                        elif self.game.pause_state:
-                            self.game.current_state = self.game.last_state 
+                        if self.game.state.play_state or self.game.state.dialogue_state:
+                            self.game.state.set_state('pause')
+                        elif self.game.state.pause_state:
+                            self.game.state.current_state = self.game.state.last_state 
                 else:
                     if event.key == pygame.K_UP:
                         self.game.ui.menu_cursor = (self.game.ui.menu_cursor - 1) % 3 
@@ -58,7 +57,7 @@ class Input:
                         self.game.ui.menu_cursor = (self.game.ui.menu_cursor + 1) % 3
                     if event.key == pygame.K_z:
                         if self.game.ui.menu_cursor == 0:
-                            self.game.set_state('play')
+                            self.game.state.set_state('play')
                         elif self.game.ui.menu_cursor == 2:
                             self.quit_game()
                   

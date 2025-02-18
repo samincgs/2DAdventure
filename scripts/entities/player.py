@@ -5,7 +5,7 @@ from scripts.entities.npc import NPC
 
 from ..const import *
 
-from .entity import Entity
+from ..entity import Entity
 
 class Player(Entity):
     def __init__(self, game, pos, size, type):        
@@ -52,11 +52,10 @@ class Player(Entity):
         dis = self.get_distance(npc)
         if dis <= npc.interact_range:
             if self.game.input.interacted:
-                self.game.set_state('dialogue')
-                self.game.interacted_npc = npc
-                if npc.can_turn:
-                    self.game.interacted_npc.turn_to_player(self)
-                self.game.interacted_npc.speak()
+                self.game.state.set_state('dialogue')
+                if npc.can_turn: npc.turn_to_player(self)
+                npc.speak()
+                self.game.state.interacted_npc = npc
     
     def animation_update(self, dt):
         if self.game.input.pressed: 

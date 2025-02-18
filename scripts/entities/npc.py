@@ -1,7 +1,7 @@
 import random
 
 from ..const import *
-from .entity import Entity
+from ..entity import Entity
 
 class NPC(Entity):
     def __init__(self, game, pos, size, type):
@@ -33,7 +33,7 @@ class NPC(Entity):
             self.dialogue_index += 1
             if self.dialogue_index >= len(self.dialogues):
                 self.dialogue_index = 0
-                self.game.return_to_play_state()
+                self.game.state.return_to_play_state()
                 return
             self.speak()
     

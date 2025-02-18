@@ -1,23 +1,28 @@
 import pygame
 
+from ..entity import Entity
 from ..const import *
 
 
-class Object:
-    def __init__(self, game, pos, name, size=(16, 16)):
+class Object(Entity):
+    def __init__(self, game, pos, type, size=(16,16)):
         self.game = game
         self.pos = list(pos)
-        self.name = name
+        self.type = type
         self.size = list(size)
-        self.img = self.game.assets.object_imgs[self.name]
-        self.img_states = None
-        self.collision_on = False
         
-        self.rect_offset = RECT_OFFSETS[name] if name in RECT_OFFSETS else (0, 0)
+        self.img_states = None
+        
+    @property
+    def img(self):
+        return self.game.assets.object_imgs[self.type]
         
     @property
     def rect(self):
         return pygame.Rect(self.pos[0] + self.rect_offset[0], self.pos[1] + self.rect_offset[1], self.size[0], self.size[1])
+    
+    def update(self):
+        pass
     
     def render(self, surf, offset=(0, 0)):
         # pygame.draw.rect(surf, WHITE, pygame.Rect(self.rect.x - offset[0], self.rect.y - offset[1], *self.size), 1)

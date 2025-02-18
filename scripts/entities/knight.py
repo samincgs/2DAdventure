@@ -1,4 +1,3 @@
-import pygame
 from .npc import NPC
 
 
