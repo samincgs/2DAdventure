@@ -33,16 +33,9 @@ class Game:
         self.player = self.entities[-1]
         
         self.entities.append(OldWizard(self, (275, 150), (14, 10), 'old_wizard'))
-        self.old_wizard = self.entities[-1]
-        
         self.entities.append(Knight(self, (404, 367), (12, 14), 'knight'))
-        self.knight = self.entities[-1] 
-        
         self.entities.append(GreenSlime(self, (624, 144), (11, 10), 'green_slime'))
-        self.knight = self.entities[-1] 
         
-        
-
     def run(self):
         while True:
             surf = self.window.display   

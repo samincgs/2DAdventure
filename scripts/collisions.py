@@ -76,6 +76,8 @@ class CollisionManager:
     
     def check_entity(self, entity, other):
         
+        collided_entity = None
+        
         other_rect = [pygame.Rect(*other.rect)]
         collisions = self.collision_test(entity.rect, other_rect)
         temp_rect = entity.rect
@@ -86,6 +88,7 @@ class CollisionManager:
             elif entity.direction == 'left':
                 temp_rect.left = collision_rect.right  
             entity.pos[0] = temp_rect.x
+            collided_entity = other
             
         other_rect = [pygame.Rect(*other.rect)]
         collisions = self.collision_test(entity.rect, other_rect)
@@ -97,6 +100,9 @@ class CollisionManager:
             elif entity.direction == 'down':
                 temp_rect.bottom = collision_rect.top  
             entity.pos[1] = temp_rect.y
+            collided_entity = other
+            
+        return collided_entity
             
     def check_event(self, loc, size, req_direction='any', push=False):
         rect = pygame.Rect(loc[0], loc[1], size, size)

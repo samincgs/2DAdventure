@@ -17,6 +17,7 @@ class Entity:
         self.max_health = 3
         self.health = self.max_health
         
+        self.animation_timer = 0.15
         self.frame_index = 0 # spriteCounter
         self.frame_num = 0
         
@@ -48,7 +49,8 @@ class Entity:
         elif self.direction == 'right':
             movement[0] += self.speed * dt
         return movement
-            
+        
+    #√(x2 - x1)^2 + (y2 - y1)^2
     def get_distance(self, target):
         return math.sqrt((self.rect.center[0] - target.rect.center[0]) ** 2 + (self.rect.center[1] - target.rect.center[1]) ** 2)   
             
@@ -63,11 +65,13 @@ class Entity:
     def speak(self):
         pass
     
-    def animation_update(self, dt):
+    def animation_update(self, dt): #TODO: fix
         self.frame_num += dt
-        if self.frame_num > 0.15:
-            self.frame_index = 0 if self.frame_index == 1 else 0
+        if self.frame_num > self.animation_timer:
+            self.frame_index += 1
             self.frame_num = 0
+            if self.frame_index >= len(self.images[self.direction]):
+                self.frame_index = 0
         
     def render_offset(self, offset=(0, 0)):
         offset = list(offset)

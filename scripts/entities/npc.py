@@ -21,6 +21,7 @@ class NPC(Entity):
         self.can_turn = True
         
         self.action_counter = 0
+        self.action_cooldown = 2
         
         self.movement_timer = 0
         self.movement_cooldown = 3
@@ -30,7 +31,7 @@ class NPC(Entity):
         
         self.action_counter += dt
         
-        if self.action_counter >= 2:
+        if self.action_counter >= self.action_cooldown:
             self.direction = random.choice(['up', 'left', 'right', 'down'])
             self.action_counter = 0
     

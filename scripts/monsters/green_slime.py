@@ -9,5 +9,7 @@ class GreenSlime(Entity):
         self.max_health = 4
         self.health = self.max_health
         
+        self.animation_timer = 0.18
+        
     def update(self, dt):
-        pass
+        self.animation_update(dt)

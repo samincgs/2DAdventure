@@ -5,12 +5,13 @@ class Assets:
     def __init__(self, path='data/images/'):
         self.path = path
         
+        entity_path = path + 'entities/'
         
         # self.player_imgs = load_dir(path + 'old_player')
-        self.player = load_dir_list(path + 'player', alpha=True)
-        self.npc = load_dir_list(path + 'npc', alpha=True)
-        self.knight = load_dir_list(path + 'knight', alpha=True)
-        self.slime = load_dir_list(path + 'slime', alpha=True)
+        self.player = load_dir_list(entity_path + 'player', alpha=True)
+        self.old_wizard = load_dir_list(entity_path + 'old_wizard', alpha=True)
+        self.knight = load_dir_list(entity_path + 'knight', alpha=True)
+        self.slime = load_dir_list(entity_path + 'slime', alpha=True)
         
         self.objects = load_dir(path + 'objects', alpha=True)
         

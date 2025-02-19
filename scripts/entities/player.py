@@ -23,7 +23,7 @@ class Player(Entity):
         self.last_movement = 0
         
         self.frame_motion = [0, 0]
-        self.animation_timer = 0.14
+        self.animation_timer = 0.13
         
     def move(self, dt):
         movement = [0, 0]
@@ -53,12 +53,7 @@ class Player(Entity):
     
     def animation_update(self, dt):
         if self.game.input.pressed: 
-            self.frame_num += dt
-            if self.frame_num > self.animation_timer:
-                self.frame_index += 1
-                self.frame_num = 0
-                if self.frame_index >= len(self.images[self.direction]):
-                    self.frame_index = 0
+            super().animation_update(dt)
         else:
             self.frame_num = 0
             self.frame_index = 0
@@ -78,13 +73,12 @@ class Player(Entity):
         self.game.collision_manager.check_tile(self)
         self.game.events.events()
         
-        for entity in (npc for npc in self.game.entities if isinstance(npc, NPC)):
+        for entity in (npc for npc in self.game.entities if npc.type != 'player'):
             if self.on_screen(entity, self.game.scroll, self.game.window.display):
                 self.game.collision_manager.check_entity(self, entity)
-                self.interact_with_npc(entity)
-            
-        if self.on_screen(self.game.knight, self.game.scroll, self.game.window.display):
-            self.game.collision_manager.check_entity(self, self.game.knight)
+                if isinstance(entity, NPC):
+                    self.interact_with_npc(entity)
+        
 
     def render(self, surf, offset=(0, 0)):
         super().render(surf, offset=offset)

@@ -1,6 +1,5 @@
 from .npc import NPC
 
-
 class Knight(NPC):
     def __init__(self, game, pos, size, type):
         super().__init__(game, pos, size, type)        
