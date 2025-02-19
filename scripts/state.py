@@ -3,7 +3,8 @@ class State:
         self.game = game
         
         self.game_states = {'play': 0, 'pause': 1, 'dialogue': 2, 'menu': 3}
-        self.current_state = self.game_states['menu']
+        # self.current_state = self.game_states['menu']
+        self.current_state = self.game_states['play']
         
         self.last_state = self.current_state
         

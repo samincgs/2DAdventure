@@ -16,6 +16,9 @@ class GreenSlime(Entity):
         self.action_cooldown = 3
         
         self.damage_amt = 1
+    
+    def set_action(self, dt):
+        super().set_action(dt)
         
     def update(self, dt):
         self.animation_update(dt)

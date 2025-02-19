@@ -29,7 +29,7 @@ class Game:
         self.scroll = [0, 0]
 
     def load_entities(self):
-        self.entities.append(Player(self, (323, 350), (8,8), 'player'))
+        self.entities.append(Player(self, (326, 165), (8,8), 'player'))
         self.player = self.entities[-1]
         
         self.entities.append(OldWizard(self, (275, 150), (14, 10), 'old_wizard'))

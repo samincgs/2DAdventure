@@ -83,4 +83,4 @@ class Input:
             print(f"SCROLL: {self.game.scroll}")            
             print(f"FPS: {self.game.window.clock.get_fps()}") 
             print("-" * 40)
-    
+            

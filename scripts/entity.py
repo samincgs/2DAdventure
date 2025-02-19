@@ -98,12 +98,17 @@ class Entity:
         return offset
     
     def render(self, surf, offset=(0, 0)):
-        if self.game.input.debug:
-            pygame.draw.rect(surf, WHITE, pygame.Rect(self.rect.x - offset[0], self.rect.y - offset[1], self.rect.size[0], self.rect.size[1])) #debug
+        # if self.game.input.debug:
+        #     pygame.draw.rect(surf, WHITE, pygame.Rect(self.rect.x - offset[0], self.rect.y - offset[1], self.rect.size[0], self.rect.size[1])) #debug
             
         img = self.img.copy()
         if self.invincible:
-            img.set_alpha(150)
+            if self.invincible_counter % 0.20 <= 0.1:
+                img.set_alpha(120)
+            else:
+                img.set_alpha(255)
+        
+        # add invincibility visibility
         offset = self.render_offset(offset=offset)
         surf.blit(img, (int(self.pos[0] - offset[0]), int(self.pos[1] - offset[1])))
     

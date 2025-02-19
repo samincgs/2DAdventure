@@ -81,6 +81,5 @@ class Player(Entity):
                 self.invincible = False
                 self.invincible_counter = 0
         
-
     def render(self, surf, offset=(0, 0)):
         super().render(surf, offset=offset)
