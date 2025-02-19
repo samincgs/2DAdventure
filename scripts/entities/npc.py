@@ -8,7 +8,6 @@ class NPC(Entity):
         super().__init__(game, pos, size, type)
         
         self.direction = 'down'
-        self.images = self.game.assets.npc_imgs
         self.speed = 30
         
         self.dialogues = DIALOGUES[type] if type in DIALOGUES else []
@@ -20,6 +19,8 @@ class NPC(Entity):
         self.interact_range = 12
         self.can_move = True
         self.can_turn = True
+        
+        self.action_counter = 0
         
         self.movement_timer = 0
         self.movement_cooldown = 3

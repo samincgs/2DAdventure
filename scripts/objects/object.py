@@ -15,7 +15,7 @@ class Object(Entity):
         
     @property
     def img(self):
-        return self.game.assets.object_imgs[self.type]
+        return self.game.assets.objects[self.type]
         
     @property
     def rect(self):

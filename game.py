@@ -9,6 +9,7 @@ from scripts.ui import UI
 from scripts.entities.old_wizard import OldWizard
 from scripts.entities.player import Player
 from scripts.entities.knight import Knight
+from scripts.monsters.green_slime import GreenSlime
 from scripts.const import *
 
 class Game:
@@ -36,6 +37,11 @@ class Game:
         
         self.entities.append(Knight(self, (404, 367), (12, 14), 'knight'))
         self.knight = self.entities[-1] 
+        
+        self.entities.append(GreenSlime(self, (624, 144), (11, 10), 'green_slime'))
+        self.knight = self.entities[-1] 
+        
+        
 
     def run(self):
         while True:

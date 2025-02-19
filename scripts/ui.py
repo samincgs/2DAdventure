@@ -9,7 +9,7 @@ class UI:
         self.state = state
         
         self.font = Font(FONT_PATH + 'small_font.png')
-        self.maru_monica_font = pygame.font.Font('data/fonts/marumonica.ttf', 30)
+        self.maru_monica_font = pygame.font.Font('data/fonts/marumonica.ttf', 28)
         self.byte_bounce_font = pygame.font.Font('data/fonts/ByteBounce.ttf', 84)
         self.byte_bounce_font2 = pygame.font.Font('data/fonts/ByteBounce.ttf', 48)
         
@@ -33,9 +33,9 @@ class UI:
         surf.blit(dialogue_surf, (dialogue_size_x, dialogue_size_y))
     
     def draw_player_hearts(self, surf):
-        full_heart_img = self.game.assets.object_imgs['full_heart']
-        half_heart_img = self.game.assets.object_imgs['half_heart']
-        empty_heart_img = self.game.assets.object_imgs['empty_heart']
+        full_heart_img = self.game.assets.objects['full_heart']
+        half_heart_img = self.game.assets.objects['half_heart']
+        empty_heart_img = self.game.assets.objects['empty_heart']
         
         total_hearts = self.game.player.max_health / 2
         player_hearts = self.game.player.health

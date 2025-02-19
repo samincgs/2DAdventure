@@ -11,13 +11,13 @@ class Entity:
         self.type = type
         self.speed = 60
         
-        self.images = None
-        self.direction = None
+        self.images = getattr(self.game.assets, type, None)
+        self.direction = 'down'
         
         self.max_health = 3
         self.health = self.max_health
         
-        self.frame_index = 1 # spriteCounter
+        self.frame_index = 0 # spriteCounter
         self.frame_num = 0
         
         self.last_movement = 0
@@ -26,12 +26,9 @@ class Entity:
         
         self.rect_offset = RECT_OFFSETS[type] if type in RECT_OFFSETS else (0, 0)
         
-        self.action_counter = 0
-        
     @property
     def img(self):
-        img = self.images[self.direction + '_' + str(self.frame_index)]
-        return img
+        return self.images[self.direction][self.frame_index]
     
     @property
     def rect(self):
@@ -69,7 +66,7 @@ class Entity:
     def animation_update(self, dt):
         self.frame_num += dt
         if self.frame_num > 0.15:
-            self.frame_index = 1 if self.frame_index == 2 else 2
+            self.frame_index = 0 if self.frame_index == 1 else 0
             self.frame_num = 0
         
     def render_offset(self, offset=(0, 0)):
@@ -80,8 +77,9 @@ class Entity:
         return offset
     
     def render(self, surf, offset=(0, 0)):
+        img = self.img
         if self.game.input.debug:
             pygame.draw.rect(surf, WHITE, pygame.Rect(self.rect.x - offset[0], self.rect.y - offset[1], self.rect.size[0], self.rect.size[1])) #debug
         offset = self.render_offset(offset=offset)
-        surf.blit(self.img, (int(self.pos[0] - offset[0]), int(self.pos[1] - offset[1])))
+        surf.blit(img, (int(self.pos[0] - offset[0]), int(self.pos[1] - offset[1])))
     

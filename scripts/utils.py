@@ -13,7 +13,7 @@ def load_img(path, colorkey=None, alpha=False):
 def load_imgs(path, colorkey=None, alpha=False):
     tiles = []
     for file in sorted(os.listdir(path)):
-        img = load_img(path + '/' + file, alpha=True)
+        img = load_img(path + '/' + file, colorkey=colorkey, alpha=True)
         tiles.append(img)
     return tiles
 
@@ -22,7 +22,7 @@ def load_dir(path, colorkey=None, alpha=False):
     tiles = {}
     for file in sorted(os.listdir(path)):
         name = file.split('.')[0]
-        img = load_img(path + '/' + file, alpha=True)
+        img = load_img(path + '/' + file, colorkey=colorkey, alpha=alpha)
         tiles[name] = img
     return tiles
 
@@ -35,6 +35,7 @@ def load_dir_list(path, colorkey=None, alpha=False):
             image_dir[folder].append(load_img(os.path.join(path, folder, img), colorkey, alpha))                                       
     return image_dir
 
+# load all sound files from a dict into a dict
 def load_sounds(path):
     tiles = {}
     for file in sorted(os.listdir(path)):
@@ -43,12 +44,14 @@ def load_sounds(path):
         tiles[name] = sound
     return tiles
 
+# load a json file and return its data
 def load_json(path):
     f = open(path)
     map_data = json.load(fp=f)
     f.close()
     return map_data
 
+# open a file and save data into the file
 def save_json(path, data):
     f = open(path, 'w')
     json.dump(data, fp=f)
@@ -79,7 +82,7 @@ def clip(surf, loc, size):
     clipped_rect = pygame.Rect(loc[0], loc[1], size[0], size[1])
     main_surf.set_clip(clipped_rect)
     img = main_surf.subsurface(main_surf.get_clip())
-    return img.copy()
+    return img
 
 # do a color swap, between an old and new color
 def palette_swap(img, old_color, new_color):

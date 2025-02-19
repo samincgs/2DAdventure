@@ -15,6 +15,7 @@ RECT_OFFSETS = {
     'player': (4, 9),
     'old_wizard': (1, 6),
     'knight': (2, 2),
+    'green_slime': (2, 6),
     'key': (3, 3),
     'sneakers': (1, 5)
 }

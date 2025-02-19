@@ -143,7 +143,11 @@ class Editor:
             text_h += 12
 
     
-            text = f'pos: [{str(tile_pos[0])},{str(tile_pos[1])}]'
+            text = f'grid pos: [{str(tile_pos[0])},{str(tile_pos[1])}]'
+            self.render_text(text=text, loc=(WIDTH - self.white_font.width(text, extra_space=3), text_h))
+            text_h += 12
+            
+            text = f'pos: [{str(tile_loc[0])},{str(tile_loc[1])}]'
             self.render_text(text=text, loc=(WIDTH - self.white_font.width(text, extra_space=3), text_h))
             text_h += 12
             

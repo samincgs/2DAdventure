@@ -12,7 +12,6 @@ class Player(Entity):
         super().__init__(game, pos, size, type)
         
         self.direction = 'down'
-        self.images = self.game.assets.player
         self.speed = 110
         
         self.max_health = 6 # 2 health equals one whole heart, 1 equals half heart
@@ -26,11 +25,6 @@ class Player(Entity):
         self.frame_motion = [0, 0]
         self.animation_timer = 0.14
         
-    
-    @property
-    def img(self):
-        return self.images[self.direction][self.frame_index]
-    
     def move(self, dt):
         movement = [0, 0]
         if self.game.input.up_pressed:
@@ -93,9 +87,4 @@ class Player(Entity):
             self.game.collision_manager.check_entity(self, self.game.knight)
 
     def render(self, surf, offset=(0, 0)):
-        img = self.img
-        if self.game.input.debug:
-            pygame.draw.rect(surf, WHITE, pygame.Rect(self.rect.x - offset[0], self.rect.y - offset[1], self.rect.size[0], self.rect.size[1])) #debug
-        offset = self.render_offset(offset=offset)
-        
-        surf.blit(img, (int(self.pos[0] - offset[0]), int(self.pos[1] - offset[1])))
+        super().render(surf, offset=offset)
