@@ -29,13 +29,15 @@ class Game:
         self.scroll = [0, 0]
 
     def load_entities(self):
-        self.entities.append(Player(self, (323, 160), (8,8), 'player'))
+        self.entities.append(Player(self, (323, 350), (8,8), 'player'))
         self.player = self.entities[-1]
         
         self.entities.append(OldWizard(self, (275, 150), (14, 10), 'old_wizard'))
         self.entities.append(Knight(self, (404, 367), (12, 14), 'knight'))
-        self.entities.append(GreenSlime(self, (624, 144), (11, 10), 'green_slime'))
-        
+        self.entities.append(GreenSlime(self, (624, 358), (11, 10), 'green_slime')) # 624
+        self.entities.append(GreenSlime(self, (624, 358), (11, 10), 'green_slime')) # 624
+        self.entities.append(GreenSlime(self, (624, 358), (11, 10), 'green_slime')) # 624
+
     def run(self):
         while True:
             surf = self.window.display   

@@ -1,5 +1,3 @@
-import random
-
 from ..const import *
 from ..entity import Entity
 
@@ -19,22 +17,11 @@ class NPC(Entity):
         self.interact_range = 12
         self.can_move = True
         self.can_turn = True
-        
-        self.action_counter = 0
-        self.action_cooldown = 2
-        
+         
         self.movement_timer = 0
         self.movement_cooldown = 3
         self.keep_moving = 4
-    
-    def set_action(self, dt):
         
-        self.action_counter += dt
-        
-        if self.action_counter >= self.action_cooldown:
-            self.direction = random.choice(['up', 'left', 'right', 'down'])
-            self.action_counter = 0
-    
     def speak(self):
         self.game.ui.current_dialogue = self.dialogues[self.dialogue_index]
              

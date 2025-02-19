@@ -7,4 +7,7 @@ class Knight(NPC):
         self.can_turn = False
         self.can_move = False
         
+    def update(self, dt):
+        pass
+        
     

@@ -32,18 +32,13 @@ class CollisionManager:
                 temp_rect.right = collision_rect.left  
             elif entity.direction == 'left':
                 temp_rect.left = collision_rect.right  
-            entity.pos[0] = temp_rect.x
-            
-        tiles = self.tile_manager.get_nearby_rects(entity.pos)
-        temp_rect = entity.rect
-        collisions = self.collision_test(temp_rect, tiles)
-        
-        for collision_rect in collisions:
-            if entity.direction == 'up':
+            elif entity.direction == 'up':
                 temp_rect.top = collision_rect.bottom  
             elif entity.direction == 'down':
                 temp_rect.bottom = collision_rect.top      
-            entity.pos[1] = temp_rect.y
+            entity.pos = [temp_rect.x, temp_rect.y]
+            return
+            
         
     def check_object(self, entity):
         
@@ -58,49 +53,36 @@ class CollisionManager:
                     temp_rect.right = collision_obj.rect.left
                 elif entity.direction == 'left':
                     temp_rect.left = collision_obj.rect.right
-            obj = collision_obj
-            entity.pos[0] = temp_rect.x
-            
-        collisions = self.collision_obj(entity.rect, self.game.object_spawner.objects)
-        temp_rect = entity.rect
-        
-        for collision_obj in collisions:
-            if collision_obj.collision_on:
-                if entity.direction == 'up':
+                elif entity.direction == 'up':
                     temp_rect.top = collision_obj.rect.bottom
                 elif entity.direction == 'down':
                     temp_rect.bottom = collision_obj.rect.top
+            entity.pos = [temp_rect.x, temp_rect.y]
             obj = collision_obj
-            entity.pos[1] = temp_rect.y
+            return obj
+            
         return obj
     
     def check_entity(self, entity, other):
         
         collided_entity = None
         
-        other_rect = [pygame.Rect(*other.rect)]
-        collisions = self.collision_test(entity.rect, other_rect)
+        other_rect = other.rect
+        collisions = self.collision_test(entity.rect, [other_rect])
         temp_rect = entity.rect
         
         for collision_rect in collisions:
             if entity.direction == 'right':
                 temp_rect.right = collision_rect.left  
             elif entity.direction == 'left':
-                temp_rect.left = collision_rect.right  
-            entity.pos[0] = temp_rect.x
-            collided_entity = other
-            
-        other_rect = [pygame.Rect(*other.rect)]
-        collisions = self.collision_test(entity.rect, other_rect)
-        temp_rect = entity.rect
-        
-        for collision_rect in collisions:
-            if entity.direction == 'up':
+                temp_rect.left = collision_rect.right   
+            elif entity.direction == 'up':
                 temp_rect.top = collision_rect.bottom  
             elif entity.direction == 'down':
                 temp_rect.bottom = collision_rect.top  
-            entity.pos[1] = temp_rect.y
+            entity.pos = [temp_rect.x, temp_rect.y]
             collided_entity = other
+            return collided_entity
             
         return collided_entity
             

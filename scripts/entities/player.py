@@ -1,11 +1,6 @@
-import pygame
-import math
-
-from scripts.entities.npc import NPC
-
-from ..const import *
-
 from ..entity import Entity
+from scripts.entities.npc import NPC
+from ..const import *
 
 class Player(Entity):
     def __init__(self, game, pos, size, type):        
@@ -41,7 +36,6 @@ class Player(Entity):
             movement[0] += self.speed * dt
         return movement
 
-    
     def interact_with_npc(self, npc, turn=True):
         dis = self.get_distance(npc)
         if dis <= npc.interact_range:
@@ -64,20 +58,28 @@ class Player(Entity):
         
         self.pos[0] += movement[0]
         self.pos[1] += movement[1]
-        
-        self.pos[0] = round(self.pos[0])
-        self.pos[1] = round(self.pos[1])
+        self.pos = [round(self.pos[0]), round(self.pos[1])]
         
         self.animation_update(dt)
         
         self.game.collision_manager.check_tile(self)
         self.game.events.events()
         
-        for entity in (npc for npc in self.game.entities if npc.type != 'player'):
+        other_entities = (npc for npc in self.game.entities if npc.type != 'player')
+        for entity in other_entities:
             if self.on_screen(entity, self.game.scroll, self.game.window.display):
-                self.game.collision_manager.check_entity(self, entity)
+                collided = self.game.collision_manager.check_entity(self, entity)
+                if collided and collided.type in MONSTERS:
+                    self.damage(collided.damage_amt)
                 if isinstance(entity, NPC):
                     self.interact_with_npc(entity)
+                    
+        # invincible timer
+        if self.invincible:
+            self.invincible_counter += dt
+            if self.invincible_counter >= 1:
+                self.invincible = False
+                self.invincible_counter = 0
         
 
     def render(self, surf, offset=(0, 0)):

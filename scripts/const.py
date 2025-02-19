@@ -30,6 +30,7 @@ DIALOGUES = {
     'knight': ["Don't talk to me stranger."]
 }
 
+MONSTERS = {'green_slime'}
 
 # COLORS
 WHITE = (255, 255, 255)

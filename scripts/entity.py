@@ -1,5 +1,6 @@
 import pygame
 import math
+import random
 
 from .const import *
 
@@ -26,6 +27,12 @@ class Entity:
         self.collision_on = False
         
         self.rect_offset = RECT_OFFSETS[type] if type in RECT_OFFSETS else (0, 0)
+        
+        self.action_counter = 0
+        self.action_cooldown = 2
+        
+        self.invincible = False
+        self.invincible_counter = 0
         
     @property
     def img(self):
@@ -60,10 +67,20 @@ class Entity:
         return movement
         
     def set_action(self, dt):
-        pass
+        
+        self.action_counter += dt
+        
+        if self.action_counter >= self.action_cooldown:
+            self.direction = random.choice(['up', 'left', 'right', 'down'])
+            self.action_counter = 0
     
     def speak(self):
         pass
+    
+    def damage(self, amt):
+        if not self.invincible:
+            self.health -= amt
+            self.invincible = True
     
     def animation_update(self, dt): #TODO: fix
         self.frame_num += dt
@@ -81,9 +98,12 @@ class Entity:
         return offset
     
     def render(self, surf, offset=(0, 0)):
-        img = self.img
         if self.game.input.debug:
             pygame.draw.rect(surf, WHITE, pygame.Rect(self.rect.x - offset[0], self.rect.y - offset[1], self.rect.size[0], self.rect.size[1])) #debug
+            
+        img = self.img.copy()
+        if self.invincible:
+            img.set_alpha(150)
         offset = self.render_offset(offset=offset)
         surf.blit(img, (int(self.pos[0] - offset[0]), int(self.pos[1] - offset[1])))
     
