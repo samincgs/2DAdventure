@@ -1,4 +1,4 @@
-from .utils import load_dir, load_dir_list, load_sounds
+from .utils import load_dir, load_dir_list,  load_sounds
 
 
 class Assets:
@@ -6,18 +6,22 @@ class Assets:
         self.path = path
         
         entity_path = path + 'entities/'
+        alpha=True
         
-        # self.player_imgs = load_dir(path + 'old_player')
-        self.player = load_dir_list(entity_path + 'player', alpha=True)
-        self.old_wizard = load_dir_list(entity_path + 'old_wizard', alpha=True)
-        self.knight = load_dir_list(entity_path + 'knight', alpha=True)
-        self.slime = load_dir_list(entity_path + 'slime', alpha=True)
+        # entities
+        self.player = load_dir_list(entity_path + 'player', alpha=alpha)
+        self.old_wizard = load_dir_list(entity_path + 'old_wizard', alpha=alpha)
+        self.knight = load_dir_list(entity_path + 'knight', alpha=alpha)
+        self.slime = load_dir_list(entity_path + 'slime', alpha=alpha)
         
-        self.objects = load_dir(path + 'objects', alpha=True)
+        # objects
+        self.objects = load_dir(path + 'objects', alpha=alpha)
+        
+        # tools
+        self.sword = load_dir(path + 'tools/sword', alpha=alpha)
         
         
-        
-        
+        # sounds
         self.sounds = load_sounds('data/sfx/')
         
                 

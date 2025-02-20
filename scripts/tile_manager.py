@@ -1,8 +1,7 @@
 import pygame
 
 from .utils import load_json, save_json, load_dir_list, outline
-
-TILE_SIZE = 16
+from .const import TILE_SIZE
 
 class TileManager:
     def __init__(self, game):

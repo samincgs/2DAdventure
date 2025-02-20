@@ -35,11 +35,3 @@ MONSTERS = {'green_slime'}
 # COLORS
 WHITE = (255, 255, 255)
 BLACK = (0, 0, 0)
-
-# PATHS
-PLAYER_IMG_PATH = 'data/images/player/'
-TILE_IMG_PATH = 'data/images/tiles/'
-WATER_IMG_PATH = 'data/images/tiles/water'
-OBJECT_IMG_PATH = 'data/images/objects/'
-MAP_PATH = 'data/maps/'
-FONT_PATH = 'data/fonts/'

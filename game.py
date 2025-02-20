@@ -26,14 +26,17 @@ class Game:
         self.entities = []
         self.load_entities()
 
-        self.scroll = [0, 0]
+        self.scroll = [0, 0] 
 
     def load_entities(self):
         self.entities.append(Player(self, (326, 165), (8,8), 'player'))
         self.player = self.entities[-1]
         
+        #npcs
         self.entities.append(OldWizard(self, (275, 150), (14, 10), 'old_wizard'))
         self.entities.append(Knight(self, (404, 367), (12, 14), 'knight'))
+        
+        # monsters
         self.entities.append(GreenSlime(self, (624, 358), (11, 10), 'green_slime')) # 624
         self.entities.append(GreenSlime(self, (624, 358), (11, 10), 'green_slime')) # 624
         self.entities.append(GreenSlime(self, (624, 358), (11, 10), 'green_slime')) # 624
@@ -54,8 +57,10 @@ class Game:
                 self.tile_manager.render_visible(surf, offset=render_scroll)
                 
                 if self.state.play_state: 
-                    for entity in self.entities:
-                        entity.update(self.window.dt)
+                    for entity in self.entities.copy():
+                        kill = entity.update(self.window.dt)
+                        if kill:
+                            self.entities.remove(entity)
                 elif self.state.dialogue_state:
                     self.state.track_event_and_dialogues()
                 

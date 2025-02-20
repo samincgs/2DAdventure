@@ -1,5 +1,5 @@
-from ..const import *
 from ..entity import Entity
+from ..const import *
 
 class NPC(Entity):
     def __init__(self, game, pos, size, type):

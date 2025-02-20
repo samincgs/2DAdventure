@@ -13,6 +13,7 @@ class Input:
         self.left_pressed = False # LEFT KEY
         self.right_pressed = False # RIGHT KEY
         self.interacted = False # Z KEY
+        self.action = False # X KEY
         self.enter_pressed = False # ENTER KEY
         
         self.debug = False # TAB KEY
@@ -27,6 +28,7 @@ class Input:
     
     def update(self):
         self.interacted = False
+        self.action = False
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 self.quit_game()
@@ -44,6 +46,9 @@ class Input:
                         self.right_pressed = True
                     if event.key == pygame.K_z:
                         self.interacted = True
+                        # self.action = True
+                    if event.key == pygame.K_x:
+                        self.action = True
                     if event.key == pygame.K_TAB:
                         self.debug = not self.debug
                     if event.key == pygame.K_p:
@@ -71,8 +76,6 @@ class Input:
                     self.down_pressed = False
                 if event.key == pygame.K_RIGHT:
                     self.right_pressed = False
-                if event.key == pygame.K_z:
-                    self.interacted = False
                 if event.key == pygame.K_RETURN:
                     self.enter_pressed = False
                 

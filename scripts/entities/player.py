@@ -1,6 +1,8 @@
-from ..entity import Entity
+from scripts.tools.sword import Sword
 from scripts.entities.npc import NPC
+from ..entity import Entity
 from ..const import *
+
 
 class Player(Entity):
     def __init__(self, game, pos, size, type):        
@@ -14,11 +16,22 @@ class Player(Entity):
         
         self.collision_on = True
         
-        self.has_keys = 0
         self.last_movement = 0
         
-        self.frame_motion = [0, 0]
         self.animation_timer = 0.13
+        
+        
+        self.weapon_type = 'sword'
+        self.weapon = None
+        self.attacking = False
+        self.attack_timer = 0
+        
+        self.damage_amt = 2
+    
+    @property
+    def img(self):
+        img = super().img
+        return img
         
     def move(self, dt):
         movement = [0, 0]
@@ -36,15 +49,34 @@ class Player(Entity):
             movement[0] += self.speed * dt
         return movement
 
+    
+    def attack(self):
+        if not self.attacking and self.weapon_type == 'sword':
+            self.attacking = True
+            self.attack_timer = 0
+            self.frame_index = 3
+            self.weapon = Sword(self, self.game.assets.sword)
+    
+    
+    
+    def reset_attack(self, dt, timer):
+        if self.attacking:
+            self.attack_timer += dt
+            if self.attack_timer >= timer:
+                self.attacking = False
+                self.attack_timer = 0
+                return True
+            
     def interact_with_npc(self, npc, turn=True):
         dis = self.get_distance(npc)
         if dis <= npc.interact_range:
             if self.game.input.interacted:
                 self.game.state.set_state('dialogue')
-                if npc.can_turn: npc.turn_to_player(self)
+                if npc.can_turn: 
+                    npc.turn_to_player(self)
                 npc.speak()
                 self.game.state.interacted_npc = npc
-    
+        
     def animation_update(self, dt):
         if self.game.input.pressed: 
             super().animation_update(dt)
@@ -53,33 +85,48 @@ class Player(Entity):
             self.frame_index = 0
     
     def update(self, dt):
+        kill = self.check_death()
+        if kill:
+            return kill
+        
+        if not self.attacking:
+            movement = self.move(dt)
+        
+            self.pos[0] += movement[0]
+            self.pos[1] += movement[1]
+            self.pos = [round(self.pos[0]), round(self.pos[1])]
             
-        movement = self.move(dt)
-        
-        self.pos[0] += movement[0]
-        self.pos[1] += movement[1]
-        self.pos = [round(self.pos[0]), round(self.pos[1])]
-        
-        self.animation_update(dt)
-        
-        self.game.collision_manager.check_tile(self)
-        self.game.events.events()
-        
-        other_entities = (npc for npc in self.game.entities if npc.type != 'player')
-        for entity in other_entities:
-            if self.on_screen(entity, self.game.scroll, self.game.window.display):
-                collided = self.game.collision_manager.check_entity(self, entity)
-                if collided and collided.type in MONSTERS:
-                    self.damage(collided.damage_amt)
-                if isinstance(entity, NPC):
-                    self.interact_with_npc(entity)
+            self.animation_update(dt)
+            
+            self.game.collision_manager.check_tile(self)
+            self.game.events.events()
+            
+            other_entities = (npc for npc in self.game.entities if npc.type != 'player')
+            for entity in other_entities:
+                if self.on_screen(entity, self.game.scroll, self.game.window.display):
+                    collided = self.game.collision_manager.check_entity(self, entity)
+                    if collided and collided.type in MONSTERS: # if monster collides with player
+                        self.damage(collided.damage_amt)
+                    if isinstance(entity, NPC):
+                        self.interact_with_npc(entity)
+                        
+            self.reset_invincible(dt)
                     
-        # invincible timer
-        if self.invincible:
-            self.invincible_counter += dt
-            if self.invincible_counter >= 1:
-                self.invincible = False
-                self.invincible_counter = 0
-        
+            
+            if self.game.input.action:
+                self.attack()
+        else:  
+            if self.weapon:
+                remove = self.weapon.update(dt)
+                if remove:
+                    self.weapon = None
+                    
+        return kill
+
     def render(self, surf, offset=(0, 0)):
+        if self.weapon:
+            self.weapon.render(surf, offset=offset)
         super().render(surf, offset=offset)
+        
+        
+        

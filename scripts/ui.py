@@ -3,6 +3,8 @@ import pygame
 from .font import Font
 from .const import *
 
+FONT_PATH = 'data/fonts/'
+
 class UI:
     def __init__(self, game, state):
         self.game = game

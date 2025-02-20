@@ -14,6 +14,7 @@ class GreenSlime(Entity):
         
         self.animation_timer = 0.15
         self.action_cooldown = 3
+        self.inv
         
         self.damage_amt = 1
     
@@ -21,6 +22,11 @@ class GreenSlime(Entity):
         super().set_action(dt)
         
     def update(self, dt):
+        
+        kill = self.check_death()
+        if kill:
+            return kill
+        
         self.animation_update(dt)
         
         movement = super().update(dt)
@@ -34,5 +40,9 @@ class GreenSlime(Entity):
             for entity in self.game.entities:
                 if entity.type != self.type and self.on_screen(entity, self.game.scroll, self.game.window.display):
                     collided = self.game.collision_manager.check_entity(self, entity)
-                    if collided and collided.type == 'player':
+                    if collided and collided.type == 'player': # collide with player
                         collided.damage(self.damage_amt)
+                        
+        self.reset_invincible(dt)
+        
+        return kill

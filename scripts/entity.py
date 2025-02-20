@@ -11,28 +11,32 @@ class Entity:
         self.size = list(size)
         self.type = type
         self.speed = 60
+        self.rect_offset = RECT_OFFSETS[type] if type in RECT_OFFSETS else (0, 0)
         
         self.images = getattr(self.game.assets, type, None)
         self.direction = 'down'
         
         self.max_health = 3
         self.health = self.max_health
+        self.invincible = False
+        self.damage_amt = 2
+        
         
         self.animation_timer = 0.15
-        self.frame_index = 0 # spriteCounter
+        self.frame_index = 0 
         self.frame_num = 0
-        
-        self.last_movement = 0
-        
-        self.collision_on = False
-        
-        self.rect_offset = RECT_OFFSETS[type] if type in RECT_OFFSETS else (0, 0)
-        
         self.action_counter = 0
         self.action_cooldown = 2
-        
-        self.invincible = False
         self.invincible_counter = 0
+        
+        
+        self.collision_on = False
+        self.last_movement = 0
+        
+        
+        
+        
+        
         
     @property
     def img(self):
@@ -81,6 +85,16 @@ class Entity:
         if not self.invincible:
             self.health -= amt
             self.invincible = True
+            kill = self.check_death()
+            return kill
+    
+    def reset_invincible(self, dt):
+        # invincible timer
+            if self.invincible:
+                self.invincible_counter += dt
+                if self.invincible_counter >= 1:
+                    self.invincible = False
+                    self.invincible_counter = 0
     
     def animation_update(self, dt): #TODO: fix
         self.frame_num += dt
@@ -89,7 +103,11 @@ class Entity:
             self.frame_num = 0
             if self.frame_index >= len(self.images[self.direction]):
                 self.frame_index = 0
-        
+    
+    def check_death(self):
+        if self.health <= 0:
+            return True
+       
     def render_offset(self, offset=(0, 0)):
         offset = list(offset)
         if self.rect_offset:
@@ -98,8 +116,8 @@ class Entity:
         return offset
     
     def render(self, surf, offset=(0, 0)):
-        # if self.game.input.debug:
-        #     pygame.draw.rect(surf, WHITE, pygame.Rect(self.rect.x - offset[0], self.rect.y - offset[1], self.rect.size[0], self.rect.size[1])) #debug
+        if self.game.input.debug:
+            pygame.draw.rect(surf, WHITE, pygame.Rect(self.rect.x - offset[0], self.rect.y - offset[1], self.rect.size[0], self.rect.size[1])) #debug
             
         img = self.img.copy()
         if self.invincible:
@@ -108,7 +126,6 @@ class Entity:
             else:
                 img.set_alpha(255)
         
-        # add invincibility visibility
         offset = self.render_offset(offset=offset)
         surf.blit(img, (int(self.pos[0] - offset[0]), int(self.pos[1] - offset[1])))
     
