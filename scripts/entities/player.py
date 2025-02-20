@@ -20,7 +20,6 @@ class Player(Entity):
         
         self.animation_timer = 0.13
         
-        
         self.weapon_type = 'sword'
         self.weapon = None
         self.attacking = False
@@ -85,9 +84,8 @@ class Player(Entity):
             self.frame_index = 0
     
     def update(self, dt):
-        kill = self.check_death()
-        if kill:
-            return kill
+        dead = self.check_death(dt)
+        
         
         if not self.attacking:
             movement = self.move(dt)
@@ -120,13 +118,17 @@ class Player(Entity):
                 remove = self.weapon.update(dt)
                 if remove:
                     self.weapon = None
+    
+        return dead
                     
-        return kill
 
     def render(self, surf, offset=(0, 0)):
-        if self.weapon:
+        if self.direction in {'up', 'left', 'right'} and self.weapon:
             self.weapon.render(surf, offset=offset)
         super().render(surf, offset=offset)
+        if self.direction == 'down' and self.weapon:
+            self.weapon.render(surf, offset=offset) 
+        
         
         
         

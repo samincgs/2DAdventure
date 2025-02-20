@@ -54,13 +54,7 @@ class Editor:
         self.grid_rects = {}
         
         self.sidebar_surf = pygame.Surface((SIDEBAR_WIDTH, HEIGHT))
-  
-
-    def map_reset(self):
-        self.map_size = self.map_sizes[self.map_change]
-        self.current_grid_pos = None
-        self.grid_rects = {}
-    
+      
     def render_text(self, text, loc):
         file_text = text
         self.white_font.render(self.display, file_text, loc)

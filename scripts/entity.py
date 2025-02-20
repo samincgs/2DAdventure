@@ -11,33 +11,34 @@ class Entity:
         self.size = list(size)
         self.type = type
         self.speed = 60
-        self.rect_offset = RECT_OFFSETS[type] if type in RECT_OFFSETS else (0, 0)
+        self.rect_offset = ENTITY_RECT_OFFSETS[type] if type in ENTITY_RECT_OFFSETS else (0, 0)
         
         self.images = getattr(self.game.assets, type, None)
         self.direction = 'down'
         
         self.max_health = 3
         self.health = self.max_health
-        self.invincible = False
+        
         self.damage_amt = 2
         
+        self.invincible = False
+        self.collision_on = False
+        self.dead = False
         
-        self.animation_timer = 0.15
+        
         self.frame_index = 0 
         self.frame_num = 0
+        self.animation_timer = 0.15
         self.action_counter = 0
         self.action_cooldown = 2
+        self.invincible_time = 1
         self.invincible_counter = 0
+        self.death_timer = 0
         
         
-        self.collision_on = False
         self.last_movement = 0
         
-        
-        
-        
-        
-        
+ 
     @property
     def img(self):
         return self.images[self.direction][self.frame_index]
@@ -71,28 +72,25 @@ class Entity:
         return movement
         
     def set_action(self, dt):
-        
         self.action_counter += dt
-        
         if self.action_counter >= self.action_cooldown:
             self.direction = random.choice(['up', 'left', 'right', 'down'])
             self.action_counter = 0
-    
-    def speak(self):
-        pass
     
     def damage(self, amt):
         if not self.invincible:
             self.health -= amt
             self.invincible = True
-            kill = self.check_death()
-            return kill
+            
+    def death_animation(self, img, surf, offset=(0, 0)):
+        mask = self.gen_mask(img)
+        surf.blit(mask, (int(self.pos[0] - offset[0]), int(self.pos[1] - offset[1])))
     
     def reset_invincible(self, dt):
         # invincible timer
             if self.invincible:
                 self.invincible_counter += dt
-                if self.invincible_counter >= 1:
+                if self.invincible_counter >= self.invincible_time:
                     self.invincible = False
                     self.invincible_counter = 0
     
@@ -104,9 +102,19 @@ class Entity:
             if self.frame_index >= len(self.images[self.direction]):
                 self.frame_index = 0
     
-    def check_death(self):
+    def gen_mask(self, curr_img):
+        img = curr_img.copy()
+        mask_img = pygame.mask.from_surface(img)
+        mask_img = mask_img.to_surface(setcolor=(255,255,255,255), unsetcolor=(0, 0, 0, 0))
+        return mask_img
+     
+    def check_death(self, dt):
         if self.health <= 0:
-            return True
+            self.dead = True
+            if self.dead:
+                self.death_timer += dt
+                if self.death_timer > 0.2:
+                    return self.dead
        
     def render_offset(self, offset=(0, 0)):
         offset = list(offset)
@@ -122,10 +130,15 @@ class Entity:
         img = self.img.copy()
         if self.invincible:
             if self.invincible_counter % 0.20 <= 0.1:
-                img.set_alpha(120)
+                img.set_alpha(80)  
             else:
                 img.set_alpha(255)
-        
+    
         offset = self.render_offset(offset=offset)
-        surf.blit(img, (int(self.pos[0] - offset[0]), int(self.pos[1] - offset[1])))
+        if self.dead:
+            self.death_animation(img, surf, offset=offset)
+        else:
+            surf.blit(img, (int(self.pos[0] - offset[0]), int(self.pos[1] - offset[1])))
+        
+        
     

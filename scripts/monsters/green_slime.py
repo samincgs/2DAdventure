@@ -8,24 +8,23 @@ class GreenSlime(Entity):
         
         self.images = self.game.assets.slime
         self.direction = random.choice(['up','left', 'right', 'down'])
-        self.speed = 20
+        self.speed = 16
         self.max_health = 4
         self.health = self.max_health
         
         self.animation_timer = 0.15
         self.action_cooldown = 3
-        self.inv
+        self.invincible_time = 0.85
         
         self.damage_amt = 1
     
     def set_action(self, dt):
         super().set_action(dt)
-        
+    
+      
     def update(self, dt):
         
-        kill = self.check_death()
-        if kill:
-            return kill
+        dead = self.check_death(dt)
         
         self.animation_update(dt)
         
@@ -45,4 +44,5 @@ class GreenSlime(Entity):
                         
         self.reset_invincible(dt)
         
-        return kill
+        return dead
+        

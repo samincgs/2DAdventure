@@ -11,13 +11,20 @@ WORLD_DIMENSION = 50
 WORLD_TILE_DIMENSION = WORLD_DIMENSION * TILE_SIZE
 
 # CHARACTER VARIABLES
-RECT_OFFSETS = {
+ENTITY_RECT_OFFSETS = {
     'player': (4, 9),
     'old_wizard': (1, 6),
     'knight': (2, 2),
     'green_slime': (2, 6),
-    'key': (3, 3),
-    'sneakers': (1, 5)
+}
+
+WEAPON_RECT_OFFSETS = {
+    'sword': {
+        'up': [4, 2],
+        'down': [4, 6],
+        'right': [6 , 4],
+        'left': [2, 4],
+    }
 }
 
 DIALOGUES = {

@@ -10,6 +10,9 @@ class UI:
         self.game = game
         self.state = state
         
+        # set the icon of the game to player down
+        pygame.display.set_icon(self.game.assets.player['down'][0])
+        
         self.font = Font(FONT_PATH + 'small_font.png')
         self.maru_monica_font = pygame.font.Font('data/fonts/marumonica.ttf', 28)
         self.byte_bounce_font = pygame.font.Font('data/fonts/ByteBounce.ttf', 84)
