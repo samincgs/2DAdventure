@@ -41,7 +41,7 @@ class UI:
         for enemy in self.game.entities:
             if enemy.type in MONSTERS:
                 health_ratio = enemy.health / enemy.max_health
-                outline_rect = pygame.Rect(enemy.pos[0] - self.game.scroll[0] - 1, enemy.pos[1] - self.game.scroll[1] - 8, (health_ratio * 10 + 2), 4)
+                outline_rect = pygame.Rect(enemy.pos[0] - self.game.scroll[0] - 1, enemy.pos[1] - self.game.scroll[1] - 8, (1 * 10 + 2), 4)
                 health_rect = pygame.Rect(enemy.pos[0] - self.game.scroll[0], enemy.pos[1] - self.game.scroll[1] - 7, (health_ratio * 10), 2)
                 if health_rect:
                     pygame.draw.rect(surf, (35, 35, 35), outline_rect, 1, 2)
