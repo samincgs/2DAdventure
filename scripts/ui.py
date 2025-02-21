@@ -37,6 +37,17 @@ class UI:
         
         surf.blit(dialogue_surf, (dialogue_size_x, dialogue_size_y))
     
+    def draw_enemy_health(self, surf):
+        for enemy in self.game.entities:
+            if enemy.type in MONSTERS:
+                health_ratio = enemy.health / enemy.max_health
+                outline_rect = pygame.Rect(enemy.pos[0] - self.game.scroll[0] - 1, enemy.pos[1] - self.game.scroll[1] - 8, (health_ratio * 10 + 2), 4)
+                health_rect = pygame.Rect(enemy.pos[0] - self.game.scroll[0], enemy.pos[1] - self.game.scroll[1] - 7, (health_ratio * 10), 2)
+                if health_rect:
+                    pygame.draw.rect(surf, (35, 35, 35), outline_rect, 1, 2)
+                    pygame.draw.rect(surf, (255, 0, 30), health_rect)
+                
+    
     def draw_player_hearts(self, surf):
         full_heart_img = self.game.assets.objects['full_heart']
         half_heart_img = self.game.assets.objects['half_heart']
@@ -68,6 +79,7 @@ class UI:
         elif self.state.play_state: #PLAY STATE
             # render hearts
             self.draw_player_hearts(surf)
+            self.draw_enemy_health(surf)
         elif self.state.pause_state:
             pause_text = 'PAUSED'
             self.font.render(surf, pause_text, (DISPLAY_WIDTH // 2 - self.font.width(pause_text) // 2, DISPLAY_HEIGHT // 2 - 30 - self.font.base_size[1]))

@@ -44,7 +44,7 @@ class Sword:
         remove = self.player.reset_attack(dt, timer=self.sword_timer)
         for monster in (monster for monster in self.player.game.entities if monster.type in MONSTERS): # if player sword hits any enemy
             if self.rect().colliderect(monster.rect):
-                monster.damage(self.player.damage_amt)           
+                monster.damage(self.player.damage_amt)
         return remove
     
     def render(self, surf, offset=(0, 0)):

@@ -26,9 +26,9 @@ class Editor:
         
         self.tile_manager = TileManager(self)
         
-        self.white_font = Font('editor/data/fonts/small_font.png')
-        self.red_font = Font('editor/data/fonts/small_font.png', (255, 0, 0))
-        self.green_font = Font('editor/data/fonts/small_font.png', (0, 255, 0))
+        self.white_font = Font('editor/data/fonts/main_font.png')
+        self.red_font = Font('editor/data/fonts/main_font.png', (255, 0, 0))
+        self.green_font = Font('editor/data/fonts/main_font.png', (0, 255, 0))
       
         self.assets = self.tile_manager.tile_assets
         
@@ -132,11 +132,10 @@ class Editor:
                         
             # # text ui
             text_h = 5 
-            text = 'filename: ' + str(self.current_file) if self.current_file else 'file: None'
+            text = 'filename: ' + str(self.current_file) if self.current_file else 'file: none'
             self.render_text(text=text, loc=(WIDTH - self.white_font.width(text, extra_space=3), text_h))
             text_h += 12
 
-    
             text = f'grid pos: [{str(tile_pos[0])},{str(tile_pos[1])}]'
             self.render_text(text=text, loc=(WIDTH - self.white_font.width(text, extra_space=3), text_h))
             text_h += 12

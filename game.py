@@ -12,6 +12,7 @@ from scripts.entities.knight import Knight
 from scripts.monsters.green_slime import GreenSlime
 from scripts.const import *
 
+
 class Game:
     def __init__(self):
         self.window = Window(self)
@@ -37,9 +38,9 @@ class Game:
         self.entities.append(Knight(self, (404, 367), (12, 14), 'knight'))
         
         # monsters
-        self.entities.append(GreenSlime(self, (636, 348), (11, 10), 'green_slime')) # 624
-        self.entities.append(GreenSlime(self, (650, 363), (11, 10), 'green_slime')) # 624
-        self.entities.append(GreenSlime(self, (610, 358), (11, 10), 'green_slime')) # 624
+        self.entities.append(GreenSlime(self, (636, 348), (11, 10), 'green_slime')) 
+        self.entities.append(GreenSlime(self, (650, 363), (11, 10), 'green_slime')) 
+        self.entities.append(GreenSlime(self, (610, 358), (11, 10), 'green_slime')) 
 
     def run(self):
         while True:
@@ -68,7 +69,6 @@ class Game:
                     entity.render(surf, offset=render_scroll)
             
             self.ui.render(surf)            
-                
-                              
+                           
 if __name__ == "__main__":
     Game().run()

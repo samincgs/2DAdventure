@@ -56,8 +56,6 @@ class Player(Entity):
             self.frame_index = 3
             self.weapon = Sword(self, self.game.assets.sword)
     
-    
-    
     def reset_attack(self, dt, timer):
         if self.attacking:
             self.attack_timer += dt
@@ -110,7 +108,6 @@ class Player(Entity):
                         
             self.reset_invincible(dt)
                     
-            
             if self.game.input.action:
                 self.attack()
         else:  

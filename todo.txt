@@ -1,4 +1,4 @@
 # create floodfill
-# fix ui (pause screen)
-# add dt to movement (player, npcs)
-# increase game speed by doing npc collisions only when they are on the screen
+# fix ui (pause screen) 
+
+# add sfx (sword swing, enemy taking damage, player taking damage, )

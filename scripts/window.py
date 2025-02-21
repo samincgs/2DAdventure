@@ -28,7 +28,11 @@ class Window:
         self.screen.blit(pygame.transform.scale(self.display, self.screen.get_size()), (0, 0))
         ui.render_font(self.screen)
         pygame.display.update()
-        self.display.fill((0, 0, 0))
+        
+        if self.game.state.menu_state:
+            self.display.fill((38, 41, 94))
+        else:
+            self.display.fill((0, 0, 0))
         
         
         
