@@ -15,18 +15,26 @@ class GreenSlime(Entity):
         self.animation_timer = 0.15
         self.action_cooldown = 3
         self.invincible_time = 0.85
+        self.alpha = 50
         
         self.damage_amt = 1
+        
+        self.hp_bar_cooldown = 10
     
     def set_action(self, dt):
         super().set_action(dt)
     
-      
     def update(self, dt):
         
         dead = self.check_death(dt)
         
         self.animation_update(dt)
+        
+        if self.hp_bar_on:
+            self.hp_bar_counter += dt
+            if self.hp_bar_counter >= self.hp_bar_cooldown:
+                self.hp_bar_on = False
+                self.hp_bar_counter = 0
         
         movement = super().update(dt)
         self.pos[0] += movement[0]

@@ -24,7 +24,7 @@ class Entity:
         self.invincible = False
         self.collision_on = False
         self.dead = False
-        
+        self.alpha = 100
         
         self.frame_index = 0 
         self.frame_num = 0
@@ -38,6 +38,9 @@ class Entity:
         
         self.last_movement = 0
         
+        self.hp_bar_on = False
+        self.hp_bar_counter = 0
+        self.hp_bar_cooldown = 0
  
     @property
     def img(self):
@@ -130,7 +133,7 @@ class Entity:
         img = self.img.copy()
         if self.invincible:
             if self.invincible_counter % 0.20 <= 0.1:
-                img.set_alpha(80)  
+                img.set_alpha(self.alpha)  
             else:
                 img.set_alpha(255)
     

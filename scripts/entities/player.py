@@ -25,7 +25,7 @@ class Player(Entity):
         self.attacking = False
         self.attack_timer = 0
         
-        self.damage_amt = 2
+        self.damage_amt = 1.5
     
     @property
     def img(self):

@@ -45,6 +45,13 @@ class Sword:
         for monster in (monster for monster in self.player.game.entities if monster.type in MONSTERS): # if player sword hits any enemy
             if self.rect().colliderect(monster.rect):
                 monster.damage(self.player.damage_amt)
+                monster.hp_bar_on = True
+                monster.hp_bar_counter = 0
+                opp_directions = {'right': 'left', 'left': 'right', 'up':'down', 'down': 'up'}
+                monster.direction = opp_directions[self.player.direction]
+                
+                
+                
         return remove
     
     def render(self, surf, offset=(0, 0)):
