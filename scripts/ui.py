@@ -73,6 +73,39 @@ class UI:
         char_img = pygame.transform.scale(char_img, (char_img.get_width() * 2, char_img.get_height() * 2))
         surf.blit(char_img, (DISPLAY_WIDTH // 2 - char_img.get_width() / 2, DISPLAY_HEIGHT // 2 - char_img.get_height() / 2 - 20))
     
+    def draw_character_status(self, surf):
+        pass
+    
+    def title_menu_font_screen(self, surf):
+        title_text = self.byte_bounce_font.render('Adventure Game', False, (255, 255, 255))
+        shadow_title_text = self.byte_bounce_font.render('Adventure Game', False, 'gray')
+        
+        surf.blit(shadow_title_text, (SCREEN_WIDTH// 2 - title_text.get_width() / 2 + 2, SCREEN_HEIGHT // 2 - title_text.get_height() / 2 - 180 + 2))
+        surf.blit(title_text, (SCREEN_WIDTH // 2 - title_text.get_width() / 2, SCREEN_HEIGHT // 2 - title_text.get_height() / 2 - 180))
+        
+        y_offset = 0
+        
+        new_game_text = self.byte_bounce_font2.render('NEW GAME', False, (255, 255, 255))
+        text_pos = (SCREEN_WIDTH // 2 - new_game_text.get_width() / 2, SCREEN_HEIGHT // 2 - new_game_text.get_height() / 2 + 60 + y_offset)
+        surf.blit(new_game_text, text_pos)
+        y_offset += 50
+        if self.menu_cursor == 0:
+            surf.blit(self.byte_bounce_font2.render('>', False, (255, 255, 255)), (text_pos[0] - 30, text_pos[1]))
+        
+        load_game_text = self.byte_bounce_font2.render('LOAD GAME', False, (255, 255, 255))
+        text_pos = (SCREEN_WIDTH // 2 - load_game_text.get_width() / 2, SCREEN_HEIGHT // 2 - load_game_text.get_height() / 2 + 60 + y_offset)
+        surf.blit(load_game_text, text_pos)
+        y_offset += 50
+        if self.menu_cursor == 1:
+            surf.blit(self.byte_bounce_font2.render('>', False, (255, 255, 255)), (text_pos[0] - 30, text_pos[1]))
+        
+        quit_text = self.byte_bounce_font2.render('QUIT', False, (255, 255, 255))
+        text_pos = (SCREEN_WIDTH // 2 - quit_text.get_width() / 2, SCREEN_HEIGHT // 2 - quit_text.get_height() / 2 + 60 + y_offset)
+        surf.blit(quit_text, text_pos)
+        y_offset += 50
+        if self.menu_cursor == 2:
+            surf.blit(self.byte_bounce_font2.render('>', False, (255, 255, 255)), (text_pos[0] - 30, text_pos[1]))
+    
     def render(self, surf):
         if self.state.menu_state:  #MENU STATE
             self.draw_menu_character(surf)
@@ -86,38 +119,14 @@ class UI:
         elif self.state.dialogue_state:
             self.draw_player_hearts(surf)
             self.draw_dialogue(surf)
-                
+        elif self.state.dialogue_state:
+            self.draw_character_status()
+    
+    
+                 
     def render_font(self, surf):
         if self.state.menu_state:
-            title_text = self.byte_bounce_font.render('Adventure Game', False, (255, 255, 255))
-            shadow_title_text = self.byte_bounce_font.render('Adventure Game', False, 'gray')
-            
-            surf.blit(shadow_title_text, (SCREEN_WIDTH// 2 - title_text.get_width() / 2 + 2, SCREEN_HEIGHT // 2 - title_text.get_height() / 2 - 180 + 2))
-            surf.blit(title_text, (SCREEN_WIDTH // 2 - title_text.get_width() / 2, SCREEN_HEIGHT // 2 - title_text.get_height() / 2 - 180))
-            
-            y_offset = 0
-            
-            new_game_text = self.byte_bounce_font2.render('NEW GAME', False, (255, 255, 255))
-            text_pos = (SCREEN_WIDTH // 2 - new_game_text.get_width() / 2, SCREEN_HEIGHT // 2 - new_game_text.get_height() / 2 + 60 + y_offset)
-            surf.blit(new_game_text, text_pos)
-            y_offset += 50
-            if self.menu_cursor == 0:
-                surf.blit(self.byte_bounce_font2.render('>', False, (255, 255, 255)), (text_pos[0] - 30, text_pos[1]))
-            
-            load_game_text = self.byte_bounce_font2.render('LOAD GAME', False, (255, 255, 255))
-            text_pos = (SCREEN_WIDTH // 2 - load_game_text.get_width() / 2, SCREEN_HEIGHT // 2 - load_game_text.get_height() / 2 + 60 + y_offset)
-            surf.blit(load_game_text, text_pos)
-            y_offset += 50
-            if self.menu_cursor == 1:
-                surf.blit(self.byte_bounce_font2.render('>', False, (255, 255, 255)), (text_pos[0] - 30, text_pos[1]))
-            
-            quit_text = self.byte_bounce_font2.render('QUIT', False, (255, 255, 255))
-            text_pos = (SCREEN_WIDTH // 2 - quit_text.get_width() / 2, SCREEN_HEIGHT // 2 - quit_text.get_height() / 2 + 60 + y_offset)
-            surf.blit(quit_text, text_pos)
-            y_offset += 50
-            if self.menu_cursor == 2:
-                surf.blit(self.byte_bounce_font2.render('>', False, (255, 255, 255)), (text_pos[0] - 30, text_pos[1]))
-            
+            self.title_menu_font_screen(surf)   
         elif self.state.dialogue_state:
             if self.current_dialogue:
                 dialogue_text = self.maru_monica_font.render(self.current_dialogue, False, (255, 255, 255))

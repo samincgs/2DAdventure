@@ -18,9 +18,7 @@ class Entity:
         
         self.max_health = 3
         self.health = self.max_health
-        
-        self.damage_amt = 2
-        
+                
         self.invincible = False
         self.collision_on = False
         self.dead = False

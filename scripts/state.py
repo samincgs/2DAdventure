@@ -2,7 +2,7 @@ class State:
     def __init__(self, game):
         self.game = game
         
-        self.game_states = {'play': 0, 'pause': 1, 'dialogue': 2, 'menu': 3}
+        self.game_states = {'play': 0, 'pause': 1, 'dialogue': 2, 'menu': 3, 'status': 4}
         self.current_state = self.game_states['menu']
         # self.current_state = self.game_states['play']
         
@@ -28,8 +28,12 @@ class State:
         return self.current_state == self.game_states['menu']
     
     @property
+    def status_state(self):
+        return self.current_state == self.game_states['status']
+    
+    @property
     def ingame_state(self):
-        return self.current_state in {self.game_states['play'], self.game_states['pause'], self.game_states['dialogue']}
+        return self.current_state in {self.game_states['play'], self.game_states['pause'], self.game_states['dialogue'], self.game_states['status']}
     
     def set_state(self, state):
         self.current_state = self.game_states[state]

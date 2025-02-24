@@ -3,6 +3,8 @@ import pygame
 from ..const import *
 
 class Sword:
+    damage_amt = 1
+    
     def __init__(self, player, images):
         self.type = 'sword'
         self.pos = [0, 0]
@@ -11,7 +13,7 @@ class Sword:
         self.direction = player.direction
         self.get_pos()
         
-        self.sword_timer = 0.28
+        self.sword_timer = 0.35
         self.rect_size = 8
         self.rect_offset = WEAPON_RECT_OFFSETS[self.type][self.direction] if self.type in WEAPON_RECT_OFFSETS else [0, 0]
         
@@ -44,7 +46,7 @@ class Sword:
         remove = self.player.reset_attack(dt, timer=self.sword_timer)
         for monster in (monster for monster in self.player.game.entities if monster.type in MONSTERS): # if player sword hits any enemy
             if self.rect().colliderect(monster.rect):
-                monster.damage(self.player.damage_amt)
+                monster.damage(self.player.attack_value)
                 monster.hp_bar_on = True
                 monster.hp_bar_counter = 0
                 opp_directions = {'right': 'left', 'left': 'right', 'up':'down', 'down': 'up'}

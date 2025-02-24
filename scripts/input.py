@@ -26,15 +26,21 @@ class Input:
         pygame.quit()
         sys.exit()
     
-    def update(self):
+    def reset_keys(self):
         self.interacted = False
         self.action = False
+        self.enter_pressed = False
+    
+    def update(self):
+        self.reset_keys()
+        
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 self.quit_game()
             if event.type == pygame.KEYDOWN:
                 if event.key == pygame.K_ESCAPE:
                     self.quit_game()  
+                # in ingame state    
                 if self.state.ingame_state:
                     if event.key == pygame.K_UP:
                         self.up_pressed = True
@@ -46,6 +52,11 @@ class Input:
                         self.right_pressed = True
                     if event.key == pygame.K_z:
                         self.interacted = True
+                    if event.key == pygame.K_RETURN:
+                        if self.state.play_state:
+                            self.state.set_state('status')
+                        elif self.state.status_state:
+                            self.state.set_state('play')
                         # self.action = True
                     if event.key == pygame.K_x:
                         self.action = True
@@ -56,6 +67,7 @@ class Input:
                             self.state.set_state('pause')
                         elif self.state.pause_state:
                             self.state.current_state = self.state.last_state 
+                            
                 else:
                     if event.key == pygame.K_UP:
                         self.game.ui.menu_cursor = (self.game.ui.menu_cursor - 1) % 3 
@@ -78,7 +90,7 @@ class Input:
                     self.right_pressed = False
                 if event.key == pygame.K_RETURN:
                     self.enter_pressed = False
-                
+        
                     
         if self.debug:
             print(f"POS: {self.game.player.pos}")         

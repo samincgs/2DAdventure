@@ -13,6 +13,12 @@ class Player(Entity):
         
         self.max_health = 6 # 2 health equals one whole heart, 1 equals half heart
         self.health = self.max_health
+        self.strength = 1
+        # self.dexterity = 1 use when there is a shield
+        self.level = 1
+        self.exp = 0
+        self.next_level_exp = 5
+        self.coins = 0
         
         self.collision_on = True
         
@@ -25,12 +31,16 @@ class Player(Entity):
         self.attacking = False
         self.attack_timer = 0
         
-        self.damage_amt = 1.5
+        
     
     @property
     def img(self):
         img = super().img
         return img
+    
+    @property
+    def attack_value(self):
+        return self.strength * Sword.damage_amt
         
     def move(self, dt):
         movement = [0, 0]
