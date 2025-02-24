@@ -32,7 +32,7 @@ class Game:
     def load_entities(self):
         self.entities.append(Player(self, (326, 165), (8,8), 'player'))
         self.player = self.entities[-1]
-        
+         
         #npcs
         self.entities.append(OldWizard(self, (275, 150), (14, 10), 'old_wizard'))
         self.entities.append(Knight(self, (404, 367), (12, 14), 'knight'))

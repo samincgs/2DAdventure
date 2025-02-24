@@ -112,7 +112,7 @@ class Player(Entity):
                 if self.on_screen(entity, self.game.scroll, self.game.window.display):
                     collided = self.game.collision_manager.check_entity(self, entity)
                     if collided and collided.type in MONSTERS: # if monster collides with player
-                        self.damage(collided.damage_amt)
+                        self.damage(collided.attack_value)
                     if isinstance(entity, NPC):
                         self.interact_with_npc(entity)
                         

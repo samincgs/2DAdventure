@@ -32,7 +32,7 @@ DIALOGUES = {
     'old_wizard': ['Hello lad.', 
                    "Welcome to this island, I don't think I have\nseen you around.", 
                    "So you've come to this island to find the\ntreasure?", 
-                   "I used to be a great wizard but now I'm a bit\ntoo old to go on an adventure."
+                   "I used to be a great wizard but now I'm a\nbit too old to go on an adventure."
                    ],
     'knight': ["Don't talk to me stranger."]
 }

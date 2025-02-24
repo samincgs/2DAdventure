@@ -17,9 +17,13 @@ class GreenSlime(Entity):
         self.invincible_time = 0.85
         self.alpha = 50
         
-        self.damage_amt = 1
+        self.damage_amt = 2
         
         self.hp_bar_cooldown = 10
+    
+    @property
+    def attack_value(self):
+        return self.damage_amt
     
     def set_action(self, dt):
         super().set_action(dt)
