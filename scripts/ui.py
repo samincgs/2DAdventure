@@ -19,12 +19,8 @@ class UI:
         'medium_text_font': pygame.font.Font(BYTEBOUNCE_FONT, 32),
         'small_text_font' : pygame.font.Font(BYTEBOUNCE_FONT, 26)
         }
+        
         self.aa = False
-        
-        # self.font = Font(FONT_PATH + 'small_font.png')
-        # self.maru_monica_font = pygame.font.Font('data/fonts/marumonica.ttf', 28)
-        # self.maru_monica_font2 = pygame.font.Font('data/fonts/marumonica.ttf', 32)
-        
         
         self.current_dialogue = ''
         self.menu_cursor = 0
@@ -34,23 +30,26 @@ class UI:
     def draw_ui_message(self, text):
         message_timer = 0
         self.ui_messages.append([text, message_timer])
+    
+    
+    def draw_box(self, surf, size, loc, alpha=190):
+        status_surf = pygame.Surface(size, pygame.SRCALPHA)
+        status_surf.fill((0, 0, 0, 0))
+        
+        transparent_rect = pygame.Rect(2, 2, status_surf.get_width() - 4, status_surf.get_height() - 4)
+        status_rect = pygame.Rect(0, 0, status_surf.get_width(), status_surf.get_height())
+        
+        pygame.draw.rect(status_surf, (0, 0, 0, alpha), transparent_rect)
+        pygame.draw.rect(status_surf, WHITE, status_rect, 2, 5)
+        
+        surf.blit(status_surf, loc)
                 
     def draw_dialogue(self, surf):
         dialogue_size_x = 30
-        dialogue_size_y = 8
         dialogue_height = 55
-        
-        dialogue_surf = pygame.Surface((DISPLAY_WIDTH - dialogue_size_x * 2, dialogue_height), pygame.SRCALPHA)
-        dialogue_surf.fill((0, 0, 0, 190))
-        
-        dialogue_rect = pygame.Rect(4, 4, dialogue_surf.get_width() - 8, dialogue_surf.get_height() - 8)
-        outline_rect = pygame.Rect(2, 2, dialogue_surf.get_width() - 4, dialogue_surf.get_height() - 4)
-        
-        pygame.draw.rect(dialogue_surf, (255, 255, 255, 255), outline_rect)
-        pygame.draw.rect(dialogue_surf, (0, 0, 0, 190), dialogue_rect, 0, 5)
-        
-        surf.blit(dialogue_surf, (dialogue_size_x, dialogue_size_y))
-    
+        dialogue_size_y = 8
+        self.draw_box(surf, (DISPLAY_WIDTH - dialogue_size_x * 2, dialogue_height), (dialogue_size_x, dialogue_size_y))
+            
     def draw_enemy_health(self, surf):
         for enemy in self.game.entities:
             if enemy.type in MONSTERS and enemy.hp_bar_on:
@@ -70,7 +69,6 @@ class UI:
         total_hearts = self.game.player.max_health / 2
         player_hearts = self.game.player.health
         
-        
         for i in range(int(total_hearts)):
             if player_hearts >= 2:
                 surf.blit(full_heart_img, (4 + i * 18, 4))
@@ -88,25 +86,29 @@ class UI:
         surf.blit(char_img, (DISPLAY_WIDTH // 2 - char_img.get_width() / 2, DISPLAY_HEIGHT // 2 - char_img.get_height() / 2 - 20))
     
     def draw_character_status(self, surf):
-        status_surf = pygame.Surface((80, 160), pygame.SRCALPHA)
-        status_surf.fill((0, 0, 0, 0))
+        size = (80, 160)
+        loc = (160, 12)
+        self.draw_box(surf, size, loc)
+    
+    def draw_inventory(self, surf):
+        # inventory box
+        size = (130, 80)
+        loc = [20, 12]
+        self.draw_box(surf, size, loc)
         
-        transparent_rect = pygame.Rect(2, 2, status_surf.get_width() - 4, status_surf.get_height() - 4)
-        status_rect = pygame.Rect(0, 0, status_surf.get_width(), status_surf.get_height())
-        
-        pygame.draw.rect(status_surf, (0, 0, 0, 190), transparent_rect)
-        pygame.draw.rect(status_surf, (255, 255, 255, 255), status_rect, 2, 5)
-
-        surf.blit(status_surf, (160, 12))
+        # text box
+        size = (130, 60)
+        loc = [20, 100]
+        self.draw_box(surf, size, loc)
     
     def status_dialog_font(self, surf):
         font = self.fonts['medium_text_font']
-        line_height = 36
-        
         stats_font = self.fonts['medium_title_font']
         stats_font.set_underline(True)
-        stats_text = stats_font.render('Stats', self.aa, (255, 255, 255))
         
+        line_height = 36
+        
+        stats_text = stats_font.render('Stats', self.aa, WHITE)
         surf.blit(stats_text, (554, 50))
         
         x_pos = 160 * 3 + 14
@@ -124,14 +126,14 @@ class UI:
         }
         
         for text, data in status_data.items():
-            status_text = font.render(text.title() + ': ' + str(data), self.aa, (255, 255, 255))
+            status_text = font.render(text.title() + ': ' + str(data), self.aa, WHITE)
             surf.blit(status_text, (x_pos, y_pos))
             y_pos += line_height
             
         
         
     def title_menu_font_screen(self, surf):
-        title_text = self.fonts['big_title_font'].render('Adventure Game', self.aa, (255, 255, 255))
+        title_text = self.fonts['big_title_font'].render('Adventure Game', self.aa, WHITE)
         shadow_title_text = self.fonts['big_title_font'].render('Adventure Game', self.aa, 'gray')
         
         surf.blit(shadow_title_text, (SCREEN_WIDTH// 2 - title_text.get_width() / 2 + 2, SCREEN_HEIGHT // 2 - title_text.get_height() / 2 - 180 + 2))
@@ -139,26 +141,26 @@ class UI:
         
         y_offset = 0
         
-        new_game_text = self.fonts['medium_title_font'].render('NEW GAME', self.aa, (255, 255, 255))
+        new_game_text = self.fonts['medium_title_font'].render('NEW GAME', self.aa, WHITE)
         text_pos = (SCREEN_WIDTH // 2 - new_game_text.get_width() / 2, SCREEN_HEIGHT // 2 - new_game_text.get_height() / 2 + 60 + y_offset)
         surf.blit(new_game_text, text_pos)
         y_offset += 50
         if self.menu_cursor == 0:
-            surf.blit(self.fonts['medium_title_font'].render('>', self.aa, (255, 255, 255)), (text_pos[0] - 30, text_pos[1]))
+            surf.blit(self.fonts['medium_title_font'].render('>', self.aa, WHITE), (text_pos[0] - 30, text_pos[1]))
         
-        load_game_text = self.fonts['medium_title_font'].render('LOAD GAME', self.aa, (255, 255, 255))
+        load_game_text = self.fonts['medium_title_font'].render('LOAD GAME', self.aa, WHITE)
         text_pos = (SCREEN_WIDTH // 2 - load_game_text.get_width() / 2, SCREEN_HEIGHT // 2 - load_game_text.get_height() / 2 + 60 + y_offset)
         surf.blit(load_game_text, text_pos)
         y_offset += 50
         if self.menu_cursor == 1:
-            surf.blit(self.fonts['medium_title_font'].render('>', self.aa, (255, 255, 255)), (text_pos[0] - 30, text_pos[1]))
+            surf.blit(self.fonts['medium_title_font'].render('>', self.aa, WHITE), (text_pos[0] - 30, text_pos[1]))
         
-        quit_text = self.fonts['medium_title_font'].render('QUIT', self.aa, (255, 255, 255))
+        quit_text = self.fonts['medium_title_font'].render('QUIT', self.aa, WHITE)
         text_pos = (SCREEN_WIDTH // 2 - quit_text.get_width() / 2, SCREEN_HEIGHT // 2 - quit_text.get_height() / 2 + 60 + y_offset)
         surf.blit(quit_text, text_pos)
         y_offset += 50
         if self.menu_cursor == 2:
-            surf.blit(self.fonts['medium_title_font'].render('>', self.aa, (255, 255, 255)), (text_pos[0] - 30, text_pos[1]))
+            surf.blit(self.fonts['medium_title_font'].render('>', self.aa, WHITE), (text_pos[0] - 30, text_pos[1]))
     
     def render(self, surf):
         if self.state.menu_state:  #MENU STATE
@@ -168,12 +170,13 @@ class UI:
             self.draw_player_hearts(surf)
             self.draw_enemy_health(surf)
         elif self.state.pause_state:
-            pause_text = 'PAUSED'
+            pass
         elif self.state.dialogue_state:
             self.draw_player_hearts(surf)
             self.draw_dialogue(surf)
         elif self.state.status_state:
             self.draw_player_hearts(surf)
+            self.draw_inventory(surf)
             self.draw_character_status(surf)
 
     def render_font(self, surf):
@@ -187,15 +190,16 @@ class UI:
                     
                 y_height = SCREEN_HEIGHT - 150
                 font = self.fonts['small_text_font']
-                text = font.render(msg[0], self.aa, (255, 255, 255))
-                shadow_text = font.render(msg[0], self.aa, (0, 0, 0))
+                text = font.render(msg[0], self.aa, WHITE)
+                shadow_text = font.render(msg[0], self.aa, BLACK)
                 surf.blit(shadow_text, (SCREEN_WIDTH - 50 - text.get_width() + 1, y_height + 30 * idx + 1))
                 surf.blit(text, (SCREEN_WIDTH - 50 - text.get_width(), y_height + 30 * idx))
+                
         elif self.state.menu_state:
             self.title_menu_font_screen(surf)   
         elif self.state.dialogue_state:
             if self.current_dialogue:
-                dialogue_text = self.fonts['medium_text_font'].render(self.current_dialogue, self.aa, (255, 255, 255))
+                dialogue_text = self.fonts['medium_text_font'].render(self.current_dialogue, self.aa, WHITE)
                 surf.blit(dialogue_text, (130, 50))
         elif self.state.status_state:
             self.status_dialog_font(surf)

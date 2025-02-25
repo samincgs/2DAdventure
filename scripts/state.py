@@ -37,7 +37,8 @@ class State:
     
     def set_state(self, state):
         self.current_state = self.game_states[state]
-        
+    
+    # needed for smaller dialogue messages
     def set_event(self, event_name):
         self.current_event = event_name
         
@@ -56,5 +57,7 @@ class State:
     def track_event_and_dialogues(self):
         if self.interacted_npc:
             self.interacted_npc.continue_dialogue()
+            
+        # one line dialog box
         if self.current_event and self.game.input.interacted:
             self.return_to_play_state()

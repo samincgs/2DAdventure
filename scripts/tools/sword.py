@@ -68,7 +68,7 @@ class Sword:
         # debug
         if self.player.game.input.debug:
             sword_rect = self.rect()
-            pygame.draw.rect(surf, (255, 255, 255), pygame.Rect(sword_rect.x - offset[0], sword_rect.y - offset[1], sword_rect[2], sword_rect[3]))
+            pygame.draw.rect(surf, WHITE, pygame.Rect(sword_rect.x - offset[0], sword_rect.y - offset[1], sword_rect[2], sword_rect[3]))
         img = self.img
         surf.blit(img, (self.pos[0] - offset[0], self.pos[1] - offset[1]))
     

@@ -32,7 +32,7 @@ class Window:
         if self.game.state.menu_state:
             self.display.fill((38, 41, 94))
         else:
-            self.display.fill((0, 0, 0))
+            self.display.fill(BLACK)
         
         
         
