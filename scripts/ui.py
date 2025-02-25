@@ -1,6 +1,5 @@
 import pygame
 
-from .font import Font
 from .const import *
 
 FONT_PATH = 'data/fonts/'
@@ -18,7 +17,7 @@ class UI:
         'big_title_font': pygame.font.Font(BYTEBOUNCE_FONT, 84),
         'medium_title_font': pygame.font.Font(BYTEBOUNCE_FONT, 48),
         'medium_text_font': pygame.font.Font(BYTEBOUNCE_FONT, 32),
-        'small_text_font' : pygame.font.Font(BYTEBOUNCE_FONT, 26) 
+        'small_text_font' : pygame.font.Font(BYTEBOUNCE_FONT, 26)
         }
         self.aa = False
         
@@ -29,6 +28,12 @@ class UI:
         
         self.current_dialogue = ''
         self.menu_cursor = 0
+        
+        self.ui_messages = [] # message, timer
+        
+    def draw_ui_message(self, text):
+        message_timer = 0
+        self.ui_messages.append([text, message_timer])
                 
     def draw_dialogue(self, surf):
         dialogue_size_x = 30
@@ -112,46 +117,19 @@ class UI:
             'health': self.game.player.health,
             'strength': self.game.player.strength,
             'exp': self.game.player.exp,
-            'next_level_exp': self.game.player.next_level_exp,
+            'exp required': self.game.player.next_level_exp,
             'strength': self.game.player.strength,
             'coins': self.game.player.coins,
-            'weapon': self.game.player.weapon_type,
+            'weapon': str(self.game.player.weapon_type).title(),
         }
         
-        level_text = font.render('Level: ' + str(status_data['level']), self.aa, (255, 255, 255))
-        surf.blit(level_text, (x_pos, y_pos))
-        y_pos += line_height
-        
-        health_text = font.render('Health: ' + str(status_data['health']), self.aa, (255, 255, 255))
-        surf.blit(health_text, (x_pos, y_pos))
-        y_pos += line_height
-                
-        strength_text = font.render('Strength: ' + str(status_data['strength']), self.aa, (255, 255, 255))
-        surf.blit(strength_text, (x_pos, y_pos))
-        y_pos += line_height
-        
-        dex_text = font.render('Dexterity: ', self.aa, (255, 255, 255))
-        surf.blit(dex_text, (x_pos, y_pos))
-        y_pos += line_height
-        
-        exp_text = font.render('EXP: ' + str(status_data['exp']), self.aa, (255, 255, 255))
-        surf.blit(exp_text, (x_pos, y_pos))
-        y_pos += line_height
-        
-        exp_needed_text = font.render('EXP Needed: ' + str(status_data['next_level_exp']), self.aa, (255, 255, 255))
-        surf.blit(exp_needed_text, (x_pos, y_pos))
-        y_pos += line_height
-        
-        coin_text = font.render('Coin: ' + str(status_data['coins']), self.aa, (255, 255, 255))
-        surf.blit(coin_text, (x_pos, y_pos))
-        y_pos += line_height
-        
-        weapon_text = font.render('Weapon: ' + str(status_data['weapon']).title(), self.aa, (255, 255, 255))
-        surf.blit(weapon_text, (x_pos, y_pos))
-        y_pos += line_height
+        for text, data in status_data.items():
+            status_text = font.render(text.title() + ': ' + str(data), self.aa, (255, 255, 255))
+            surf.blit(status_text, (x_pos, y_pos))
+            y_pos += line_height
+            
         
         
-    
     def title_menu_font_screen(self, surf):
         title_text = self.fonts['big_title_font'].render('Adventure Game', self.aa, (255, 255, 255))
         shadow_title_text = self.fonts['big_title_font'].render('Adventure Game', self.aa, 'gray')
@@ -199,7 +177,21 @@ class UI:
             self.draw_character_status(surf)
 
     def render_font(self, surf):
-        if self.state.menu_state:
+        if self.state.play_state:
+            if len(self.ui_messages) >= 4:
+                    self.ui_messages.pop(0)
+            for idx, msg in enumerate(self.ui_messages.copy(), start=1):
+                msg[1] += 1
+                if msg[1] >= 200:
+                    self.ui_messages.remove(msg)
+                    
+                y_height = SCREEN_HEIGHT - 150
+                font = self.fonts['small_text_font']
+                text = font.render(msg[0], self.aa, (255, 255, 255))
+                shadow_text = font.render(msg[0], self.aa, (0, 0, 0))
+                surf.blit(shadow_text, (SCREEN_WIDTH - 50 - text.get_width() + 1, y_height + 30 * idx + 1))
+                surf.blit(text, (SCREEN_WIDTH - 50 - text.get_width(), y_height + 30 * idx))
+        elif self.state.menu_state:
             self.title_menu_font_screen(surf)   
         elif self.state.dialogue_state:
             if self.current_dialogue:

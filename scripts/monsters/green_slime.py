@@ -18,8 +18,11 @@ class GreenSlime(Entity):
         self.alpha = 50
         
         self.damage_amt = 2
+        self.exp = 2
         
         self.hp_bar_cooldown = 10
+        
+        self.death_message_shown = False
     
     @property
     def attack_value(self):

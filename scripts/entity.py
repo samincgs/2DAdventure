@@ -39,6 +39,8 @@ class Entity:
         self.hp_bar_on = False
         self.hp_bar_counter = 0
         self.hp_bar_cooldown = 0
+        
+        self.death_message_shown = False
  
     @property
     def img(self):

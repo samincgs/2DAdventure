@@ -38,6 +38,9 @@ class State:
     def set_state(self, state):
         self.current_state = self.game_states[state]
         
+    def set_event(self, event_name):
+        self.current_event = event_name
+        
     def return_to_play_state(self):
         self.set_state('play')
         self.current_event = None

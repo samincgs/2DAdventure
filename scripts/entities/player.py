@@ -14,7 +14,7 @@ class Player(Entity):
         self.max_health = 6 # 2 health equals one whole heart, 1 equals half heart
         self.health = self.max_health
         self.strength = 1
-        # self.dexterity = 1 use when there is a shield
+        self.dexterity = 1 #use when there is a shield
         self.level = 1
         self.exp = 0
         self.next_level_exp = 5
@@ -31,8 +31,6 @@ class Player(Entity):
         self.attacking = False
         self.attack_timer = 0
         
-        
-    
     @property
     def img(self):
         img = super().img
@@ -73,6 +71,19 @@ class Player(Entity):
                 self.attacking = False
                 self.attack_timer = 0
                 return True
+    
+    def check_level_up(self):
+        if self.exp >= self.next_level_exp:
+            self.level += 1
+            self.exp = 0
+            self.next_level_exp *= 2
+            self.max_health += 2 # one health
+            self.strength += 1
+            self.dexterity += 1
+            # level up dialogue
+            self.game.state.set_state('dialogue')
+            self.game.state.set_event('Level up')
+            self.game.ui.current_dialogue = 'You are now ' + str(self.level) + '!'
             
     def interact_with_npc(self, npc, turn=True):
         dis = self.get_distance(npc)
@@ -93,8 +104,7 @@ class Player(Entity):
     
     def update(self, dt):
         dead = self.check_death(dt)
-        
-        
+            
         if not self.attacking:
             movement = self.move(dt)
         
@@ -111,7 +121,7 @@ class Player(Entity):
             for entity in other_entities:
                 if self.on_screen(entity, self.game.scroll, self.game.window.display):
                     collided = self.game.collision_manager.check_entity(self, entity)
-                    if collided and collided.type in MONSTERS: # if monster collides with player
+                    if collided and collided.type in MONSTERS and not collided.death_timer: # if monster collides with player
                         self.damage(collided.attack_value)
                     if isinstance(entity, NPC):
                         self.interact_with_npc(entity)

@@ -41,6 +41,7 @@ class Game:
         self.entities.append(GreenSlime(self, (636, 348), (11, 10), 'green_slime')) 
         self.entities.append(GreenSlime(self, (650, 363), (11, 10), 'green_slime')) 
         self.entities.append(GreenSlime(self, (610, 358), (11, 10), 'green_slime')) 
+        self.entities.append(GreenSlime(self, (688, -176), (11, 10), 'green_slime')) 
 
     def run(self):
         while True:

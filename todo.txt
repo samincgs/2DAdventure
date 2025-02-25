@@ -1,4 +1,4 @@
 # create floodfill
 # fix ui (pause screen) 
 
-# add sfx (sword swing, enemy taking damage, player taking damage, falling into pit, healing pool)
+# add sfx (sword swing, enemy taking damage, player taking damage, falling into pit, healing pool, level up)

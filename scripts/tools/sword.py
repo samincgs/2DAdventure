@@ -46,12 +46,20 @@ class Sword:
         remove = self.player.reset_attack(dt, timer=self.sword_timer)
         for monster in (monster for monster in self.player.game.entities if monster.type in MONSTERS): # if player sword hits any enemy
             if self.rect().colliderect(monster.rect):
+                if not monster.invincible:
+                    self.player.game.ui.draw_ui_message(str(self.player.attack_value) + ' damage!')
                 monster.damage(self.player.attack_value)
                 monster.hp_bar_on = True
                 monster.hp_bar_counter = 0
                 opp_directions = {'right': 'left', 'left': 'right', 'up':'down', 'down': 'up'}
                 monster.direction = opp_directions[self.player.direction]
-                
+                if monster.dead and not monster.death_message_shown:
+                    self.player.exp += monster.exp
+                    monster.death_message_shown = True
+                    self.player.game.ui.draw_ui_message('killed the ' + monster.__class__.__name__ + '!')
+                    self.player.game.ui.draw_ui_message('EXP gained: ' + str(monster.exp))
+                    
+        print(self.player.exp)
                 
                 
         return remove
