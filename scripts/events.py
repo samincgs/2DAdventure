@@ -39,3 +39,4 @@ class Events:
             
             # functionality
             self.game.player.health = self.game.player.max_health
+            self.game.spawn_enemies()

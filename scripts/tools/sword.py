@@ -59,7 +59,7 @@ class Sword:
                     self.player.game.ui.draw_ui_message('killed the ' + monster.__class__.__name__ + '!')
                     self.player.game.ui.draw_ui_message('EXP gained: ' + str(monster.exp))
                     
-        print(self.player.exp)
+                    
                 
                 
         return remove

@@ -83,7 +83,7 @@ class Player(Entity):
             # level up dialogue
             self.game.state.set_state('dialogue')
             self.game.state.set_event('Level up')
-            self.game.ui.current_dialogue = 'You are now ' + str(self.level) + '!'
+            self.game.ui.current_dialogue = 'You are now level ' + str(self.level) + '!\nYou feel stronger than before!'
             
     def interact_with_npc(self, npc, turn=True):
         dis = self.get_distance(npc)

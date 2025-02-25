@@ -29,6 +29,16 @@ class Game:
 
         self.scroll = [0, 0] 
 
+    def spawn_enemies(self):
+        # reset monsters if they alr exist
+        self.entities = [entity for entity in self.entities if entity.type not in MONSTERS]
+        
+        # monsters
+        self.entities.append(GreenSlime(self, (636, 348), (11, 10), 'green_slime')) 
+        self.entities.append(GreenSlime(self, (650, 363), (11, 10), 'green_slime')) 
+        self.entities.append(GreenSlime(self, (610, 358), (11, 10), 'green_slime')) 
+        self.entities.append(GreenSlime(self, (688, -176), (11, 10), 'green_slime')) 
+    
     def load_entities(self):
         self.entities.append(Player(self, (326, 165), (8,8), 'player'))
         self.player = self.entities[-1]
@@ -38,10 +48,7 @@ class Game:
         self.entities.append(Knight(self, (404, 367), (12, 14), 'knight'))
         
         # monsters
-        self.entities.append(GreenSlime(self, (636, 348), (11, 10), 'green_slime')) 
-        self.entities.append(GreenSlime(self, (650, 363), (11, 10), 'green_slime')) 
-        self.entities.append(GreenSlime(self, (610, 358), (11, 10), 'green_slime')) 
-        self.entities.append(GreenSlime(self, (688, -176), (11, 10), 'green_slime')) 
+        self.spawn_enemies()
 
     def run(self):
         while True:
@@ -63,6 +70,7 @@ class Game:
                         kill = entity.update(self.window.dt)
                         if kill:
                             self.entities.remove(entity)
+                            self.player.check_level_up()
                 elif self.state.dialogue_state:
                     self.state.track_event_and_dialogues()
                 
