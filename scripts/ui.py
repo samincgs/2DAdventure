@@ -24,6 +24,10 @@ class UI:
         
         self.current_dialogue = ''
         self.menu_cursor = 0
+        self.inventory_max_col = 6
+        self.inventory_max_row = 2
+        self.inventory_slot_col = 0
+        self.inventory_slot_row = 0
         
         self.ui_messages = [] # message, timer
         
@@ -31,8 +35,7 @@ class UI:
         message_timer = 0
         self.ui_messages.append([text, message_timer])
     
-    
-    def draw_box(self, surf, size, loc, alpha=190):
+    def draw_box(self, surf, size, loc, alpha=160, width=2, br=5):
         status_surf = pygame.Surface(size, pygame.SRCALPHA)
         status_surf.fill((0, 0, 0, 0))
         
@@ -40,7 +43,7 @@ class UI:
         status_rect = pygame.Rect(0, 0, status_surf.get_width(), status_surf.get_height())
         
         pygame.draw.rect(status_surf, (0, 0, 0, alpha), transparent_rect)
-        pygame.draw.rect(status_surf, WHITE, status_rect, 2, 5)
+        pygame.draw.rect(status_surf, WHITE, status_rect, width, br)
         
         surf.blit(status_surf, loc)
                 
@@ -60,7 +63,6 @@ class UI:
                     pygame.draw.rect(surf, (35, 35, 35), outline_rect, 0, 2)
                     pygame.draw.rect(surf, (255, 0, 30), health_rect)
                 
-    
     def draw_player_hearts(self, surf):
         full_heart_img = self.game.assets.objects['full_heart']
         half_heart_img = self.game.assets.objects['half_heart']
@@ -79,7 +81,6 @@ class UI:
             else:
                 surf.blit(empty_heart_img, (4 + i * 18, 4))
         
-     
     def draw_menu_character(self, surf):
         char_img = self.game.assets.player['down'][0]
         char_img = pygame.transform.scale(char_img, (char_img.get_width() * 2, char_img.get_height() * 2))
@@ -91,15 +92,33 @@ class UI:
         self.draw_box(surf, size, loc)
     
     def draw_inventory(self, surf):
+        
         # inventory box
-        size = (130, 80)
+        size = (122, 80)
         loc = [20, 12]
         self.draw_box(surf, size, loc)
         
         # text box
-        size = (130, 60)
+        size = (122, 72)
         loc = [20, 100]
         self.draw_box(surf, size, loc)
+        
+        # inventory slots
+        size = (18, 18)
+        slot_loc = [27, 36]
+        cursor_loc = (slot_loc[0] + (size[0] * self.inventory_slot_col), slot_loc[1] + (size[1] * self.inventory_slot_row))
+        
+        # draw the inventory cursor
+        
+        self.draw_box(surf, size, cursor_loc, alpha=60, width=1, br=3)
+        
+        
+    def inventory_font(self, surf):
+        inventory_font = self.fonts['medium_title_font']
+        inventory_font.set_underline(True)
+        
+        inventory_text = inventory_font.render('Inventory', self.aa, WHITE)
+        surf.blit(inventory_text, (170, 50))
     
     def status_dialog_font(self, surf):
         font = self.fonts['medium_text_font']
@@ -122,16 +141,13 @@ class UI:
             'exp required': self.game.player.next_level_exp,
             'strength': self.game.player.strength,
             'coins': self.game.player.coins,
-            'weapon': str(self.game.player.weapon_type).title(),
         }
         
         for text, data in status_data.items():
             status_text = font.render(text.title() + ': ' + str(data), self.aa, WHITE)
             surf.blit(status_text, (x_pos, y_pos))
             y_pos += line_height
-            
-        
-        
+
     def title_menu_font_screen(self, surf):
         title_text = self.fonts['big_title_font'].render('Adventure Game', self.aa, WHITE)
         shadow_title_text = self.fonts['big_title_font'].render('Adventure Game', self.aa, 'gray')
@@ -140,28 +156,16 @@ class UI:
         surf.blit(title_text, (SCREEN_WIDTH // 2 - title_text.get_width() / 2, SCREEN_HEIGHT // 2 - title_text.get_height() / 2 - 180))
         
         y_offset = 0
+        menu_options = ['NEW GAME', 'LOAD GAME', 'QUIT']
         
-        new_game_text = self.fonts['medium_title_font'].render('NEW GAME', self.aa, WHITE)
-        text_pos = (SCREEN_WIDTH // 2 - new_game_text.get_width() / 2, SCREEN_HEIGHT // 2 - new_game_text.get_height() / 2 + 60 + y_offset)
-        surf.blit(new_game_text, text_pos)
-        y_offset += 50
-        if self.menu_cursor == 0:
-            surf.blit(self.fonts['medium_title_font'].render('>', self.aa, WHITE), (text_pos[0] - 30, text_pos[1]))
-        
-        load_game_text = self.fonts['medium_title_font'].render('LOAD GAME', self.aa, WHITE)
-        text_pos = (SCREEN_WIDTH // 2 - load_game_text.get_width() / 2, SCREEN_HEIGHT // 2 - load_game_text.get_height() / 2 + 60 + y_offset)
-        surf.blit(load_game_text, text_pos)
-        y_offset += 50
-        if self.menu_cursor == 1:
-            surf.blit(self.fonts['medium_title_font'].render('>', self.aa, WHITE), (text_pos[0] - 30, text_pos[1]))
-        
-        quit_text = self.fonts['medium_title_font'].render('QUIT', self.aa, WHITE)
-        text_pos = (SCREEN_WIDTH // 2 - quit_text.get_width() / 2, SCREEN_HEIGHT // 2 - quit_text.get_height() / 2 + 60 + y_offset)
-        surf.blit(quit_text, text_pos)
-        y_offset += 50
-        if self.menu_cursor == 2:
-            surf.blit(self.fonts['medium_title_font'].render('>', self.aa, WHITE), (text_pos[0] - 30, text_pos[1]))
-    
+        for idx, menu_option in enumerate(menu_options):
+            text = self.fonts['medium_title_font'].render(menu_option, self.aa, WHITE)
+            text_pos = (SCREEN_WIDTH // 2 - text.get_width() / 2, SCREEN_HEIGHT // 2 - text.get_height() / 2 + 60 + y_offset)
+            surf.blit(text, text_pos)
+            y_offset += 50
+            if self.menu_cursor == idx:
+                surf.blit(self.fonts['medium_title_font'].render('>', self.aa, WHITE), (text_pos[0] - 30, text_pos[1]))
+     
     def render(self, surf):
         if self.state.menu_state:  #MENU STATE
             self.draw_menu_character(surf)
@@ -169,15 +173,17 @@ class UI:
             # render hearts
             self.draw_player_hearts(surf)
             self.draw_enemy_health(surf)
-        elif self.state.pause_state:
+        elif self.state.pause_state: # PAUSE STATE
             pass
-        elif self.state.dialogue_state:
+        elif self.state.dialogue_state: # DIALOGUE STATE
             self.draw_player_hearts(surf)
             self.draw_dialogue(surf)
-        elif self.state.status_state:
+        elif self.state.status_state: # STATUS STATE
             self.draw_player_hearts(surf)
             self.draw_inventory(surf)
             self.draw_character_status(surf)
+        
+        print(self.inventory_slot_col, self.inventory_slot_row)
 
     def render_font(self, surf):
         if self.state.play_state:
@@ -202,4 +208,5 @@ class UI:
                 dialogue_text = self.fonts['medium_text_font'].render(self.current_dialogue, self.aa, WHITE)
                 surf.blit(dialogue_text, (130, 50))
         elif self.state.status_state:
+            self.inventory_font(surf)
             self.status_dialog_font(surf)

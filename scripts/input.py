@@ -44,12 +44,20 @@ class Input:
                 if self.state.ingame_state:
                     if event.key == pygame.K_UP:
                         self.up_pressed = True
+                        if self.state.status_state:
+                            self.game.ui.inventory_slot_row = (self.game.ui.inventory_slot_row - 1 ) % self.game.ui.inventory_max_row
                     if event.key == pygame.K_LEFT:
                         self.left_pressed = True
+                        if self.state.status_state:
+                            self.game.ui.inventory_slot_col = (self.game.ui.inventory_slot_col - 1 ) % self.game.ui.inventory_max_col
                     if event.key == pygame.K_DOWN:
                         self.down_pressed = True
+                        if self.state.status_state:
+                            self.game.ui.inventory_slot_row = (self.game.ui.inventory_slot_row + 1 ) % self.game.ui.inventory_max_row
                     if event.key == pygame.K_RIGHT:
                         self.right_pressed = True
+                        if self.state.status_state:
+                            self.game.ui.inventory_slot_col = (self.game.ui.inventory_slot_col + 1 ) % self.game.ui.inventory_max_col
                     if event.key == pygame.K_z:
                         self.interacted = True
                     if event.key == pygame.K_RETURN:
@@ -68,7 +76,7 @@ class Input:
                         elif self.state.pause_state:
                             self.state.current_state = self.state.last_state 
                             
-                else:
+                elif self.state.menu_state:
                     if event.key == pygame.K_UP:
                         self.game.ui.menu_cursor = (self.game.ui.menu_cursor - 1) % 3 
                     if event.key == pygame.K_DOWN:

@@ -96,13 +96,13 @@ class CollisionManager:
         if player.rect.colliderect(rect) and (player.direction == req_direction or req_direction == 'any'):
             if push:
                 if player.direction == 'up':
-                    player.pos[1] = rect.bottom + size
+                    player.pos[1] = rect.bottom + push
                 elif player.direction == 'down':
-                    player.pos[1] = rect.top - size
+                    player.pos[1] = rect.top - push
                 elif player.direction == 'right':
-                    player.pos[0] = rect.left - size
+                    player.pos[0] = rect.left - push
                 elif player.direction == 'left':
-                    player.pos[0] = rect.right + size
+                    player.pos[0] = rect.right + push
             return True
 
             
