@@ -1,5 +1,6 @@
 from scripts.tools.sword import Sword
 from scripts.objects.key import Key
+from scripts.objects.sneaker import Sneaker
 from scripts.entities.npc import NPC
 from ..entity import Entity
 from ..const import *
@@ -21,8 +22,9 @@ class Player(Entity):
         self.next_level_exp = 5
         self.coins = 0
         self.inventory = []
-        self.inventory.append(Sword(self, self.game.assets.sword))
-        self.inventory.append(Key(game,(0, 0), (16, 16)))
+        self.inventory.append([Sword(self, self.game.assets.sword), 1])
+        self.inventory.append([Key(game,(0, 0), (16, 16)), 2])
+        self.inventory.append([Sneaker(game,(0, 0), (16, 16)), 3])
         
         self.collision_on = True
         

@@ -17,7 +17,8 @@ class UI:
         'big_title_font': pygame.font.Font(BYTEBOUNCE_FONT, 84),
         'medium_title_font': pygame.font.Font(BYTEBOUNCE_FONT, 48),
         'medium_text_font': pygame.font.Font(BYTEBOUNCE_FONT, 32),
-        'small_text_font' : pygame.font.Font(BYTEBOUNCE_FONT, 26)
+        'small_text_font' : pygame.font.Font(BYTEBOUNCE_FONT, 26),
+        'super_small_text_font' : pygame.font.Font(BYTEBOUNCE_FONT, 22),
         }
         
         self.aa = False
@@ -25,11 +26,13 @@ class UI:
         self.current_dialogue = ''
         self.menu_cursor = 0
         
-        self.inventory_max_col = 6
+        self.inventory_max_col = 5
         self.inventory_max_row = 2
         self.inventory_slot_col = 0
         self.inventory_slot_row = 0
         
+        self.inventory_item_descriptions = ITEM_DESCRIPTIONS
+                
         self.ui_messages = [] # message, timer
         
     def draw_ui_message(self, text):
@@ -95,33 +98,33 @@ class UI:
     def draw_inventory(self, surf):
         
         # inventory box
-        size = (122, 80)
+        size = (120, 73)
         loc = [20, 12]
         self.draw_box(surf, size, loc)
         
         # text box
-        size = (122, 72)
+        size = (120, 72)
         loc = [20, 100]
         self.draw_box(surf, size, loc)
         
         # inventory slots
-        size = (18, 18)
+        size = (21, 21)
         slot_loc = [27, 36]
         cursor_loc = (slot_loc[0] + (size[0] * self.inventory_slot_col), slot_loc[1] + (size[1] * self.inventory_slot_row))
         self.draw_box(surf, size, cursor_loc, alpha=60, width=1, br=3)
         
         # draw the inventory cursor
-        for idx, item in enumerate(self.game.player.inventory):
+        for idx, item_data in enumerate(self.game.player.inventory):
+            item = item_data[0]
             img = item.type
             if item.type == 'sword':
                 img = 'sword_ui'
                 
             col = idx % self.inventory_max_col
             row = idx // self.inventory_max_col
-            x = slot_loc[0] + 1 + col * size[0]
-            y = slot_loc[1] + 1 + row * size[1]
-            
-                
+            x = slot_loc[0] + 1 + col * size[0] + 1.5
+            y = slot_loc[1] + 1 + row * size[1] + 2
+                            
             surf.blit(self.game.assets.objects[img], (x, y))
 
     def inventory_font(self, surf):
@@ -130,6 +133,29 @@ class UI:
         
         inventory_text = inventory_font.render('Inventory', self.aa, WHITE)
         surf.blit(inventory_text, (170, 50))
+        
+        # top half of inventory
+        for idx, item_data in enumerate(self.game.player.inventory):
+            amount = item_data[1]
+            
+            size = (21 * RENDER_SCALE, 21 * RENDER_SCALE)
+            slot_loc = [27 * RENDER_SCALE, 36 * RENDER_SCALE]
+            col = idx % self.inventory_max_col
+            row = idx // self.inventory_max_col
+            x = slot_loc[0] + 1 + col * size[0] + size[0] - size[0] / 2
+            y = slot_loc[1] + 1 + row * size[1] + 1
+            
+            if amount > 1:
+                amount_text = self.fonts['super_small_text_font'].render('x' + str(amount), self.aa, WHITE)    
+                surf.blit(amount_text, (x, y))
+                                
+            # bottom half of inventory item description
+            if idx == (self.inventory_slot_col + (self.inventory_slot_row * self.inventory_max_col)):
+                size = (120 * RENDER_SCALE, 72 * RENDER_SCALE)
+                loc = [20 * RENDER_SCALE, 100 * RENDER_SCALE]
+                if item_data[0].type in self.inventory_item_descriptions:
+                    item_description_text = self.fonts['medium_text_font'].render(self.inventory_item_descriptions[item_data[0].type], self.aa, WHITE)
+                    surf.blit(item_description_text, (loc[0] + 17, loc[1] + 25))
     
     def status_dialog_font(self, surf):
         font = self.fonts['medium_text_font']

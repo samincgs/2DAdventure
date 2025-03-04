@@ -37,6 +37,11 @@ DIALOGUES = {
     'knight': ["Don't talk to me stranger."]
 }
 
+ITEM_DESCRIPTIONS = {
+    'sword': '[ Sword ]\n\nAn old sword.',
+    'key': '[ Key ]\n\nA rusty key which is used\nto open doors.'
+}
+
 MONSTERS = {'green_slime'}
 
 # COLORS
