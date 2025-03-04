@@ -24,6 +24,7 @@ class UI:
         
         self.current_dialogue = ''
         self.menu_cursor = 0
+        
         self.inventory_max_col = 6
         self.inventory_max_row = 2
         self.inventory_slot_col = 0
@@ -35,7 +36,7 @@ class UI:
         message_timer = 0
         self.ui_messages.append([text, message_timer])
     
-    def draw_box(self, surf, size, loc, alpha=160, width=2, br=5):
+    def draw_box(self, surf, size, loc, alpha=180, width=2, br=5):
         status_surf = pygame.Surface(size, pygame.SRCALPHA)
         status_surf.fill((0, 0, 0, 0))
         
@@ -107,12 +108,22 @@ class UI:
         size = (18, 18)
         slot_loc = [27, 36]
         cursor_loc = (slot_loc[0] + (size[0] * self.inventory_slot_col), slot_loc[1] + (size[1] * self.inventory_slot_row))
-        
-        # draw the inventory cursor
-        
         self.draw_box(surf, size, cursor_loc, alpha=60, width=1, br=3)
         
-        
+        # draw the inventory cursor
+        for idx, item in enumerate(self.game.player.inventory):
+            img = item.type
+            if item.type == 'sword':
+                img = 'sword_ui'
+                
+            col = idx % self.inventory_max_col
+            row = idx // self.inventory_max_col
+            x = slot_loc[0] + 1 + col * size[0]
+            y = slot_loc[1] + 1 + row * size[1]
+            
+                
+            surf.blit(self.game.assets.objects[img], (x, y))
+
     def inventory_font(self, surf):
         inventory_font = self.fonts['medium_title_font']
         inventory_font.set_underline(True)
@@ -183,8 +194,6 @@ class UI:
             self.draw_inventory(surf)
             self.draw_character_status(surf)
         
-        print(self.inventory_slot_col, self.inventory_slot_row)
-
     def render_font(self, surf):
         if self.state.play_state:
             if len(self.ui_messages) >= 4:

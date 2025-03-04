@@ -77,7 +77,7 @@ class Game:
                 for entity in sorted(self.entities, key=lambda x: x.pos[1]): # sprite ordering
                     entity.render(surf, offset=render_scroll)
             
-            self.ui.render(surf)            
+            self.ui.render(surf)   
                            
 if __name__ == "__main__":
     Game().run()

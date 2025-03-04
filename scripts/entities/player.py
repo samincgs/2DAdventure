@@ -1,4 +1,5 @@
 from scripts.tools.sword import Sword
+from scripts.objects.key import Key
 from scripts.entities.npc import NPC
 from ..entity import Entity
 from ..const import *
@@ -19,6 +20,9 @@ class Player(Entity):
         self.exp = 0
         self.next_level_exp = 5
         self.coins = 0
+        self.inventory = []
+        self.inventory.append(Sword(self, self.game.assets.sword))
+        self.inventory.append(Key(game,(0, 0), (16, 16)))
         
         self.collision_on = True
         
