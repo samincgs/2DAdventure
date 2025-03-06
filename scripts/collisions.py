@@ -14,12 +14,9 @@ class CollisionManager:
                 collisions.append(tile)
         return collisions
     
-    def collision_obj(self, rect, objs):
-        collisions = []
-        for obj in objs:
-            if rect.colliderect(obj.rect):
-                collisions.append(obj)
-        return collisions
+    def collision_obj(self, entity, obj):
+        if entity.rect.colliderect(obj.rect):
+            return obj
     
     def check_tile(self, entity):
         
@@ -40,28 +37,26 @@ class CollisionManager:
             return
             
         
-    def check_object(self, entity):
+    def check_object(self, entity, obj):
         
-        obj = None
+        collided = None
         
-        collisions = self.collision_obj(entity.rect, self.game.object_spawner.objects)
+        collision_obj = self.collision_obj(entity, obj)
         temp_rect = entity.rect
-        
-        for collision_obj in collisions:
-            if collision_obj.collision_on:
-                if entity.direction == 'right':
-                    temp_rect.right = collision_obj.rect.left
-                elif entity.direction == 'left':
-                    temp_rect.left = collision_obj.rect.right
-                elif entity.direction == 'up':
-                    temp_rect.top = collision_obj.rect.bottom
-                elif entity.direction == 'down':
-                    temp_rect.bottom = collision_obj.rect.top
+                
+        if collision_obj and collision_obj.collision_on:
+            if entity.direction == 'right':
+                temp_rect.right = collision_obj.rect.left
+            elif entity.direction == 'left':
+                temp_rect.left = collision_obj.rect.right
+            elif entity.direction == 'up':
+                temp_rect.top = collision_obj.rect.bottom
+            elif entity.direction == 'down':
+                temp_rect.bottom = collision_obj.rect.top
             entity.pos = [temp_rect.x, temp_rect.y]
-            obj = collision_obj
-            return obj
-            
-        return obj
+        
+        collided = collision_obj
+        return collided
     
     def check_entity(self, entity, other):
         

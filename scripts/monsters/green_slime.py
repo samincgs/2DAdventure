@@ -43,14 +43,13 @@ class GreenSlime(Entity):
                 self.hp_bar_on = False
                 self.hp_bar_counter = 0
         
-        movement = super().update(dt)
-        self.pos[0] += movement[0]
-        self.pos[1] += movement[1]
-        
-        if self.last_movement != self.pos:
-            self.game.collision_manager.check_tile(self)
-        
         if self.on_screen(self, self.game.scroll, self.game.window.display): # check if self is on the screen
+            movement = super().update(dt)
+            self.pos[0] += movement[0]
+            self.pos[1] += movement[1]
+            if self.last_movement != self.pos:
+                self.game.collision_manager.check_tile(self)
+            
             for entity in self.game.entities:
                 if entity.type != self.type and self.on_screen(entity, self.game.scroll, self.game.window.display):
                     collided = self.game.collision_manager.check_entity(self, entity)

@@ -22,9 +22,7 @@ class Player(Entity):
         self.next_level_exp = 5
         self.coins = 0
         self.inventory = []
-        self.inventory.append([Sword(self, self.game.assets.sword), 1])
-        self.inventory.append([Key(game,(0, 0), (16, 16)), 2])
-        self.inventory.append([Sneaker(game,(0, 0), (16, 16)), 3])
+        self.inventory.append([Sword(self, self.game.assets.sword), ITEM_AMOUNT_DEFAULT])
         
         self.collision_on = True
         
@@ -63,6 +61,18 @@ class Player(Entity):
         return movement
 
     
+    def pickup(self, item):
+        if len(self.inventory) <= MAX_INVENTORY_SIZE:
+            for inv_item in self.inventory:
+                if type(inv_item[0]) is type(item):
+                    inv_item[1] += ITEM_AMOUNT_DEFAULT
+                    self.game.object_mapper.objects.remove(item)
+                    return
+                
+        self.inventory.append([item, ITEM_AMOUNT_DEFAULT])
+        self.game.object_mapper.objects.remove(item)
+        
+            
     def attack(self):
         if not self.attacking and self.weapon_type == 'sword':
             self.attacking = True
@@ -91,7 +101,7 @@ class Player(Entity):
             self.game.state.set_event('Level up')
             self.game.ui.current_dialogue = 'You are now level ' + str(self.level) + '!\nYou feel stronger than before!'
             
-    def interact_with_npc(self, npc, turn=True):
+    def interact_with_npc(self, npc):
         dis = self.get_distance(npc)
         if dis <= npc.interact_range:
             if self.game.input.interacted:
@@ -122,6 +132,12 @@ class Player(Entity):
             
             self.game.collision_manager.check_tile(self)
             self.game.events.events()
+            
+            for obj in self.game.object_mapper.objects:
+                if self.on_screen(obj, self.game.scroll, self.game.window.display):
+                    collided_obj = self.game.collision_manager.check_object(self, obj)
+                    if collided_obj:
+                        self.pickup(collided_obj)
             
             other_entities = (npc for npc in self.game.entities if npc.type != 'player')
             for entity in other_entities:

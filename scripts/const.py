@@ -37,9 +37,12 @@ DIALOGUES = {
     'knight': ["Don't talk to me stranger."]
 }
 
+ITEM_AMOUNT_DEFAULT = 1
+MAX_INVENTORY_SIZE = 10
 ITEM_DESCRIPTIONS = {
     'sword': '[ Sword ]\n\nAn old sword.',
-    'key': '[ Key ]\n\nA rusty key which is used\nto open doors.'
+    'key': '[ Key ]\n\nA rusty key which is used\nto open doors.',
+    'sneaker': '[ Sneaker ]\n\nShoes that allow you to\nmove faster for a short\nduration.'
 }
 
 MONSTERS = {'green_slime'}

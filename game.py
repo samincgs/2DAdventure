@@ -5,13 +5,13 @@ from scripts.tile_manager import TileManager
 from scripts.collisions import CollisionManager
 from scripts.events import Events
 from scripts.state import State
+from scripts.object_mapper import ObjectMapper
 from scripts.ui import UI
 from scripts.entities.old_wizard import OldWizard
 from scripts.entities.player import Player
 from scripts.entities.knight import Knight
 from scripts.monsters.green_slime import GreenSlime
 from scripts.const import *
-
 
 class Game:
     def __init__(self):
@@ -23,6 +23,7 @@ class Game:
         self.collision_manager = CollisionManager(self, self.tile_manager)
         self.ui = UI(self, self.state)
         self.events = Events(self, self.state, self.collision_manager)
+        self.object_mapper = ObjectMapper(self)
         
         self.entities = []
         self.load_entities()
@@ -52,6 +53,7 @@ class Game:
 
     def run(self):
         while True:
+            
             surf = self.window.display   
             
             self.window.create(self.ui)
@@ -64,6 +66,7 @@ class Game:
                 render_scroll = (int(self.scroll[0]), int(self.scroll[1]))
 
                 self.tile_manager.render_visible(surf, offset=render_scroll)
+                self.object_mapper.render(surf, offset=render_scroll)
                 
                 if self.state.play_state: 
                     for entity in self.entities.copy():

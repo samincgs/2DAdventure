@@ -4,6 +4,7 @@ from .const import *
 
 FONT_PATH = 'data/fonts/'
 BYTEBOUNCE_FONT = FONT_PATH + 'ByteBounce.ttf'
+MARUMONICA_FONT = FONT_PATH + 'marumonica.ttf'
 
 class UI:
     def __init__(self, game, state):
@@ -30,6 +31,7 @@ class UI:
         self.inventory_max_row = 2
         self.inventory_slot_col = 0
         self.inventory_slot_row = 0
+        self.render_inventory_textbox = False
         
         self.inventory_item_descriptions = ITEM_DESCRIPTIONS
                 
@@ -96,7 +98,6 @@ class UI:
         self.draw_box(surf, size, loc)
     
     def draw_inventory(self, surf):
-        
         # inventory box
         size = (120, 73)
         loc = [20, 12]
@@ -105,13 +106,16 @@ class UI:
         # text box
         size = (120, 72)
         loc = [20, 100]
-        self.draw_box(surf, size, loc)
+        if self.render_inventory_textbox:
+            self.draw_box(surf, size, loc)
         
         # inventory slots
         size = (21, 21)
         slot_loc = [27, 36]
         cursor_loc = (slot_loc[0] + (size[0] * self.inventory_slot_col), slot_loc[1] + (size[1] * self.inventory_slot_row))
         self.draw_box(surf, size, cursor_loc, alpha=60, width=1, br=3)
+        
+        
         
         # draw the inventory cursor
         for idx, item_data in enumerate(self.game.player.inventory):
@@ -151,6 +155,7 @@ class UI:
                                 
             # bottom half of inventory item description
             if idx == (self.inventory_slot_col + (self.inventory_slot_row * self.inventory_max_col)):
+                self.render_inventory_textbox = True
                 size = (120 * RENDER_SCALE, 72 * RENDER_SCALE)
                 loc = [20 * RENDER_SCALE, 100 * RENDER_SCALE]
                 if item_data[0].type in self.inventory_item_descriptions:
@@ -221,6 +226,7 @@ class UI:
             self.draw_character_status(surf)
         
     def render_font(self, surf):
+        self.render_inventory_textbox = False
         if self.state.play_state:
             if len(self.ui_messages) >= 4:
                     self.ui_messages.pop(0)

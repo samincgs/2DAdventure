@@ -11,7 +11,10 @@ class Object(Entity):
         self.type = type
         self.size = list(size)
         
+        self.collision_on = False
         self.img_states = None
+        
+        self.rect_offset = ENTITY_RECT_OFFSETS[type] if type in ENTITY_RECT_OFFSETS else (0, 0)
         
     @property
     def img(self):
