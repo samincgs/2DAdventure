@@ -138,6 +138,7 @@ class Player(Entity):
                     collided_obj = self.game.collision_manager.check_object(self, obj)
                     if collided_obj:
                         self.pickup(collided_obj)
+                        self.game.ui.draw_ui_message('x1 ' + str(collided_obj.type).title() + '!')
             
             other_entities = (npc for npc in self.game.entities if npc.type != 'player')
             for entity in other_entities:

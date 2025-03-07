@@ -18,7 +18,7 @@ class UI:
         'big_title_font': pygame.font.Font(BYTEBOUNCE_FONT, 84),
         'medium_title_font': pygame.font.Font(BYTEBOUNCE_FONT, 48),
         'medium_text_font': pygame.font.Font(BYTEBOUNCE_FONT, 32),
-        'small_text_font' : pygame.font.Font(BYTEBOUNCE_FONT, 26),
+        'small_text_font' : pygame.font.Font(BYTEBOUNCE_FONT, 27),
         'super_small_text_font' : pygame.font.Font(BYTEBOUNCE_FONT, 22),
         }
         
