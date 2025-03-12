@@ -60,14 +60,12 @@ class Input:
                             self.game.ui.inventory_slot_col = (self.game.ui.inventory_slot_col + 1 ) % self.game.ui.inventory_max_col
                     if event.key == pygame.K_z:
                         self.interacted = True
+                        self.action = True
                     if event.key == pygame.K_RETURN:
                         if self.state.play_state:
                             self.state.set_state('status')
                         elif self.state.status_state:
                             self.state.set_state('play')
-                        # self.action = True
-                    if event.key == pygame.K_x:
-                        self.action = True
                     if event.key == pygame.K_TAB:
                         self.debug = not self.debug
                     if event.key == pygame.K_p:

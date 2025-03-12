@@ -11,6 +11,7 @@ from scripts.entities.old_wizard import OldWizard
 from scripts.entities.player import Player
 from scripts.entities.knight import Knight
 from scripts.monsters.green_slime import GreenSlime
+from scripts.objects.sword import Sword
 from scripts.const import *
 
 class Game:
@@ -43,6 +44,7 @@ class Game:
     def load_entities(self):
         self.entities.append(Player(self, (326, 165), (8,8), 'player'))
         self.player = self.entities[-1]
+        self.player.inventory.append([Sword(self, (0, 0), (16, 16)), ITEM_AMOUNT_DEFAULT])
          
         #npcs
         self.entities.append(OldWizard(self, (275, 150), (14, 10), 'old_wizard'))

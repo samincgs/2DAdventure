@@ -2,3 +2,4 @@
 # fix ui (pause screen) 
 
 # add sfx (sword swing, enemy taking damage, player taking damage, falling into pit, healing pool, level up)
+# add pickeable for knight guy to change his dialogue and setup his store

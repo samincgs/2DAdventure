@@ -17,7 +17,7 @@ class GreenSlime(Entity):
         self.invincible_time = 0.85
         self.alpha = 50
         
-        self.damage_amt = 2
+        self.damage_amt = 3
         self.exp = 2
         
         self.hp_bar_cooldown = 10

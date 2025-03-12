@@ -1,8 +1,7 @@
 import pygame
 
-from scripts.objects.sword import Sword
-from scripts.objects.key import Key
 from scripts.entities.npc import NPC
+
 from ..entity import Entity
 from ..const import *
 
@@ -24,7 +23,6 @@ class Player(Entity):
         self.next_level_exp = 5
         self.coins = 0
         self.inventory = []
-        self.inventory.append([Sword(game, (0, 0), (16, 16)), ITEM_AMOUNT_DEFAULT])
         
         self.collision_on = True
         
@@ -93,7 +91,7 @@ class Player(Entity):
             self.attacking = True
     
     def reset_attack(self, dt):
-        ANIMATION_DURATIONS = [0.08, 0.32]
+        ANIMATION_DURATIONS = [0.08, 0.40]
         if self.attacking:
             self.attack_num += dt
             if self.attack_num <= ANIMATION_DURATIONS[0]:
@@ -126,11 +124,14 @@ class Player(Entity):
         dis = self.get_distance(npc)
         if dis <= npc.interact_range:
             if self.game.input.interacted:
+                self.attacking = False # make sure attack animation does not happen when interacting with an npc
+                self.frame_index = 0
+                self.frame_num = 0
                 self.game.state.set_state('dialogue')
                 if npc.can_turn: 
                     npc.turn_to_player(self)
                 npc.speak()
-                self.game.state.interacted_npc = npc
+                self.game.state.interacted_npc = npc # need this because play state is paused when we go into dialogue state, so we need to continue it somewhere else
         
     def animation_update(self, dt):
         if self.game.input.pressed: 
@@ -141,53 +142,54 @@ class Player(Entity):
     
     def update(self, dt):
         dead = self.check_death(dt)
-            
-        movement = self.move(dt)
         
         if self.game.input.action:
             self.attack()
-    
-        self.pos[0] += movement[0]
-        self.pos[1] += movement[1]
-        self.pos = [round(self.pos[0]), round(self.pos[1])]
-        
-        self.animation_update(dt)
-        
-        self.game.collision_manager.check_tile(self)
-        self.game.events.events()
-        
-        for obj in self.game.object_mapper.objects:
-            if self.on_screen(obj, self.game.scroll, self.game.window.display):
-                collided_obj = self.game.collision_manager.check_object(self, obj)
-                if collided_obj:
-                    self.pickup(collided_obj)
-                    self.game.ui.draw_ui_message('x1 ' + str(collided_obj.type).title() + '!')
-        
-        other_entities = (npc for npc in self.game.entities if npc.type != 'player')
+
+        if not self.attacking:
+            movement = self.move(dt)
+            self.pos[0] += movement[0]
+            self.pos[1] += movement[1]
+            self.pos = [round(self.pos[0]), round(self.pos[1])]
+            
+            self.animation_update(dt)
+            
+            self.game.collision_manager.check_tile(self)
+            self.game.events.events()
+            
+            for obj in self.game.object_mapper.objects:
+                if self.on_screen(obj, self.game.scroll, self.game.window.display):
+                    collided_obj = self.game.collision_manager.check_object(self, obj)
+                    if collided_obj:
+                        self.pickup(collided_obj)
+                        self.game.ui.draw_ui_message('x1 ' + str(collided_obj.type).title() + '!')
+            
+        other_entities = (entity for entity in self.game.entities if entity.type != 'player')
         for entity in other_entities:
             if self.on_screen(entity, self.game.scroll, self.game.window.display):
                 collided = self.game.collision_manager.check_entity(self, entity)
                 if collided and collided.type in MONSTERS and not collided.death_timer: # if monster collides with player
                     self.damage(collided.attack_value)
-                if isinstance(entity, NPC):
+                elif isinstance(entity, NPC):
                     self.interact_with_npc(entity)
-        
-        # attacking monsters
-        if self.attacking:
-            for monster in (monster for monster in self.game.entities if monster.type in MONSTERS): # if player sword hits any enemy
-                if self.weapon_rect.colliderect(monster.rect):
-                    if not monster.invincible:
-                        self.game.ui.draw_ui_message(str(self.attack_value) + ' damage!')
-                    monster.damage(self.attack_value)
-                    monster.hp_bar_on = True
-                    monster.hp_bar_counter = 0
-                    opp_directions = {'right': 'left', 'left': 'right', 'up':'down', 'down': 'up'}
-                    monster.direction = opp_directions[self.direction]
-                    if monster.dead and not monster.death_message_shown:
-                        self.exp += monster.exp
-                        monster.death_message_shown = True
-                        self.game.ui.draw_ui_message('killed the ' + monster.__class__.__name__ + '!')
-                        self.game.ui.draw_ui_message('EXP gained: ' + str(monster.exp))
+                # attacking monsters
+                elif self.attacking:
+                    if entity.type in MONSTERS: # if player sword hits any enemy
+                        monster = entity
+                        if self.weapon_rect.colliderect(monster.rect):
+                            if not monster.invincible:
+                                self.game.ui.draw_ui_message(str(self.attack_value) + ' damage!')
+                            monster.damage(self.attack_value)
+                            monster.hp_bar_on = True
+                            monster.hp_bar_counter = 0
+                            opp_directions = {'right': 'left', 'left': 'right', 'up':'down', 'down': 'up'}
+                            monster.direction = opp_directions[self.direction]
+                            if monster.dead and not monster.death_message_shown:
+                                self.exp += monster.exp
+                                monster.death_message_shown = True
+                                self.game.ui.draw_ui_message('killed the ' + monster.__class__.__name__ + '!')
+                                self.game.ui.draw_ui_message('EXP gained: ' + str(monster.exp))
+    
         
         # reset timers
         self.reset_invincible(dt)
