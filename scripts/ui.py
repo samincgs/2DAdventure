@@ -121,9 +121,6 @@ class UI:
         for idx, item_data in enumerate(self.game.player.inventory):
             item = item_data[0]
             img = item.type
-            if item.type == 'sword':
-                img = 'sword_ui'
-                
             col = idx % self.inventory_max_col
             row = idx // self.inventory_max_col
             x = slot_loc[0] + 1 + col * size[0] + 1.5

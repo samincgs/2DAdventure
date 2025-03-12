@@ -1,9 +1,11 @@
-from scripts.tools.sword import Sword
+import pygame
+
+from scripts.objects.sword import Sword
 from scripts.objects.key import Key
-from scripts.objects.sneaker import Sneaker
 from scripts.entities.npc import NPC
 from ..entity import Entity
 from ..const import *
+
 
 
 class Player(Entity):
@@ -22,7 +24,7 @@ class Player(Entity):
         self.next_level_exp = 5
         self.coins = 0
         self.inventory = []
-        self.inventory.append([Sword(self, self.game.assets.sword), ITEM_AMOUNT_DEFAULT])
+        self.inventory.append([Sword(game, (0, 0), (16, 16)), ITEM_AMOUNT_DEFAULT])
         
         self.collision_on = True
         
@@ -30,10 +32,14 @@ class Player(Entity):
         
         self.animation_timer = 0.13
         
-        self.weapon_type = 'sword'
-        self.weapon = None
         self.attacking = False
-        self.attack_timer = 0
+        self.attack_index = 0
+        self.attack_num = 0
+        self.attack_delay_timer = 0
+        self.attack_delay = 0.33
+        
+        self.sword_damage_amt = 1
+        self.weapon = 'sword'
         
     @property
     def img(self):
@@ -41,8 +47,17 @@ class Player(Entity):
         return img
     
     @property
+    def weapon_img(self):
+        img = self.images['attack' + '_' + self.direction][self.attack_index]
+        return img
+    
+    @property
+    def weapon_rect(self):
+        return pygame.Rect(int(self.pos[0] + WEAPON_RECT[self.weapon]['offset'][self.direction][0]), int(self.pos[1] + WEAPON_RECT[self.weapon]['offset'][self.direction][1]), WEAPON_RECT[self.weapon]['size'][self.direction][0], WEAPON_RECT[self.weapon]['size'][self.direction][1])
+    
+    @property
     def attack_value(self):
-        return self.strength * Sword.damage_amt
+        return self.strength * self.sword_damage_amt
         
     def move(self, dt):
         movement = [0, 0]
@@ -74,19 +89,25 @@ class Player(Entity):
         
             
     def attack(self):
-        if not self.attacking and self.weapon_type == 'sword':
+        if not self.attack_delay_timer:
             self.attacking = True
-            self.attack_timer = 0
-            self.frame_index = 3
-            self.weapon = Sword(self, self.game.assets.sword)
     
-    def reset_attack(self, dt, timer):
+    def reset_attack(self, dt):
+        ANIMATION_DURATIONS = [0.08, 0.32]
         if self.attacking:
-            self.attack_timer += dt
-            if self.attack_timer >= timer:
+            self.attack_num += dt
+            if self.attack_num <= ANIMATION_DURATIONS[0]:
+                self.attack_index = 0
+            elif self.attack_num <= ANIMATION_DURATIONS[1]:
+                self.attack_index = 1
+            else:
                 self.attacking = False
-                self.attack_timer = 0
-                return True
+                self.attack_index = 0
+                self.attack_num = 0
+                self.attack_delay_timer = self.attack_delay
+        else:
+            self.attack_delay = max(0, self.attack_delay_timer - dt)
+            
     
     def check_level_up(self):
         if self.exp >= self.next_level_exp:
@@ -121,53 +142,87 @@ class Player(Entity):
     def update(self, dt):
         dead = self.check_death(dt)
             
-        if not self.attacking:
-            movement = self.move(dt)
+        movement = self.move(dt)
         
-            self.pos[0] += movement[0]
-            self.pos[1] += movement[1]
-            self.pos = [round(self.pos[0]), round(self.pos[1])]
-            
-            self.animation_update(dt)
-            
-            self.game.collision_manager.check_tile(self)
-            self.game.events.events()
-            
-            for obj in self.game.object_mapper.objects:
-                if self.on_screen(obj, self.game.scroll, self.game.window.display):
-                    collided_obj = self.game.collision_manager.check_object(self, obj)
-                    if collided_obj:
-                        self.pickup(collided_obj)
-                        self.game.ui.draw_ui_message('x1 ' + str(collided_obj.type).title() + '!')
-            
-            other_entities = (npc for npc in self.game.entities if npc.type != 'player')
-            for entity in other_entities:
-                if self.on_screen(entity, self.game.scroll, self.game.window.display):
-                    collided = self.game.collision_manager.check_entity(self, entity)
-                    if collided and collided.type in MONSTERS and not collided.death_timer: # if monster collides with player
-                        self.damage(collided.attack_value)
-                    if isinstance(entity, NPC):
-                        self.interact_with_npc(entity)
-                        
-            self.reset_invincible(dt)
-                    
-            if self.game.input.action:
-                self.attack()
-        else:  
-            if self.weapon:
-                remove = self.weapon.update(dt)
-                if remove:
-                    self.weapon = None
+        if self.game.input.action:
+            self.attack()
     
+        self.pos[0] += movement[0]
+        self.pos[1] += movement[1]
+        self.pos = [round(self.pos[0]), round(self.pos[1])]
+        
+        self.animation_update(dt)
+        
+        self.game.collision_manager.check_tile(self)
+        self.game.events.events()
+        
+        for obj in self.game.object_mapper.objects:
+            if self.on_screen(obj, self.game.scroll, self.game.window.display):
+                collided_obj = self.game.collision_manager.check_object(self, obj)
+                if collided_obj:
+                    self.pickup(collided_obj)
+                    self.game.ui.draw_ui_message('x1 ' + str(collided_obj.type).title() + '!')
+        
+        other_entities = (npc for npc in self.game.entities if npc.type != 'player')
+        for entity in other_entities:
+            if self.on_screen(entity, self.game.scroll, self.game.window.display):
+                collided = self.game.collision_manager.check_entity(self, entity)
+                if collided and collided.type in MONSTERS and not collided.death_timer: # if monster collides with player
+                    self.damage(collided.attack_value)
+                if isinstance(entity, NPC):
+                    self.interact_with_npc(entity)
+        
+        # attacking monsters
+        if self.attacking:
+            for monster in (monster for monster in self.game.entities if monster.type in MONSTERS): # if player sword hits any enemy
+                if self.weapon_rect.colliderect(monster.rect):
+                    if not monster.invincible:
+                        self.game.ui.draw_ui_message(str(self.attack_value) + ' damage!')
+                    monster.damage(self.attack_value)
+                    monster.hp_bar_on = True
+                    monster.hp_bar_counter = 0
+                    opp_directions = {'right': 'left', 'left': 'right', 'up':'down', 'down': 'up'}
+                    monster.direction = opp_directions[self.direction]
+                    if monster.dead and not monster.death_message_shown:
+                        self.exp += monster.exp
+                        monster.death_message_shown = True
+                        self.game.ui.draw_ui_message('killed the ' + monster.__class__.__name__ + '!')
+                        self.game.ui.draw_ui_message('EXP gained: ' + str(monster.exp))
+        
+        # reset timers
+        self.reset_invincible(dt)
+        self.reset_attack(dt)
+         
         return dead
                     
 
     def render(self, surf, offset=(0, 0)):
-        if self.direction in {'up', 'left', 'right'} and self.weapon:
-            self.weapon.render(surf, offset=offset)
-        super().render(surf, offset=offset)
-        if self.direction == 'down' and self.weapon:
-            self.weapon.render(surf, offset=offset) 
+        if self.game.input.debug:
+            pygame.draw.rect(surf, WHITE, pygame.Rect(self.rect.x - offset[0], self.rect.y - offset[1], self.rect.size[0], self.rect.size[1])) #debug
+            pygame.draw.rect(surf, RED, pygame.Rect(self.weapon_rect.x - offset[0], self.weapon_rect.y - offset[1], self.weapon_rect.size[0], self.weapon_rect.size[1])) #debug
+            
+        img = self.img.copy()
+        
+        if self.invincible:
+            if self.invincible_counter % 0.20 <= 0.1:
+                img.set_alpha(self.alpha)  
+            else:
+                img.set_alpha(255)
+    
+        offset = self.render_offset(offset=offset)
+ 
+        if self.dead:
+            self.death_animation(img, surf, offset=offset)
+        elif self.attacking:
+            temp_pos = self.pos.copy()
+            if self.direction == 'left':
+                temp_pos[0] = self.pos[0] - TILE_SIZE
+            elif self.direction == 'up':
+                temp_pos[1] = self.pos[1] - TILE_SIZE
+            img = self.weapon_img
+            surf.blit(img, (int(temp_pos[0] - offset[0]), int(temp_pos[1] - offset[1])))
+        else:       
+            surf.blit(img, (int(self.pos[0] - offset[0]), int(self.pos[1] - offset[1])))
         
         
         

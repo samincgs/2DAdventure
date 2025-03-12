@@ -33,7 +33,6 @@ class Entity:
         self.invincible_counter = 0
         self.death_timer = 0
         
-        
         self.last_movement = 0
         
         self.hp_bar_on = False
@@ -49,6 +48,8 @@ class Entity:
     @property
     def rect(self):
         return pygame.Rect(int(self.pos[0]), int(self.pos[1]), *self.size)
+    
+    
     
     def on_screen(self, entity, camera, display):
        return (camera[0] <= entity.pos[0] <= camera[0] + display.get_width() and camera[1] <= entity.pos[1] <= camera[1] + display.get_height())
@@ -138,9 +139,10 @@ class Entity:
                 img.set_alpha(255)
     
         offset = self.render_offset(offset=offset)
+ 
         if self.dead:
             self.death_animation(img, surf, offset=offset)
-        else:
+        else:       
             surf.blit(img, (int(self.pos[0] - offset[0]), int(self.pos[1] - offset[1])))
         
         

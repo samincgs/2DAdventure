@@ -10,6 +10,7 @@ class Assets:
         
         # entities
         self.player = load_dir_list(entity_path + 'player', alpha=alpha)
+                
         self.old_wizard = load_dir_list(entity_path + 'old_wizard', alpha=alpha)
         self.knight = load_dir_list(entity_path + 'knight', alpha=alpha)
         self.slime = load_dir_list(entity_path + 'slime', alpha=alpha)

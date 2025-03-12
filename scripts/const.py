@@ -18,12 +18,20 @@ ENTITY_RECT_OFFSETS = {
     'green_slime': (2, 6),
 }
 
-WEAPON_RECT_OFFSETS = {
+WEAPON_RECT = {
     'sword': {
-        'up': [4, 2],
-        'down': [4, 6],
-        'right': [6 , 4],
-        'left': [2, 4],
+        'size': {
+            'up': [6, 8],
+            'down': [6, 8],
+            'right': [8 , 6],
+            'left': [8, 6],
+        },
+        'offset': {
+            'up': [3, -16],
+            'down': [-1, 9],
+            'right': [11 , -1],
+            'left': [-11, -1],
+            }
     }
 }
 
@@ -49,4 +57,5 @@ MONSTERS = {'green_slime'}
 
 # COLORS
 WHITE = (255, 255, 255)
+RED = (255, 0, 0)
 BLACK = (0, 0, 0)
