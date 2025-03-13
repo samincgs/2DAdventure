@@ -20,6 +20,7 @@ class GreenSlime(Entity):
         self.damage_amt = 3
         self.exp = 2
         
+        self.is_monster = True
         self.hp_bar_cooldown = 10
         
         self.death_message_shown = False

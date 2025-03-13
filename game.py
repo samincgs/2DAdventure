@@ -1,3 +1,4 @@
+from scripts.objects.axe import Axe
 from scripts.window import Window
 from scripts.input import Input
 from scripts.assets import Assets
@@ -12,7 +13,6 @@ from scripts.entities.player import Player
 from scripts.entities.knight import Knight
 from scripts.monsters.green_slime import GreenSlime
 from scripts.objects.sword import Sword
-from scripts.const import *
 
 class Game:
     def __init__(self):
@@ -33,7 +33,7 @@ class Game:
 
     def spawn_enemies(self):
         # reset monsters if they alr exist
-        self.entities = [entity for entity in self.entities if entity.type not in MONSTERS]
+        self.entities = [entity for entity in self.entities if not entity.is_monster]
         
         # monsters
         self.entities.append(GreenSlime(self, (636, 348), (11, 10), 'green_slime')) 
@@ -44,7 +44,9 @@ class Game:
     def load_entities(self):
         self.entities.append(Player(self, (326, 165), (8,8), 'player'))
         self.player = self.entities[-1]
-        self.player.inventory.append([Sword(self, (0, 0), (16, 16)), ITEM_AMOUNT_DEFAULT])
+        self.player.inventory.append(Sword(self, (0, 0), (16, 16)))
+        self.player.inventory.append(Axe(self, (0, 0), (16, 16)))
+        self.player.weapon = self.player.inventory[0]
          
         #npcs
         self.entities.append(OldWizard(self, (275, 150), (14, 10), 'old_wizard'))

@@ -97,11 +97,5 @@ class Input:
                 if event.key == pygame.K_RETURN:
                     self.enter_pressed = False
         
-                    
-        if self.debug:
-            print(f"POS: {self.game.player.pos}")         
-            print(f"RECT: {self.game.player.rect.topleft}")  
-            print(f"SCROLL: {self.game.scroll}")            
-            print(f"FPS: {self.game.window.clock.get_fps()}") 
-            print("-" * 40)
+            
             

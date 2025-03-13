@@ -1,5 +1,4 @@
 from .object import Object
-from ..const import *
 
 class Heart(Object):
     def __init__(self, game, pos):

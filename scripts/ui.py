@@ -33,22 +33,30 @@ class UI:
         self.inventory_slot_row = 0
         self.render_inventory_textbox = False
         
-        self.inventory_item_descriptions = ITEM_DESCRIPTIONS
                 
         self.ui_messages = [] # message, timer
+    
+    def debug(self, surf):
+        debug_texts = [f"POS: {self.game.player.pos}", f"RECT: {self.game.player.rect.topleft}", f"SCROLL: {self.game.scroll}", f"FPS: {self.game.window.clock.get_fps()}"]
+        
+        y_height = 450
+        for text in debug_texts:
+            debug_text = self.fonts['medium_text_font'].render(text, self.aa, WHITE)
+            y_height += self.fonts['medium_text_font'].get_height() + 3
+            surf.blit(debug_text, (0, y_height))
         
     def draw_ui_message(self, text):
         message_timer = 0
         self.ui_messages.append([text, message_timer])
     
-    def draw_box(self, surf, size, loc, alpha=180, width=2, br=5):
+    def draw_box(self, surf, size, loc, color=(0,0,0, 180), width=2, br=5):
         status_surf = pygame.Surface(size, pygame.SRCALPHA)
         status_surf.fill((0, 0, 0, 0))
         
         transparent_rect = pygame.Rect(2, 2, status_surf.get_width() - 4, status_surf.get_height() - 4)
         status_rect = pygame.Rect(0, 0, status_surf.get_width(), status_surf.get_height())
         
-        pygame.draw.rect(status_surf, (0, 0, 0, alpha), transparent_rect)
+        pygame.draw.rect(status_surf, color, transparent_rect)
         pygame.draw.rect(status_surf, WHITE, status_rect, width, br)
         
         surf.blit(status_surf, loc)
@@ -61,7 +69,7 @@ class UI:
             
     def draw_enemy_health(self, surf):
         for enemy in self.game.entities:
-            if enemy.type in MONSTERS and enemy.hp_bar_on:
+            if enemy.is_monster and enemy.hp_bar_on:
                 health_ratio = enemy.health / enemy.max_health
                 outline_rect = pygame.Rect(enemy.pos[0] - self.game.scroll[0] - 1, enemy.pos[1] - self.game.scroll[1] - 8, (1 * 10 + 2), 4)
                 health_rect = pygame.Rect(enemy.pos[0] - self.game.scroll[0], enemy.pos[1] - self.game.scroll[1] - 7, (health_ratio * 10), 2)
@@ -113,20 +121,23 @@ class UI:
         size = (21, 21)
         slot_loc = [27, 36]
         cursor_loc = (slot_loc[0] + (size[0] * self.inventory_slot_col), slot_loc[1] + (size[1] * self.inventory_slot_row))
-        self.draw_box(surf, size, cursor_loc, alpha=60, width=1, br=3)
-        
-        
+        self.draw_box(surf, size, cursor_loc, (0, 0, 0, 60), width=1, br=3)
         
         # draw the inventory cursor
         for idx, item_data in enumerate(self.game.player.inventory):
-            item = item_data[0]
-            img = item.type
+            if item_data.is_weapon:
+                img = item_data.ui_img
+            else:
+                img = item_data.img
+                
             col = idx % self.inventory_max_col
             row = idx // self.inventory_max_col
             x = slot_loc[0] + 1 + col * size[0] + 1.5
             y = slot_loc[1] + 1 + row * size[1] + 2
                             
-            surf.blit(self.game.assets.objects[img], (x, y))
+            if type(item_data) is type(self.game.player.weapon):
+                pygame.draw.rect(surf, (240, 190, 90), pygame.Rect(x - 1, y - 2, 19, 19), 0, 2)
+            surf.blit(img, (x, y))
 
     def inventory_font(self, surf):
         inventory_font = self.fonts['medium_title_font']
@@ -137,8 +148,8 @@ class UI:
         
         # top half of inventory
         for idx, item_data in enumerate(self.game.player.inventory):
-            amount = item_data[1]
-            
+            amount = item_data.amount
+    
             size = (21 * RENDER_SCALE, 21 * RENDER_SCALE)
             slot_loc = [27 * RENDER_SCALE, 36 * RENDER_SCALE]
             col = idx % self.inventory_max_col
@@ -155,8 +166,8 @@ class UI:
                 self.render_inventory_textbox = True
                 size = (120 * RENDER_SCALE, 72 * RENDER_SCALE)
                 loc = [20 * RENDER_SCALE, 100 * RENDER_SCALE]
-                if item_data[0].type in self.inventory_item_descriptions:
-                    item_description_text = self.fonts['medium_text_font'].render(self.inventory_item_descriptions[item_data[0].type], self.aa, WHITE)
+                if item_data.item_description:
+                    item_description_text = self.fonts['medium_text_font'].render(item_data.item_description, self.aa, WHITE)
                     surf.blit(item_description_text, (loc[0] + 17, loc[1] + 25))
     
     def status_dialog_font(self, surf):
@@ -221,7 +232,7 @@ class UI:
             self.draw_player_hearts(surf)
             self.draw_inventory(surf)
             self.draw_character_status(surf)
-        
+            
     def render_font(self, surf):
         self.render_inventory_textbox = False
         if self.state.play_state:
@@ -248,3 +259,7 @@ class UI:
         elif self.state.status_state:
             self.inventory_font(surf)
             self.status_dialog_font(surf)
+            
+            
+        if self.game.input.debug:
+            self.debug(surf)

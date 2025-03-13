@@ -4,15 +4,17 @@ from ..entity import Entity
 from ..const import *
 
 
-class Object(Entity):
+class  Object(Entity):
     def __init__(self, game, pos, type, size=(16,16)):
         self.game = game
         self.pos = list(pos)
         self.type = type
         self.size = list(size)
         
+        self.is_weapon = False
         self.collision_on = False
-        self.img_states = None
+        self.amount = 1
+        self.item_description = ''
         
         self.rect_offset = ENTITY_RECT_OFFSETS[type] if type in ENTITY_RECT_OFFSETS else (0, 0)
         

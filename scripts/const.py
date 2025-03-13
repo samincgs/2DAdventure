@@ -18,22 +18,6 @@ ENTITY_RECT_OFFSETS = {
     'green_slime': (2, 6),
 }
 
-WEAPON_RECT = {
-    'sword': {
-        'size': {
-            'up': [6, 8],
-            'down': [6, 8],
-            'right': [8 , 6],
-            'left': [8, 6],
-        },
-        'offset': {
-            'up': [3, -16],
-            'down': [-1, 9],
-            'right': [11 , -1],
-            'left': [-11, -1],
-            }
-    }
-}
 
 DIALOGUES = {
     'player': [],
@@ -45,15 +29,7 @@ DIALOGUES = {
     'knight': ["Don't talk to me stranger."]
 }
 
-ITEM_AMOUNT_DEFAULT = 1
 MAX_INVENTORY_SIZE = 10
-ITEM_DESCRIPTIONS = {
-    'sword': '[ Sword ]\n\nAn old sword.',
-    'key': '[ Key ]\n\nA rusty key which is used\nto open doors.',
-    'sneaker': '[ Sneaker ]\n\nShoes that allow you to\nmove faster for a short\nduration.'
-}
-
-MONSTERS = {'green_slime'}
 
 # COLORS
 WHITE = (255, 255, 255)

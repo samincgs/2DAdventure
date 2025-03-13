@@ -36,26 +36,10 @@ class Player(Entity):
         self.attack_delay_timer = 0
         self.attack_delay = 0.33
         
-        self.sword_damage_amt = 1
-        self.weapon = 'sword'
-        
     @property
     def img(self):
         img = super().img
         return img
-    
-    @property
-    def weapon_img(self):
-        img = self.images['attack' + '_' + self.direction][self.attack_index]
-        return img
-    
-    @property
-    def weapon_rect(self):
-        return pygame.Rect(int(self.pos[0] + WEAPON_RECT[self.weapon]['offset'][self.direction][0]), int(self.pos[1] + WEAPON_RECT[self.weapon]['offset'][self.direction][1]), WEAPON_RECT[self.weapon]['size'][self.direction][0], WEAPON_RECT[self.weapon]['size'][self.direction][1])
-    
-    @property
-    def attack_value(self):
-        return self.strength * self.sword_damage_amt
         
     def move(self, dt):
         movement = [0, 0]
@@ -77,12 +61,12 @@ class Player(Entity):
     def pickup(self, item):
         if len(self.inventory) <= MAX_INVENTORY_SIZE:
             for inv_item in self.inventory:
-                if type(inv_item[0]) is type(item):
-                    inv_item[1] += ITEM_AMOUNT_DEFAULT
+                if type(inv_item) is type(item):
+                    inv_item.amount += 1
                     self.game.object_mapper.objects.remove(item)
                     return
                 
-        self.inventory.append([item, ITEM_AMOUNT_DEFAULT])
+        self.inventory.append(item)
         self.game.object_mapper.objects.remove(item)
         
             
@@ -113,6 +97,7 @@ class Player(Entity):
             self.exp = 0
             self.next_level_exp *= 2
             self.max_health += 2 # one health
+            self.health = self.max_health
             self.strength += 1
             self.dexterity += 1
             # level up dialogue
@@ -168,18 +153,18 @@ class Player(Entity):
         for entity in other_entities:
             if self.on_screen(entity, self.game.scroll, self.game.window.display):
                 collided = self.game.collision_manager.check_entity(self, entity)
-                if collided and collided.type in MONSTERS and not collided.death_timer: # if monster collides with player
+                if collided and collided.is_monster and not collided.death_timer: # if monster collides with player
                     self.damage(collided.attack_value)
                 elif isinstance(entity, NPC):
                     self.interact_with_npc(entity)
                 # attacking monsters
                 elif self.attacking:
-                    if entity.type in MONSTERS: # if player sword hits any enemy
+                    if entity.is_monster: # if player sword hits any enemy
                         monster = entity
-                        if self.weapon_rect.colliderect(monster.rect):
+                        if self.weapon.rect.colliderect(monster.rect):
                             if not monster.invincible:
-                                self.game.ui.draw_ui_message(str(self.attack_value) + ' damage!')
-                            monster.damage(self.attack_value)
+                                self.game.ui.draw_ui_message(str(self.weapon.attack_value) + ' damage!')
+                            monster.damage(self.weapon.attack_value)
                             monster.hp_bar_on = True
                             monster.hp_bar_counter = 0
                             opp_directions = {'right': 'left', 'left': 'right', 'up':'down', 'down': 'up'}
@@ -201,7 +186,7 @@ class Player(Entity):
     def render(self, surf, offset=(0, 0)):
         if self.game.input.debug:
             pygame.draw.rect(surf, WHITE, pygame.Rect(self.rect.x - offset[0], self.rect.y - offset[1], self.rect.size[0], self.rect.size[1])) #debug
-            pygame.draw.rect(surf, RED, pygame.Rect(self.weapon_rect.x - offset[0], self.weapon_rect.y - offset[1], self.weapon_rect.size[0], self.weapon_rect.size[1])) #debug
+            pygame.draw.rect(surf, RED, pygame.Rect(self.weapon.rect.x - offset[0], self.weapon.rect.y - offset[1], self.weapon.rect.size[0], self.weapon.rect.size[1])) #debug
             
         img = self.img.copy()
         
@@ -221,7 +206,7 @@ class Player(Entity):
                 temp_pos[0] = self.pos[0] - TILE_SIZE
             elif self.direction == 'up':
                 temp_pos[1] = self.pos[1] - TILE_SIZE
-            img = self.weapon_img
+            img = self.weapon.img
             surf.blit(img, (int(temp_pos[0] - offset[0]), int(temp_pos[1] - offset[1])))
         else:       
             surf.blit(img, (int(self.pos[0] - offset[0]), int(self.pos[1] - offset[1])))

@@ -35,6 +35,7 @@ class Entity:
         
         self.last_movement = 0
         
+        self.is_monster = False
         self.hp_bar_on = False
         self.hp_bar_counter = 0
         self.hp_bar_cooldown = 0
