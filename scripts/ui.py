@@ -68,7 +68,7 @@ class UI:
         self.draw_box(surf, (DISPLAY_WIDTH - dialogue_size_x * 2, dialogue_height), (dialogue_size_x, dialogue_size_y))
             
     def draw_enemy_health(self, surf):
-        for enemy in self.game.entities:
+        for enemy in self.game.entity_manager.entities:
             if enemy.is_monster and enemy.hp_bar_on:
                 health_ratio = enemy.health / enemy.max_health
                 outline_rect = pygame.Rect(enemy.pos[0] - self.game.scroll[0] - 1, enemy.pos[1] - self.game.scroll[1] - 8, (1 * 10 + 2), 4)
@@ -135,7 +135,7 @@ class UI:
             x = slot_loc[0] + 1 + col * size[0] + 1.5
             y = slot_loc[1] + 1 + row * size[1] + 2
                             
-            if type(item_data) is type(self.game.player.weapon):
+            if type(item_data) == type(self.game.player.weapon):
                 pygame.draw.rect(surf, (240, 190, 90), pygame.Rect(x - 1, y - 2, 19, 19), 0, 2)
             surf.blit(img, (x, y))
 

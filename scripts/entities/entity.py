@@ -2,7 +2,7 @@ import pygame
 import math
 import random
 
-from .const import *
+from ..const import *
 
 class Entity:
     def __init__(self, game, pos, size, type):

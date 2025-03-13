@@ -1,11 +1,9 @@
 import pygame
 
-from scripts.entities.npc import NPC
+from .npc import NPC
 
-from ..entity import Entity
+from .entity import Entity
 from ..const import *
-
-
 
 class Player(Entity):
     def __init__(self, game, pos, size, type):        
@@ -149,7 +147,7 @@ class Player(Entity):
                         self.pickup(collided_obj)
                         self.game.ui.draw_ui_message('x1 ' + str(collided_obj.type).title() + '!')
             
-        other_entities = (entity for entity in self.game.entities if entity.type != 'player')
+        other_entities = (entity for entity in self.game.entity_manager.entities if entity.type != 'player')
         for entity in other_entities:
             if self.on_screen(entity, self.game.scroll, self.game.window.display):
                 collided = self.game.collision_manager.check_entity(self, entity)
