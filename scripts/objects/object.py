@@ -15,6 +15,7 @@ class  Object(Entity):
         self.collision_on = False
         self.amount = 1
         self.item_description = ''
+        self.animation_timer = []
         
         self.rect_offset = ENTITY_RECT_OFFSETS[type] if type in ENTITY_RECT_OFFSETS else (0, 0)
         
@@ -26,6 +27,11 @@ class  Object(Entity):
     def rect(self):
         return pygame.Rect(self.pos[0] + self.rect_offset[0], self.pos[1] + self.rect_offset[1], self.size[0], self.size[1])
     
+    
+    @property
+    def attack_value(self):
+        return self.player.strength * self.damage_amt
+     
     def update(self):
         pass
     

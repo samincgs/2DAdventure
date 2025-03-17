@@ -55,7 +55,7 @@ class State:
         pass
                         
     def track_event_and_dialogues(self):
-        if self.interacted_npc:
+        if self.interacted_npc and self.game.input.interacted:
             self.interacted_npc.continue_dialogue()
             
         # one line dialog box

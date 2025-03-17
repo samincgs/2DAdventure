@@ -1,4 +1,3 @@
-from scripts.objects.axe import Axe
 from scripts.window import Window
 from scripts.input import Input
 from scripts.assets import Assets
@@ -23,9 +22,11 @@ class Game:
         self.events = Events(self, self.state, self.collision_manager)
         self.object_mapper = ObjectMapper(self)
         
-        self.player = self.entity_manager.player
         self.scroll = [0, 0] 
 
+    @property
+    def player(self):
+        return self.entity_manager.player
     
     def run(self):
         while True:
@@ -49,7 +50,7 @@ class Game:
                 elif self.state.dialogue_state:
                     self.state.track_event_and_dialogues()
                 
-                self.entity_manager.render(surf, offset=render_scroll)
+                self.entity_manager.render(surf, offset=render_scroll, ysort=True)
             
             self.ui.render(surf)   
                            

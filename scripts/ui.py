@@ -134,9 +134,18 @@ class UI:
             row = idx // self.inventory_max_col
             x = slot_loc[0] + 1 + col * size[0] + 1.5
             y = slot_loc[1] + 1 + row * size[1] + 2
-                            
-            if type(item_data) == type(self.game.player.weapon):
+            
+            # selected a weapon
+            if self.inventory_slot_col == col and self.inventory_slot_row == row:
+                if self.game.input.action and item_data.is_weapon and self.game.player.weapon is not item_data:
+                    self.game.player.weapon = item_data
+                    self.game.player.organize_inventory()
+            
+            # draw yellow border to indicate current weapon
+            if self.game.player.weapon is item_data:
                 pygame.draw.rect(surf, (240, 190, 90), pygame.Rect(x - 1, y - 2, 19, 19), 0, 2)
+            
+            
             surf.blit(img, (x, y))
 
     def inventory_font(self, surf):
@@ -185,7 +194,7 @@ class UI:
 
         status_data = {
             'level': self.game.player.level,
-            'health': self.game.player.health,
+            'health': self.game.player.health // 2,
             'strength': self.game.player.strength,
             'exp': self.game.player.exp,
             'exp required': self.game.player.next_level_exp,

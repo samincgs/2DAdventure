@@ -27,7 +27,7 @@ class EntityManager:
         self.entities.append(Player(self.game, (326, 165), (8,8), 'player'))
         self.player = self.entities[-1]
         self.player.inventory.append(Sword(self.game, (0, 0), (16, 16), self.player))
-        self.player.inventory.append(Axe(self.game, (0, 0), (16, 16)))
+        self.player.inventory.append(Axe(self.game, (0, 0), (16, 16), self.player))
         self.player.weapon = self.player.inventory[0]
          
         #npcs
@@ -45,6 +45,10 @@ class EntityManager:
                 self.player.check_level_up()
     
     
-    def render(self, surf, offset=(0, 0)):
-        for entity in sorted(self.entities, key=lambda x: x.pos[1]): # sprite ordering
-            entity.render(surf, offset=offset)
+    def render(self, surf, offset=(0, 0), ysort=True):
+        if ysort:
+            for entity in sorted(self.entities, key=lambda x: x.pos[1]): # sprite ordering
+                entity.render(surf, offset=offset)
+        else:
+            for entity in self.entities: # sprite ordering
+                entity.render(surf, offset=offset)

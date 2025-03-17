@@ -17,10 +17,16 @@ class  Events:
             if self.collision_manager.check_event(loc=self.event_locs['pit_fall'], size=self.event_rect_size, req_direction='left', push=False):
                 self.pit_fall('dialogue')
                 self.pit_fall_happened = True
+                return True
         
         # HEALING EVENT (HEALTH EVENT)
         if self.collision_manager.check_event(loc=self.event_locs['heal_pool'], size=self.event_rect_size, req_direction='up'):
             self.heal_pool('dialogue')
+            return True
+        
+        return False
+            
+            
             
     def pit_fall(self, state):
         self.state.set_state(state)
@@ -38,4 +44,4 @@ class  Events:
             
             # functionality
             self.game.player.health = self.game.player.max_health
-            self.game.spawn_enemies()
+            self.game.entity_manager.spawn_enemies()

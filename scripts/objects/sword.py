@@ -3,28 +3,7 @@ from .object import Object
 
 from ..const import *
 
-class Sword(Object):
-    def __init__(self, game, pos, size, player):
-        super().__init__(game, pos, 'sword', size)
-        self.player = player
-        
-        self.is_weapon = True
-        self.damage_amt = 1
-        self.item_description = '[ Sword ]\n\nAn old sword.'
-    
-        
-    @property
-    def img(self): # image is instead the animation for player sword swing
-        img = self.player.images[self.type + '_' + self.player.direction][self.player.attack_index]
-        return img
-    
-    @property
-    def ui_img(self):
-        return self.game.assets.objects[self.type]
-    
-    @property
-    def rect(self):
-        rect_offset = {
+WEAPON_RECT_OFFSET = {
         'size': {
             'up': [6, 9],
             'down': [6, 9],
@@ -38,8 +17,29 @@ class Sword(Object):
             'left': [-12, -1],
             }
         }
-        return pygame.Rect(int(self.player.pos[0] + rect_offset['offset'][self.player.direction][0]), int(self.player.pos[1] + rect_offset['offset'][self.player.direction][1]), rect_offset['size'][self.player.direction][0], rect_offset['size'][self.player.direction][1])
+
+class Sword(Object):
+    def __init__(self, game, pos, size, player):
+        super().__init__(game, pos, 'sword', size)
+        self.player = player
+        
+        self.is_weapon = True
+        self.damage_amt = 1
+        self.item_description = '[ Rusty Broadsword ]\n\nAn old sword.'
+        self.animation_timer = [0.08, 0.40]
+    
+        
+    @property
+    def img(self): # image is instead the animation for player sword swing
+        img = self.player.images[self.type + '_' + self.player.direction][self.player.attack_index]
+        return img
     
     @property
-    def attack_value(self):
-        return self.player.strength * self.damage_amt
+    def ui_img(self):
+        return self.game.assets.objects[self.type]
+    
+    @property
+    def rect(self):
+        return pygame.Rect(int(self.player.pos[0] + WEAPON_RECT_OFFSET['offset'][self.player.direction][0]), int(self.player.pos[1] + WEAPON_RECT_OFFSET['offset'][self.player.direction][1]), WEAPON_RECT_OFFSET['size'][self.player.direction][0], WEAPON_RECT_OFFSET['size'][self.player.direction][1])
+    
+    

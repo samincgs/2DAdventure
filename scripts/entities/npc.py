@@ -26,13 +26,12 @@ class NPC(Entity):
         self.game.ui.current_dialogue = self.dialogues[self.dialogue_index]
              
     def continue_dialogue(self):
-        if self.game.input.interacted:
-            self.dialogue_index += 1
-            if self.dialogue_index >= len(self.dialogues):
-                self.dialogue_index = 0
-                self.game.state.return_to_play_state()
-                return
-            self.speak()
+        self.dialogue_index += 1
+        if self.dialogue_index >= len(self.dialogues):
+            self.dialogue_index = 0
+            self.game.state.return_to_play_state()
+            return
+        self.speak()
     
     def turn_to_player(self, player):
         if player.direction == 'left':

@@ -13,7 +13,7 @@ class Input:
         self.left_pressed = False # LEFT KEY
         self.right_pressed = False # RIGHT KEY
         self.interacted = False # Z KEY
-        self.action = False # X KEY
+        self.action = False # z KEY
         self.enter_pressed = False # ENTER KEY
         
         self.debug = False # TAB KEY
@@ -59,8 +59,8 @@ class Input:
                         if self.state.status_state:
                             self.game.ui.inventory_slot_col = (self.game.ui.inventory_slot_col + 1 ) % self.game.ui.inventory_max_col
                     if event.key == pygame.K_z:
-                        self.interacted = True
                         self.action = True
+                        self.interacted = True
                     if event.key == pygame.K_RETURN:
                         if self.state.play_state:
                             self.state.set_state('status')
@@ -96,6 +96,9 @@ class Input:
                     self.right_pressed = False
                 if event.key == pygame.K_RETURN:
                     self.enter_pressed = False
+                if event.key == pygame.K_z:
+                    self.interacted = False
+                    self.action = False
         
             
             

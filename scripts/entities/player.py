@@ -21,6 +21,7 @@ class Player(Entity):
         self.next_level_exp = 5
         self.coins = 0
         self.inventory = []
+        self.weapon = None
         
         self.collision_on = True
         
@@ -38,7 +39,13 @@ class Player(Entity):
     def img(self):
         img = super().img
         return img
-        
+    
+    def organize_inventory(self):
+        if self.weapon in self.inventory:
+            self.inventory.remove(self.weapon)
+            self.inventory.insert(0, self.weapon)
+
+                
     def move(self, dt):
         movement = [0, 0]
         if self.game.input.up_pressed:
@@ -73,12 +80,11 @@ class Player(Entity):
             self.attacking = True
     
     def reset_attack(self, dt):
-        ANIMATION_DURATIONS = [0.08, 0.40]
         if self.attacking:
             self.attack_num += dt
-            if self.attack_num <= ANIMATION_DURATIONS[0]:
+            if self.attack_num <= self.weapon.animation_timer[0]:
                 self.attack_index = 0
-            elif self.attack_num <= ANIMATION_DURATIONS[1]:
+            elif self.attack_num <= self.weapon.animation_timer[1]:
                 self.attack_index = 1
             else:
                 self.attacking = False
@@ -98,6 +104,7 @@ class Player(Entity):
             self.health = self.max_health
             self.strength += 1
             self.dexterity += 1
+            
             # level up dialogue
             self.game.state.set_state('dialogue')
             self.game.state.set_event('Level up')
@@ -126,7 +133,9 @@ class Player(Entity):
     def update(self, dt):
         dead = self.check_death(dt)
         
-        if self.game.input.action:
+        event_happened = self.game.events.events()
+    
+        if self.game.input.action and not event_happened:
             self.attack()
 
         if not self.attacking:
@@ -138,7 +147,7 @@ class Player(Entity):
             self.animation_update(dt)
             
             self.game.collision_manager.check_tile(self)
-            self.game.events.events()
+            
             
             for obj in self.game.object_mapper.objects:
                 if self.on_screen(obj, self.game.scroll, self.game.window.display):
