@@ -44,6 +44,9 @@ class UI:
             debug_text = self.fonts['medium_text_font'].render(text, self.aa, WHITE)
             y_height += self.fonts['medium_text_font'].get_height() + 3
             surf.blit(debug_text, (0, y_height))
+    
+    def inventory_index(self):
+        return self.inventory_slot_col + (self.inventory_slot_row * self.inventory_max_col)
         
     def draw_ui_message(self, text):
         message_timer = 0
@@ -125,21 +128,15 @@ class UI:
         
         # draw the inventory cursor
         for idx, item_data in enumerate(self.game.player.inventory):
-            if item_data.is_weapon:
-                img = item_data.ui_img
-            else:
-                img = item_data.img
+            img = item_data.img
                 
             col = idx % self.inventory_max_col
             row = idx // self.inventory_max_col
             x = slot_loc[0] + 1 + col * size[0] + 1.5
             y = slot_loc[1] + 1 + row * size[1] + 2
             
-            # selected a weapon
-            if self.inventory_slot_col == col and self.inventory_slot_row == row:
-                if self.game.input.action and item_data.is_weapon and self.game.player.weapon is not item_data:
-                    self.game.player.weapon = item_data
-                    self.game.player.organize_inventory()
+            # selected an item/weapon
+            self.game.player.select_inventory()
             
             # draw yellow border to indicate current weapon
             if self.game.player.weapon is item_data:
@@ -171,13 +168,23 @@ class UI:
                 surf.blit(amount_text, (x, y))
                                 
             # bottom half of inventory item description
-            if idx == (self.inventory_slot_col + (self.inventory_slot_row * self.inventory_max_col)):
+            item_index = self.inventory_index()
+            if idx == item_index:
                 self.render_inventory_textbox = True
                 size = (120 * RENDER_SCALE, 72 * RENDER_SCALE)
                 loc = [20 * RENDER_SCALE, 100 * RENDER_SCALE]
                 if item_data.item_description:
                     item_description_text = self.fonts['medium_text_font'].render(item_data.item_description, self.aa, WHITE)
                     surf.blit(item_description_text, (loc[0] + 17, loc[1] + 25))
+                    
+                    equip_text = None
+                    if item_data is not self.game.player.weapon: 
+                        if item_data.is_weapon:
+                            equip_text = self.fonts['medium_text_font'].render('\n\nPress Z to equip', self.aa, WHITE)
+                        elif item_data.is_consumable:
+                            equip_text = self.fonts['medium_text_font'].render('\n\nPress Z to use', self.aa, WHITE)
+                        if equip_text:
+                            surf.blit(equip_text, (loc[0] + size[0] - equip_text.get_width() - 16, loc[1] + 125))
     
     def status_dialog_font(self, surf):
         font = self.fonts['medium_text_font']
@@ -268,7 +275,6 @@ class UI:
         elif self.state.status_state:
             self.inventory_font(surf)
             self.status_dialog_font(surf)
-            
             
         if self.game.input.debug:
             self.debug(surf)

@@ -12,6 +12,7 @@ class  Object(Entity):
         self.size = list(size)
         
         self.is_weapon = False
+        self.is_consumable = False
         self.collision_on = False
         self.amount = 1
         self.item_description = ''
@@ -32,7 +33,8 @@ class  Object(Entity):
     def attack_value(self):
         return self.player.strength * self.damage_amt
      
-    def update(self):
+    
+    def update(self, dt):
         pass
     
     def render(self, surf, offset=(0, 0)):

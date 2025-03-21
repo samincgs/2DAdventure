@@ -24,9 +24,11 @@ class Assets:
         
         # sounds
         self.sounds = load_sounds('data/sfx/')
+        self.limit_volume()
     
     def limit_volume(self):
-        self.sounds['door_unlock'].set_volume(0.15)
+        for sound in self.sounds:
+            self.sounds[sound].set_volume(0.1)
         
                 
         

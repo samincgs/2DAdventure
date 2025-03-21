@@ -42,6 +42,11 @@ class State:
     def set_event(self, event_name):
         self.current_event = event_name
         
+    def create_dialogue(self, message, event):
+        self.set_state('dialogue')
+        self.set_event(event)
+        self.game.ui.current_dialogue = message
+        
     def return_to_play_state(self):
         self.set_state('play')
         self.current_event = None

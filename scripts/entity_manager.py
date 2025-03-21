@@ -3,7 +3,6 @@ from .entities.old_wizard import OldWizard
 from .entities.knight import Knight
 from .monsters.green_slime import GreenSlime
 from .objects.sword import Sword
-from .objects.axe import Axe
 
 
 class EntityManager:
@@ -27,7 +26,6 @@ class EntityManager:
         self.entities.append(Player(self.game, (326, 165), (8,8), 'player'))
         self.player = self.entities[-1]
         self.player.inventory.append(Sword(self.game, (0, 0), (16, 16), self.player))
-        self.player.inventory.append(Axe(self.game, (0, 0), (16, 16), self.player))
         self.player.weapon = self.player.inventory[0]
          
         #npcs
@@ -47,8 +45,8 @@ class EntityManager:
     
     def render(self, surf, offset=(0, 0), ysort=True):
         if ysort:
-            for entity in sorted(self.entities, key=lambda x: x.pos[1]): # sprite ordering
+            for entity in sorted(self.entities, key=lambda entity: entity.pos[1]): # sprite ordering
                 entity.render(surf, offset=offset)
         else:
-            for entity in self.entities: # sprite ordering
+            for entity in self.entities:
                 entity.render(surf, offset=offset)
