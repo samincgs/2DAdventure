@@ -1,4 +1,4 @@
-from scripts.utils import load_dir, load_dir_list,  load_sounds
+from scripts.utils import load_dir, load_dir_list, load_sounds
 
 
 class Assets:
@@ -25,6 +25,8 @@ class Assets:
         # sounds
         self.sounds = load_sounds('data/sfx/')
         self.limit_volume()
+    
+    
     
     def limit_volume(self):
         for sound in self.sounds:

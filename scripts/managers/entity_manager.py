@@ -32,7 +32,7 @@ class EntityManager:
         #npcs
         self.entities.append(OldWizard(self.game, (275, 150), (14, 10), 'old_wizard'))
         self.entities.append(Knight(self.game, (404, 367), (12, 14), 'knight'))
-        self.entities.append(Princess(self.game, (16, -64), (6, 6), 'princess'))
+        self.entities.append(Princess(self.game, (16, -64), (8, 6), 'princess'))
         
         # monsters
         self.spawn_enemies()

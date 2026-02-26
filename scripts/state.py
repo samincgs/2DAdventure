@@ -1,13 +1,14 @@
+from scripts.const import START_STATE, GAME_STATES
 
-START_STATE = 'menu'
+
+
 
 class State:
     def __init__(self, game):
         self.game = game
         
-        self.game_states = {'play': 0, 'pause': 1, 'dialogue': 2, 'menu': 3, 'status': 4}
+        self.game_states = GAME_STATES
         self.current_state = self.game_states[START_STATE]
-        # self.current_state = self.game_states['play']
         
         self.last_state = self.current_state
         
@@ -61,6 +62,11 @@ class State:
         
     def update(self):
         self.track_last_state()
+        
+        if self.play_state: 
+            self.game.manager.em.update(self.game.window.dt)
+        elif self.dialogue_state:
+            self.track_event_and_dialogues()
                         
     def track_event_and_dialogues(self):
         if self.interacted_npc and self.game.input.interacted:

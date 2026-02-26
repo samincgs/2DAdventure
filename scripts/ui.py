@@ -9,11 +9,16 @@ MARUMONICA_FONT = FONT_PATH + 'marumonica.ttf'
 INVENTORY_MAX_COL = 5
 INVENTORY_MAX_ROW = 2
 
+MENU_OPTIONS = ['NEW GAME', 'LOAD GAME', 'SETTINGS', 'QUIT']
+
+DEBUG_TEXT_LOC = 450
+
 
 class UI:
     def __init__(self, game, state):
         self.game = game
         self.state = state
+        self.player = self.game.manager.em.player
     
         # set the icon of the game to player down
         pygame.display.set_icon(self.game.assets.player['down'][0])
@@ -37,19 +42,19 @@ class UI:
                 
         self.ui_messages = [] # message, timer
     
+    @property
+    def inventory_index(self):
+        return self.inventory_slot_col + (self.inventory_slot_row * INVENTORY_MAX_COL)
+    
     def debug(self, surf):
-        debug_texts = [f"POS: {self.game.player.pos}", f"RECT: {self.game.player.rect.topleft}", f"SCROLL: {self.game.camera.scroll}", f"FPS: {self.game.window.clock.get_fps()}"]
+        debug_texts = [f"POS: {self.player.pos}", f"RECT: {self.player.rect.topleft}", f"SCROLL: {self.game.camera.scroll}", f"FPS: {self.game.window.clock.get_fps()}"]
         
-        y_height = 450
         for text in debug_texts:
             debug_text = self.fonts['medium_text_font'].render(text, self.aa, WHITE)
             y_height += self.fonts['medium_text_font'].get_height() + 3
-            surf.blit(debug_text, (0, y_height))
-    
-    def inventory_index(self):
-        return self.inventory_slot_col + (self.inventory_slot_row * INVENTORY_MAX_COL)
-        
-    def draw_ui_message(self, text):
+            surf.blit(debug_text, (0, DEBUG_TEXT_LOC))
+
+    def create_message(self, text):
         message_timer = 0
         self.ui_messages.append([text, message_timer])
     
@@ -65,7 +70,7 @@ class UI:
         
         surf.blit(status_surf, loc)
                 
-    def draw_dialogue(self, surf):
+    def draw_dialogue_box(self, surf):
         dialogue_size_x = 30
         dialogue_height = 55
         dialogue_size_y = 8
@@ -86,8 +91,8 @@ class UI:
         half_heart_img = self.game.assets.objects['half_heart']
         empty_heart_img = self.game.assets.objects['empty_heart']
         
-        total_hearts = self.game.player.max_health / 2
-        player_hearts = self.game.player.health
+        total_hearts = self.player.max_health / 2
+        player_hearts = self.player.health
         
         for i in range(int(total_hearts)):
             if player_hearts >= 2:
@@ -104,12 +109,12 @@ class UI:
         char_img = pygame.transform.scale(char_img, (char_img.get_width() * 2, char_img.get_height() * 2))
         surf.blit(char_img, (DISPLAY_WIDTH // 2 - char_img.get_width() / 2, DISPLAY_HEIGHT // 2 - char_img.get_height() / 2 - 20))
     
-    def draw_character_status(self, surf):
+    def draw_character_status_box(self, surf):
         size = (80, 160)
         loc = (160, 12)
         self.draw_box(surf, size, loc)
     
-    def draw_inventory(self, surf):
+    def draw_inventory_box(self, surf):
         # inventory box
         size = (120, 73)
         loc = [20, 12]
@@ -128,7 +133,7 @@ class UI:
         self.draw_box(surf, size, cursor_loc, (0, 0, 0, 60), width=1, br=3)
         
         # draw the inventory cursor
-        for idx, item_data in enumerate(self.game.player.inventory):
+        for idx, item_data in enumerate(self.player.inventory):
             img = item_data.img
                 
             col = idx % INVENTORY_MAX_COL
@@ -137,10 +142,10 @@ class UI:
             y = slot_loc[1] + 1 + row * size[1] + 2
             
             # selected an item/weapon
-            self.game.player.select_inventory()
+            self.player.select_inventory()
             
             # draw yellow border to indicate current weapon
-            if self.game.player.weapon is item_data:
+            if self.player.weapon is item_data:
                 pygame.draw.rect(surf, (240, 190, 90), pygame.Rect(x - 1, y - 2, 19, 19), 0, 2)
             
             
@@ -154,7 +159,7 @@ class UI:
         surf.blit(inventory_text, (170, 50))
         
         # top half of inventory
-        for idx, item_data in enumerate(self.game.player.inventory):
+        for idx, item_data in enumerate(self.player.inventory):
             amount = item_data.amount
     
             size = (21 * RENDER_SCALE, 21 * RENDER_SCALE)
@@ -169,8 +174,7 @@ class UI:
                 surf.blit(amount_text, (x, y))
                                 
             # bottom half of inventory item description
-            item_index = self.inventory_index()
-            if idx == item_index:
+            if idx == self.inventory_index:
                 self.render_inventory_textbox = True
                 size = (120 * RENDER_SCALE, 72 * RENDER_SCALE)
                 loc = [20 * RENDER_SCALE, 100 * RENDER_SCALE]
@@ -179,7 +183,7 @@ class UI:
                     surf.blit(item_description_text, (loc[0] + 17, loc[1] + 25))
                     
                     equip_text = None
-                    if item_data is not self.game.player.weapon: 
+                    if item_data is not self.player.weapon: 
                         if item_data.is_weapon:
                             equip_text = self.fonts['medium_text_font'].render('\n\nPress Z to equip', self.aa, WHITE)
                         elif item_data.is_consumable:
@@ -201,13 +205,13 @@ class UI:
         y_pos = 100
 
         status_data = {
-            'level': self.game.player.level,
-            'health': self.game.player.health // 2,
-            'strength': self.game.player.strength,
-            'exp': self.game.player.exp,
-            'exp required': self.game.player.next_level_exp,
-            'strength': self.game.player.strength,
-            'coins': self.game.player.coins,
+            'level': self.player.level,
+            'health': self.player.health // 2,
+            'strength': self.player.strength,
+            'exp': self.player.exp,
+            'exp required': self.player.next_level_exp,
+            'strength': self.player.strength,
+            'coins': self.player.coins,
         }
         
         for text, data in status_data.items():
@@ -223,9 +227,8 @@ class UI:
         surf.blit(title_text, (SCREEN_WIDTH // 2 - title_text.get_width() / 2, SCREEN_HEIGHT // 2 - title_text.get_height() / 2 - 180))
         
         y_offset = 0
-        menu_options = ['NEW GAME', 'LOAD GAME', 'QUIT']
         
-        for idx, menu_option in enumerate(menu_options):
+        for idx, menu_option in enumerate(MENU_OPTIONS):
             text = self.fonts['medium_title_font'].render(menu_option, self.aa, WHITE)
             text_pos = (SCREEN_WIDTH // 2 - text.get_width() / 2, SCREEN_HEIGHT // 2 - text.get_height() / 2 + 60 + y_offset)
             surf.blit(text, text_pos)
@@ -241,14 +244,14 @@ class UI:
             self.draw_player_hearts(surf)
             self.draw_enemy_health(surf)
         elif self.state.pause_state: # PAUSE STATE
-            pass
+            surf.fill((38, 41, 94))
         elif self.state.dialogue_state: # DIALOGUE STATE
             self.draw_player_hearts(surf)
-            self.draw_dialogue(surf)
+            self.draw_dialogue_box(surf)
         elif self.state.status_state: # STATUS STATE
             self.draw_player_hearts(surf)
-            self.draw_inventory(surf)
-            self.draw_character_status(surf)
+            self.draw_inventory_box(surf)
+            self.draw_character_status_box(surf)
             
     def render_font(self, surf):
         self.render_inventory_textbox = False

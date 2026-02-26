@@ -27,6 +27,6 @@ class OldWizard(NPC):
             if self.moving:
                 self.animation_update(dt)  
                 self.game.manager.cm.check_tile(self)
-                self.game.manager.cm.check_entity(self, self.game.player)
+                self.game.manager.cm.check_entity(self, self.game.manager.em.player)
                 
             

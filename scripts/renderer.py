@@ -7,18 +7,8 @@ class Renderer:
     
     def render(self):
         surf = self.game.window.display
-        state = self.game.state
-        manager = self.game.manager
         
         self.game.window.create(self.ui)
-        if state.ingame_state:
-            manager.tm.render_visible(surf, offset=self.game.camera.render_scroll)
-            self.game.object_mapper.render(surf, offset=self.game.camera.render_scroll)
-            manager.em.render(surf, offset=self.game.camera.render_scroll, ysort=True)
-            
-            if state.play_state: 
-                manager.em.update(self.game.window.dt)
-            elif state.dialogue_state:
-                state.track_event_and_dialogues()
-        
+        if self.game.state.ingame_state:
+            self.game.manager.render(surf, offset=self.game.camera.render_scroll)
         self.ui.render(surf)   

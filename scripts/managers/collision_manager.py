@@ -19,7 +19,6 @@ class CollisionManager:
             return obj
     
     def check_tile(self, entity):
-        
         tiles = self.tile_manager.get_nearby_rects(entity.pos)
         temp_rect = entity.rect
         collisions = self.collision_test(temp_rect, tiles)
@@ -39,7 +38,6 @@ class CollisionManager:
                 temp_rect.bottom = collision_rect.top
                 tile_collide = True      
             entity.pos = [temp_rect.x, temp_rect.y]
-            
         return tile_collide
             
         
@@ -87,10 +85,8 @@ class CollisionManager:
             
         return collided_entity
             
-    def check_event(self, loc, size, req_direction='any', push=False):
+    def check_event(self, player, loc, size, req_direction='any', push=False):
         rect = pygame.Rect(loc[0], loc[1], size, size)
-        player = self.game.player
-        
         
         if player.rect.colliderect(rect) and (player.direction == req_direction or req_direction == 'any'):
             if push:

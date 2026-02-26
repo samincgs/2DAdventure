@@ -1,7 +1,7 @@
 import pygame
 
 from scripts.utils import load_json, save_json, load_dir_list, outline
-from scripts.const import TILE_SIZE
+from scripts.const import TILE_SIZE, MAP_ID
 
 
 
@@ -13,7 +13,7 @@ class TileManager:
         
         self.tile_map = {} # '5;3: {'type': '', 'var}
         
-        self.load_map('data/maps/world1.json')
+        self.load_map('data/maps/' + MAP_ID + '.json')
                              
     def get_nearby_rects(self, pos):
         rects = []

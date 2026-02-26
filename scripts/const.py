@@ -16,7 +16,7 @@ ENTITY_RECT_OFFSETS = {
     'old_wizard': (1, 6),
     'knight': (2, 2),
     'green_slime': (2, 6),
-    'princess': (5, 10)
+    'princess': (3, 10)
 }
 
 
@@ -34,7 +34,13 @@ DIALOGUES = {
 
 MAX_INVENTORY_SIZE = 10
 
+GAME_STATES = {'play': 0, 'pause': 1, 'dialogue': 2, 'menu': 3, 'status': 4}
+START_STATE = 'menu'
+
+MAP_ID = 'world1'
+
 # COLORS
 WHITE = (255, 255, 255)
 RED = (255, 0, 0)
 BLACK = (0, 0, 0)
+BACKGROUND_PURPLE = (38, 41, 94)

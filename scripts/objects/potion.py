@@ -9,8 +9,9 @@ class HealthPotion(Object):
         self.is_consumable = True
     
     def use(self):
+        player = self.game.manager.em.player
         # item effect
-        self.game.player.health = min(self.game.player.max_health, self.game.player.health + self.value)
+        player.health = min(player.max_health, player.health + self.value)
         
         # potion dialogue
         self.game.state.create_dialogue(message='You drank the ' + self.name + '!\nYou recovered some HP!', event='Heal up')

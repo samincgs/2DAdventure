@@ -44,7 +44,7 @@ class Player(Entity):
 
     
     def select_inventory(self):
-        item_index = self.game.renderer.ui.inventory_index()
+        item_index = self.game.renderer.ui.inventory_index
         
         current_item = None
         if item_index < len(self.inventory):
@@ -83,11 +83,11 @@ class Player(Entity):
             for inv_item in self.inventory:
                 if type(inv_item) is type(item):
                     inv_item.amount += 1
-                    self.game.object_mapper.objects.remove(item)
+                    self.game.manager.om.objects.remove(item)
                     return
                 
         self.inventory.append(item)
-        self.game.object_mapper.objects.remove(item)
+        self.game.manager.om.objects.remove(item)
         
             
     def attack(self):
@@ -148,7 +148,7 @@ class Player(Entity):
         dead = self.check_death(dt)
         
         self.last_pos = self.pos.copy() 
-        event_happened = self.game.events.events()
+        event_happened = self.game.manager.events.events()
 
         if self.game.input.action and not event_happened:
             self.attack()
@@ -164,12 +164,12 @@ class Player(Entity):
             self.game.manager.cm.check_tile(self)
             
             
-            for obj in self.game.object_mapper.objects:
+            for obj in self.game.manager.om.objects:
                 if self.on_screen(obj, self.game.camera.scroll, self.game.window.display):
                     collided_obj = self.game.manager.cm.check_object(self, obj)
                     if collided_obj:
                         self.pickup(collided_obj)
-                        self.game.renderer.ui.draw_ui_message('x1 ' + str(collided_obj.type).strip().title().replace('_', ' ') + '!')
+                        self.game.renderer.ui.create_message('x1 ' + str(collided_obj.type).strip().title().replace('_', ' ') + '!')
                         self.game.assets.sounds['pickup'].play()
             
         other_entities = (entity for entity in self.game.manager.em.entities if entity.type != 'player')
@@ -187,7 +187,7 @@ class Player(Entity):
                         monster = entity
                         if self.weapon.attack_rect.colliderect(monster.rect):
                             if not monster.invincible:
-                                self.game.renderer.ui.draw_ui_message(str(self.weapon.attack_value) + ' damage!')
+                                self.game.renderer.ui.create_message(str(self.weapon.attack_value) + ' damage!')
                             monster.damage(self.weapon.attack_value)
                             monster.hp_bar_on = True
                             monster.hp_bar_counter = 0
@@ -196,8 +196,8 @@ class Player(Entity):
                             if monster.dead and not monster.death_message_shown:
                                 self.exp += monster.exp
                                 monster.death_message_shown = True
-                                self.game.renderer.ui.draw_ui_message('killed the ' + monster.name + '!')
-                                self.game.renderer.ui.draw_ui_message('EXP gained: ' + str(monster.exp))
+                                self.game.renderer.ui.create_message('killed the ' + monster.name + '!')
+                                self.game.renderer.ui.create_message('EXP gained: ' + str(monster.exp))
     
         
         # reset timers
