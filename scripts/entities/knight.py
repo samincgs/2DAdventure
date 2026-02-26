@@ -1,4 +1,4 @@
-from .npc import NPC
+from scripts.entities.npc import NPC
 
 class Knight(NPC):
     def __init__(self, game, pos, size, type):

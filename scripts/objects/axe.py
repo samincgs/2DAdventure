@@ -1,6 +1,6 @@
 import pygame
 
-from .object import Object
+from scripts.objects.object import Object
 
 
 WEAPON_RECT_OFFSET = {
@@ -25,6 +25,7 @@ class Axe(Object):
         self.item_description = "[ Old Axe ]\n\nA flimsy axe that still\nseems to get the job done."
         self.damage_amt = 1
         self.is_weapon = True
+        self.position_adjust = True
         self.animation_timer = [0.36, 0.74]
         self.attack_delay = 0.18
         

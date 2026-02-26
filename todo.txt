@@ -1,6 +1,14 @@
 # create floodfill
 # fix ui (pause screen) 
 
-# add axe animation
+# add day and night cycle
+# add camp/tent
+# add lantern when its night time for light source
+# find spell book for wizard and learn fireball skill
+# create shield for knight and hide it and find it to unlock diagram and item
+# create a merchant sprites and merchant house/setup configuration
+# create an npc that will ask you to kill slimes and obtain 5-8 slime item (need to decide)
+# animate the water
+# add axe animation, and sprite cause she said it looks like a toothbrush
 # add sfx (sword swing, enemy taking damage, player taking damage, falling into pit, healing pool, level up)
-# add pickeable for knight guy to change his dialogue and setup his store
+# add pickeable for knight guy to change his dialogue

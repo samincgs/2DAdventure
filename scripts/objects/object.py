@@ -1,25 +1,19 @@
 import pygame
 
-from ..entities.entity import Entity
-from ..const import *
+from scripts.entities.entity import Entity
+from scripts.const import *
 
 
 class  Object(Entity):
     def __init__(self, game, pos, type, size=(16,16)):
-        self.game = game
-        self.pos = list(pos)
-        self.type = type
-        self.size = list(size)
+        super().__init__(game, pos, size, type)
         
         self.is_weapon = False
         self.is_consumable = False
-        self.collision_on = False
+        self.position_adjust = False
         self.amount = 1
         self.item_description = ''
-        self.animation_timer = []
-        
-        self.rect_offset = ENTITY_RECT_OFFSETS[type] if type in ENTITY_RECT_OFFSETS else (0, 0)
-        
+                
     @property
     def img(self):
         return self.game.assets.objects[self.type]

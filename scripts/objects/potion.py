@@ -1,4 +1,4 @@
-from .object import Object
+from scripts.objects.object import Object
 
 class HealthPotion(Object):
     def __init__(self, game, pos, size):

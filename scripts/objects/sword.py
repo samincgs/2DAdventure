@@ -1,7 +1,5 @@
 import pygame
-from .object import Object
-
-from ..const import *
+from scripts.objects.object import Object
 
 WEAPON_RECT_OFFSET = {
         'size': {
@@ -24,6 +22,7 @@ class Sword(Object):
         self.player = player
         
         self.is_weapon = True
+        self.position_adjust = True
         self.damage_amt = 1
         self.item_description = '[ Rusty Broadsword ]\n\nAn old sword.'
         self.animation_timer = [0.08, 0.40]

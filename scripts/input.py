@@ -1,12 +1,13 @@
 import pygame
 import sys
 
-from .const import *
+from scripts.const import *
+from scripts.ui import INVENTORY_MAX_COL, INVENTORY_MAX_ROW
 
 class Input:
-    def __init__(self, game, state):
+    def __init__(self, game):
         self.game = game
-        self.state = state
+        self.state = self.game.state
         
         self.up_pressed = False # UP KEY
         self.down_pressed = False # DOWN KEY
@@ -34,6 +35,8 @@ class Input:
     def update(self):
         self.reset_keys()
         
+        ui = self.game.renderer.ui
+        
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 self.quit_game()
@@ -45,19 +48,19 @@ class Input:
                     if event.key == pygame.K_UP:
                         self.up_pressed = True
                         if self.state.status_state:
-                            self.game.ui.inventory_slot_row = (self.game.ui.inventory_slot_row - 1 ) % self.game.ui.inventory_max_row
+                            ui.inventory_slot_row = (ui.inventory_slot_row - 1 ) % INVENTORY_MAX_ROW
                     if event.key == pygame.K_LEFT:
                         self.left_pressed = True
                         if self.state.status_state:
-                            self.game.ui.inventory_slot_col = (self.game.ui.inventory_slot_col - 1 ) % self.game.ui.inventory_max_col
+                            ui.inventory_slot_col = (ui.inventory_slot_col - 1 ) % INVENTORY_MAX_COL
                     if event.key == pygame.K_DOWN:
                         self.down_pressed = True
                         if self.state.status_state:
-                            self.game.ui.inventory_slot_row = (self.game.ui.inventory_slot_row + 1 ) % self.game.ui.inventory_max_row
+                            ui.inventory_slot_row = (ui.inventory_slot_row + 1 ) % INVENTORY_MAX_ROW
                     if event.key == pygame.K_RIGHT:
                         self.right_pressed = True
                         if self.state.status_state:
-                            self.game.ui.inventory_slot_col = (self.game.ui.inventory_slot_col + 1 ) % self.game.ui.inventory_max_col
+                            ui.inventory_slot_col = (ui.inventory_slot_col + 1 ) % INVENTORY_MAX_COL
                     if event.key == pygame.K_z:
                         self.action = True
                         self.interacted = True
@@ -76,13 +79,13 @@ class Input:
                             
                 elif self.state.menu_state:
                     if event.key == pygame.K_UP:
-                        self.game.ui.menu_cursor = (self.game.ui.menu_cursor - 1) % 3 
+                        ui.menu_cursor = (ui.menu_cursor - 1) % 3 
                     if event.key == pygame.K_DOWN:
-                        self.game.ui.menu_cursor = (self.game.ui.menu_cursor + 1) % 3
+                        ui.menu_cursor = (ui.menu_cursor + 1) % 3
                     if event.key == pygame.K_z:
-                        if self.game.ui.menu_cursor == 0:
+                        if ui.menu_cursor == 0:
                             self.state.set_state('play')
-                        elif self.game.ui.menu_cursor == 2:
+                        elif ui.menu_cursor == 2:
                             self.quit_game()
                   
             if event.type == pygame.KEYUP:

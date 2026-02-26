@@ -1,10 +1,14 @@
 import pygame
 
-from .const import *
+from scripts.const import *
 
 FONT_PATH = 'data/fonts/'
 BYTEBOUNCE_FONT = FONT_PATH + 'ByteBounce.ttf'
 MARUMONICA_FONT = FONT_PATH + 'marumonica.ttf'
+
+INVENTORY_MAX_COL = 5
+INVENTORY_MAX_ROW = 2
+
 
 class UI:
     def __init__(self, game, state):
@@ -27,17 +31,14 @@ class UI:
         self.current_dialogue = ''
         self.menu_cursor = 0
         
-        self.inventory_max_col = 5
-        self.inventory_max_row = 2
+        self.render_inventory_textbox = False
         self.inventory_slot_col = 0
         self.inventory_slot_row = 0
-        self.render_inventory_textbox = False
-        
                 
         self.ui_messages = [] # message, timer
     
     def debug(self, surf):
-        debug_texts = [f"POS: {self.game.player.pos}", f"RECT: {self.game.player.rect.topleft}", f"SCROLL: {self.game.scroll}", f"FPS: {self.game.window.clock.get_fps()}"]
+        debug_texts = [f"POS: {self.game.player.pos}", f"RECT: {self.game.player.rect.topleft}", f"SCROLL: {self.game.camera.scroll}", f"FPS: {self.game.window.clock.get_fps()}"]
         
         y_height = 450
         for text in debug_texts:
@@ -46,7 +47,7 @@ class UI:
             surf.blit(debug_text, (0, y_height))
     
     def inventory_index(self):
-        return self.inventory_slot_col + (self.inventory_slot_row * self.inventory_max_col)
+        return self.inventory_slot_col + (self.inventory_slot_row * INVENTORY_MAX_COL)
         
     def draw_ui_message(self, text):
         message_timer = 0
@@ -71,11 +72,11 @@ class UI:
         self.draw_box(surf, (DISPLAY_WIDTH - dialogue_size_x * 2, dialogue_height), (dialogue_size_x, dialogue_size_y))
             
     def draw_enemy_health(self, surf):
-        for enemy in self.game.entity_manager.entities:
+        for enemy in self.game.manager.em.entities:
             if enemy.is_monster and enemy.hp_bar_on:
                 health_ratio = enemy.health / enemy.max_health
-                outline_rect = pygame.Rect(enemy.pos[0] - self.game.scroll[0] - 1, enemy.pos[1] - self.game.scroll[1] - 8, (1 * 10 + 2), 4)
-                health_rect = pygame.Rect(enemy.pos[0] - self.game.scroll[0], enemy.pos[1] - self.game.scroll[1] - 7, (health_ratio * 10), 2)
+                outline_rect = pygame.Rect(enemy.pos[0] - self.game.camera.scroll[0] - 1, enemy.pos[1] - self.game.camera.scroll[1] - 8, (1 * 10 + 2), 4)
+                health_rect = pygame.Rect(enemy.pos[0] - self.game.camera.scroll[0], enemy.pos[1] - self.game.camera.scroll[1] - 7, (health_ratio * 10), 2)
                 if health_rect:
                     pygame.draw.rect(surf, (35, 35, 35), outline_rect, 0, 2)
                     pygame.draw.rect(surf, (255, 0, 30), health_rect)
@@ -130,8 +131,8 @@ class UI:
         for idx, item_data in enumerate(self.game.player.inventory):
             img = item_data.img
                 
-            col = idx % self.inventory_max_col
-            row = idx // self.inventory_max_col
+            col = idx % INVENTORY_MAX_COL
+            row = idx // INVENTORY_MAX_COL
             x = slot_loc[0] + 1 + col * size[0] + 1.5
             y = slot_loc[1] + 1 + row * size[1] + 2
             
@@ -158,8 +159,8 @@ class UI:
     
             size = (21 * RENDER_SCALE, 21 * RENDER_SCALE)
             slot_loc = [27 * RENDER_SCALE, 36 * RENDER_SCALE]
-            col = idx % self.inventory_max_col
-            row = idx // self.inventory_max_col
+            col = idx % INVENTORY_MAX_COL
+            row = idx // INVENTORY_MAX_COL
             x = slot_loc[0] + 1 + col * size[0] + size[0] - size[0] / 2
             y = slot_loc[1] + 1 + row * size[1] + 1
             

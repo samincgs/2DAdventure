@@ -1,6 +1,6 @@
 import random
 
-from ..entities.entity import Entity
+from scripts.entities.entity import Entity
 
 class GreenSlime(Entity):
     def __init__(self, game, pos, size, type):        
@@ -44,16 +44,16 @@ class GreenSlime(Entity):
                 self.hp_bar_on = False
                 self.hp_bar_counter = 0
         
-        if self.on_screen(self, self.game.scroll, self.game.window.display): # check if self is on the screen
+        if self.on_screen(self, self.game.camera.scroll, self.game.window.display): # check if self is on the screen
             movement = super().update(dt)
             self.pos[0] += movement[0]
             self.pos[1] += movement[1]
-            if self.last_movement != self.pos:
-                self.game.collision_manager.check_tile(self)
+            if self.moving:
+                self.game.manager.cm.check_tile(self)
             
-            for entity in self.game.entity_manager.entities:
-                if entity.type != self.type and self.on_screen(entity, self.game.scroll, self.game.window.display):
-                    collided = self.game.collision_manager.check_entity(self, entity)
+            for entity in self.game.manager.em.entities:
+                if entity.type != self.type and self.on_screen(entity, self.game.camera.scroll, self.game.window.display):
+                    collided = self.game.manager.cm.check_entity(self, entity)
                     if collided and collided.type == 'player': # collide with player
                         collided.damage(self.damage_amt)
                         

@@ -2,7 +2,7 @@ import pygame
 import math
 import random
 
-from ..const import *
+from scripts.const import *
 
 class Entity:
     def __init__(self, game, pos, size, type):
@@ -10,6 +10,9 @@ class Entity:
         self.pos = list(pos)
         self.size = list(size)
         self.type = type
+        
+        self.name = str(self.type).strip().replace('_', ' ').title()
+        
         self.speed = 60
         self.rect_offset = ENTITY_RECT_OFFSETS[type] if type in ENTITY_RECT_OFFSETS else (0, 0)
         
@@ -26,19 +29,22 @@ class Entity:
         
         self.frame_index = 0 
         self.frame_num = 0
-        self.animation_timer = 0.15
+        self.animation_timer = 0.35
         self.action_counter = 0
         self.action_cooldown = 2
         self.invincible_time = 1
         self.invincible_counter = 0
         self.death_timer = 0
         
-        self.last_movement = 0
+        self.last_pos = 0
         
         self.is_monster = False
         self.hp_bar_on = False
         self.hp_bar_counter = 0
         self.hp_bar_cooldown = 0
+        
+        self.can_move = True
+        self.can_turn = True
         
         self.death_message_shown = False
  
@@ -50,21 +56,24 @@ class Entity:
     def rect(self):
         return pygame.Rect(int(self.pos[0]), int(self.pos[1]), *self.size)
     
-    
+    @property
+    def moving(self):
+        return self.pos != self.last_pos
     
     def on_screen(self, entity, camera, display):
        return (camera[0] <= entity.pos[0] <= camera[0] + display.get_width() and camera[1] <= entity.pos[1] <= camera[1] + display.get_height())
    
     def move(self, dt):
         movement = [0, 0]
-        if self.direction == 'up':
-            movement[1] -= self.speed * dt
-        elif self.direction == 'down':
-            movement[1] += self.speed * dt
-        elif self.direction == 'left':
-            movement[0] -= self.speed * dt
-        elif self.direction == 'right':
-            movement[0] += self.speed * dt
+        if self.can_move:
+            if self.direction == 'up':
+                movement[1] -= self.speed * dt
+            elif self.direction == 'down':
+                movement[1] += self.speed * dt
+            elif self.direction == 'left':
+                movement[0] -= self.speed * dt
+            elif self.direction == 'right':
+                movement[0] += self.speed * dt
         return movement
         
     #√(x2 - x1)^2 + (y2 - y1)^2
@@ -72,6 +81,7 @@ class Entity:
         return math.sqrt((self.rect.center[0] - target.rect.center[0]) ** 2 + (self.rect.center[1] - target.rect.center[1]) ** 2)   
             
     def update(self, dt):
+        self.last_pos = self.pos.copy()   
         self.set_action(dt)
         movement = self.move(dt)
         return movement
@@ -93,11 +103,11 @@ class Entity:
     
     def reset_invincible(self, dt):
         # invincible timer
-            if self.invincible:
-                self.invincible_counter += dt
-                if self.invincible_counter >= self.invincible_time:
-                    self.invincible = False
-                    self.invincible_counter = 0
+        if self.invincible:
+            self.invincible_counter += dt
+            if self.invincible_counter >= self.invincible_time:
+                self.invincible = False
+                self.invincible_counter = 0
     
     def animation_update(self, dt): #TODO: fix
         self.frame_num += dt
@@ -128,10 +138,7 @@ class Entity:
             offset[1] += self.rect_offset[1]
         return offset
     
-    def render(self, surf, offset=(0, 0)):
-        if self.game.input.debug:
-            pygame.draw.rect(surf, WHITE, pygame.Rect(self.rect.x - offset[0], self.rect.y - offset[1], self.rect.size[0], self.rect.size[1])) #debug
-            
+    def render(self, surf, offset=(0, 0)):            
         img = self.img.copy()
         if self.invincible:
             if self.invincible_counter % 0.20 <= 0.1:
@@ -146,5 +153,7 @@ class Entity:
         else:       
             surf.blit(img, (int(self.pos[0] - offset[0]), int(self.pos[1] - offset[1])))
         
+        if self.game.input.debug:
+            pygame.draw.rect(surf, WHITE, pygame.Rect(self.rect.x - offset[0], self.rect.y - offset[1], self.rect.size[0], self.rect.size[1])) #debug
         
     

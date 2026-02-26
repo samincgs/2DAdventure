@@ -16,17 +16,20 @@ ENTITY_RECT_OFFSETS = {
     'old_wizard': (1, 6),
     'knight': (2, 2),
     'green_slime': (2, 6),
+    'princess': (5, 10)
 }
 
 
 DIALOGUES = {
-    'player': [],
     'old_wizard': ['Hello lad.', 
                    "Welcome to this island, I don't think I have\nseen you around.", 
                    "So you've come to this island to find the\ntreasure?", 
                    "I used to be a great wizard but now I'm a\nbit too old to go on an adventure."
                    ],
-    'knight': ["Don't talk to me stranger."]
+    'knight': ["Don't talk to me stranger."],
+    'princess': [
+        'Hey my name is Marianne, nice to meet you!'
+    ]
 }
 
 MAX_INVENTORY_SIZE = 10

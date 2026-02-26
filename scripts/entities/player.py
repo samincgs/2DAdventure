@@ -1,9 +1,8 @@
 import pygame
 
-from .npc import NPC
-
-from .entity import Entity
-from ..const import *
+from scripts.entities.npc import NPC
+from scripts.entities.entity import Entity
+from scripts.const import MAX_INVENTORY_SIZE, WHITE, RED, TILE_SIZE
 
 class Player(Entity):
     def __init__(self, game, pos, size, type):        
@@ -24,9 +23,7 @@ class Player(Entity):
         self.weapon = None
         
         self.collision_on = True
-        
-        self.last_movement = 0
-        
+                
         self.animation_timer = 0.13
         
         self.attacking = False
@@ -47,7 +44,7 @@ class Player(Entity):
 
     
     def select_inventory(self):
-        item_index = self.game.ui.inventory_index()
+        item_index = self.game.renderer.ui.inventory_index()
         
         current_item = None
         if item_index < len(self.inventory):
@@ -58,7 +55,7 @@ class Player(Entity):
             if current_item.is_weapon and self.weapon is not current_item:
                 self.weapon = current_item
                 self.sort_inventory()
-                self.game.ui.inventory_slot_row, self.game.ui.inventory_slot_col = 0, 0
+                self.game.renderer.ui.inventory_slot_row, self.game.renderer.ui.inventory_slot_col = 0, 0
             elif current_item.is_consumable:
                 current_item.use()
                 self.inventory.remove(current_item)
@@ -96,8 +93,6 @@ class Player(Entity):
     def attack(self):
         if not self.attack_delay_timer:
             self.attacking = True
-            if self.weapon.type == 'boomerang':
-                self.weapon.use()
     
     def reset_attack(self, dt):
         if self.attacking:
@@ -152,8 +147,9 @@ class Player(Entity):
     def update(self, dt):
         dead = self.check_death(dt)
         
+        self.last_pos = self.pos.copy() 
         event_happened = self.game.events.events()
-    
+
         if self.game.input.action and not event_happened:
             self.attack()
 
@@ -165,22 +161,22 @@ class Player(Entity):
             
             self.animation_update(dt)
             
-            self.game.collision_manager.check_tile(self)
+            self.game.manager.cm.check_tile(self)
             
             
             for obj in self.game.object_mapper.objects:
-                if self.on_screen(obj, self.game.scroll, self.game.window.display):
-                    collided_obj = self.game.collision_manager.check_object(self, obj)
+                if self.on_screen(obj, self.game.camera.scroll, self.game.window.display):
+                    collided_obj = self.game.manager.cm.check_object(self, obj)
                     if collided_obj:
-                        print(collided_obj)
                         self.pickup(collided_obj)
-                        self.game.ui.draw_ui_message('x1 ' + str(collided_obj.type).strip().title().replace('_', ' ') + '!')
+                        self.game.renderer.ui.draw_ui_message('x1 ' + str(collided_obj.type).strip().title().replace('_', ' ') + '!')
                         self.game.assets.sounds['pickup'].play()
             
-        other_entities = (entity for entity in self.game.entity_manager.entities if entity.type != 'player')
+        other_entities = (entity for entity in self.game.manager.em.entities if entity.type != 'player')
+        collided = None
         for entity in other_entities:
-            if self.on_screen(entity, self.game.scroll, self.game.window.display):
-                collided = self.game.collision_manager.check_entity(self, entity)
+            if self.on_screen(entity, self.game.camera.scroll, self.game.window.display):
+                collided = self.game.manager.cm.check_entity(self, entity)
                 if collided and collided.is_monster and not collided.death_timer: # if monster collides with player
                     self.damage(collided.attack_value)
                 elif isinstance(entity, NPC):
@@ -191,7 +187,7 @@ class Player(Entity):
                         monster = entity
                         if self.weapon.attack_rect.colliderect(monster.rect):
                             if not monster.invincible:
-                                self.game.ui.draw_ui_message(str(self.weapon.attack_value) + ' damage!')
+                                self.game.renderer.ui.draw_ui_message(str(self.weapon.attack_value) + ' damage!')
                             monster.damage(self.weapon.attack_value)
                             monster.hp_bar_on = True
                             monster.hp_bar_counter = 0
@@ -200,24 +196,25 @@ class Player(Entity):
                             if monster.dead and not monster.death_message_shown:
                                 self.exp += monster.exp
                                 monster.death_message_shown = True
-                                self.game.ui.draw_ui_message('killed the ' + monster.__class__.__name__ + '!')
-                                self.game.ui.draw_ui_message('EXP gained: ' + str(monster.exp))
+                                self.game.renderer.ui.draw_ui_message('killed the ' + monster.name + '!')
+                                self.game.renderer.ui.draw_ui_message('EXP gained: ' + str(monster.exp))
     
         
         # reset timers
         self.reset_invincible(dt)
         self.reset_attack(dt)
-         
+        
+        
         return dead
                     
 
     def render(self, surf, offset=(0, 0)):
+        img = self.img.copy()
+        
         if self.game.input.debug:
             pygame.draw.rect(surf, WHITE, pygame.Rect(self.rect.x - offset[0], self.rect.y - offset[1], self.rect.size[0], self.rect.size[1])) #debug
             pygame.draw.rect(surf, RED, pygame.Rect(self.weapon.rect.x - offset[0], self.weapon.rect.y - offset[1], self.weapon.rect.size[0], self.weapon.rect.size[1])) #debug
             
-        img = self.img.copy()
-        
         
         if self.invincible:
             if self.invincible_counter % 0.20 <= 0.1:
@@ -232,16 +229,18 @@ class Player(Entity):
         elif self.attacking:
             
             temp_pos = self.pos.copy()
+            img = self.weapon.attack_img
             
-            if self.weapon.type != 'boomerang':
+            if self.weapon.position_adjust:
                 if self.direction == 'left':
                     temp_pos[0] = self.pos[0] - TILE_SIZE
                 elif self.direction == 'up':
                     temp_pos[1] = self.pos[1] - TILE_SIZE
-                img = self.weapon.attack_img
             surf.blit(img, (int(temp_pos[0] - offset[0]), int(temp_pos[1] - offset[1])))
         else:       
             surf.blit(img, (int(self.pos[0] - offset[0]), int(self.pos[1] - offset[1])))
+            
+        
         
         
         

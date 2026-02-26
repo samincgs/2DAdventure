@@ -19,7 +19,7 @@ class ObjectMapper:
         
         self.objects.append(HealthPotion(self.game, (400, 162), (16, 16)))
         self.objects.append(Axe(self.game, (212, 170), (16, 16), self.game.player))
-        self.objects.append(Boomerang(self.game, (122, 170), (16, 16), self.game.player))
+        # self.objects.append(Boomerang(self.game, (122, 170), (16, 16), self.game.player))
         
     def render(self, surf, offset=(0, 0)):
         for obj in self.objects:

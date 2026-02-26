@@ -1,9 +1,12 @@
+
+START_STATE = 'menu'
+
 class State:
     def __init__(self, game):
         self.game = game
         
         self.game_states = {'play': 0, 'pause': 1, 'dialogue': 2, 'menu': 3, 'status': 4}
-        self.current_state = self.game_states['menu']
+        self.current_state = self.game_states[START_STATE]
         # self.current_state = self.game_states['play']
         
         self.last_state = self.current_state
@@ -45,7 +48,7 @@ class State:
     def create_dialogue(self, message, event):
         self.set_state('dialogue')
         self.set_event(event)
-        self.game.ui.current_dialogue = message
+        self.game.renderer.ui.current_dialogue = message
         
     def return_to_play_state(self):
         self.set_state('play')
@@ -57,7 +60,7 @@ class State:
             self.last_state = self.current_state
         
     def update(self):
-        pass
+        self.track_last_state()
                         
     def track_event_and_dialogues(self):
         if self.interacted_npc and self.game.input.interacted:
